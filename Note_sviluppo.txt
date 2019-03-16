@@ -1,0 +1,60 @@
+Progetto:
+
+Riconoscimento scrittura tramite MapReduce;
+libri da project Gutenberg.
+
+Studio e ripasso di Hadoop:
+struttura libro hadoop
+Chapter 2: introduzione a MapReduce
+Chapter 3: Hadoop filesystems, HDFS
+Chapter 4: I/O in Hadoop, data integrity, compression, serialization, file-based data structures
+Chapter 5: building  a MapReduce application
+Chapter 6: MapReduce in Hadoop
+Chapter 7: MapReduce programming model and data formats
+Chapter 8: advanced MapReduce topics, come sorting e joining data
+
+Fase di download dei dati;
+pulizia dati, ovvero organizzazione per autore ed estrazione di circa il 10% dei dati per essere usati come test.
+Lo script crawler dei dati dal sito project Gutenberg scarica tutti i file txt di lingua inglese.
+Per convenzione del project Gutenberg, i file txt sono nominati in modo non-userfriendly 
+(dal libro numero 10000 in poi, il nome del file è il numero stesso del file; 
+per i primi 100000, la name convention utilizzata è una abbreviazione di qualche tipo del titolo del libro); 
+allo scopo di avere le basi per poter sviluppare il suddetto progetto, ho creato uno script che rinominasse tutti i file di testo con 
+autore + titolo (author,___,title). Siccome la maggioranza dei file ha, tra le prime 30 righe, una riga 
+del formato "Author: nome" e "Title: titolo", ho estratto tali campi e li ho utilizzati per rinominare i file;
+inoltre ho creato una cartella per autore e spostato i file relativi a quell'autore nella sua cartella.
+Lo script fallisce nei casi in cui o nel nome dell'autore o nel titolo vengono utilizzati caratteri non codificati da UTF-8, o nel
+caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostare i file in modo automatico, legge quel carattere
+come se ci fosse una subdirectory, fallendo la mv del file).
+Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
+
+Progetto generale:
+Fase creazione impronte per ogni autore.
+Per ogni autore, verranno estratte informazioni al fine di creare un'"impronta" dell'autore stesso.
+L'impronta dell'autore può essere creata guardando:
+- il numero di parole più utilizzate
+- le coppie di parole più utilizzate all'interno della stessa frase
+- altro....
+Su Zotero, raccolta articoli per spunti di profilazione.
+
+Fase riconoscimento autore.
+Per ogni libro inserito (di cui l'autore è noto solo da noi), verrà estratta una sua impronta che
+ verrà confrontata con le impronte salvate dall'elaborazione precedente.
+Verrà restituito come output la/e migliori corrispondenze.
+
+Considerazioni:
+Verranno tratte le dovute conclusioni relative alle tecniche migliori per il riconoscimento,
+per la ricerca stessa ed estrazione delle impronte, della scalabilità del programma.
+
+Note e scelte progettuali:
+Utilizzo librerie prese dal container installato sul mio computer. Essendo la versione di Cloudera
+non aggiornata all'ultima versione di hadoop, nonostante quest'ultima sia compatibile con JDK8, la versione
+precedente è compatibile con JDK7, pertanto verrà utilizzata questa versione di Java.
+
+Ho utilizzato uno script per scaricare tutti i libri necessari per lo studio. Sono stati utilizzati
+i formati txt e la lingua inglese. Data la non interpretazione della semantica, implementare il programma per la lingua
+inglese non influenza l'implementazione su dataset di altre lingue. Le uniche note da tenere in considerazione
+sono la lingua unica dei libri per autore (non posso avere un'impronta dell'autore X costituita da metà libri in inglese
+e metà libri in italiano; sarebbe come avere metà libri a disposizione) e la compatibilità con alfabeti differenti dal latino.
+
+
