@@ -10,4 +10,4 @@ FASE MAP:
 FASE REDUCE:
 //TODO
 
-Passare come input un libro non conosciuto dal programma e vedere se indovina
+Passare come input un libro non conosciuto dal programma e vedere se indovina l'autore.
