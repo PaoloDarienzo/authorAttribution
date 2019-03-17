@@ -1,12 +1,16 @@
 # authorAttribution
 MapReduce project
+
 Obiettivo:
 analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
-parole utilizzate
-accostamenti di parole utilizzate
+
+- parole utilizzate
+- accostamenti di parole utilizzate
 ...
+
 FASE MAP:
 //TODO
+
 FASE REDUCE:
 //TODO
 
