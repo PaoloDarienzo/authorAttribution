@@ -1,5 +1,19 @@
 #!/bin/bash
 
+#extracting txt file(s) from directories
+for dir in *; do
+    #if the file is a directory
+    if [ -d "$dir" ]; then
+      #move up by one the file(s)
+      mv $dir/*.txt .
+      #deleting directory (with content non-txt)
+      rm -r $dir
+    fi
+done
+
+mkdir -p "AUTHOR_NOT_FOUND"
+
+#renaming and ordering txt files
 for filename in *.txt; do
 
     # Grab the first 30 lines with carriage returns removed (tr -d):
@@ -12,14 +26,17 @@ for filename in *.txt; do
     if [ -z "$title" ]; then
         # >&2 redirect std output to stderr
         echo "Unable to find Title: in $filename; skipping" >&2
+        mv --backup=numbered -i -f "$filename" "AUTHOR_NOT_FOUND"/"$filename"
         continue
     fi
 
     author=$(echo "$firstlines" | sed -n 's/^.*[Aa][Uu][Tt][Hh][Oo][Rr]:[[:blank:]]*//p')
     if [ -z "$author" ]; then
         echo "Unable to find Author: in $filename; skipping" >&2
+        mv --backup=numbered -i -f "$filename" "00000_AUTHOR_NOT_FOUND"/"$filename"
         continue
     fi
+
     #creating new name convention
     new_name="$author,___,$title.txt"
 
