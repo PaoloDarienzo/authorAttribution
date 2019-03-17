@@ -25,7 +25,7 @@ del formato "Author: nome" e "Title: titolo", ho estratto tali campi e li ho uti
 inoltre ho creato una cartella per autore e spostato i file relativi a quell'autore nella sua cartella.
 Lo script fallisce nei casi in cui o nel nome dell'autore o nel titolo vengono utilizzati caratteri non codificati da UTF-8, o nel
 caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostare i file in modo automatico, legge quel carattere
-come se ci fosse una subdirectory, fallendo la mv del file).
+come se ci fosse una subdirectory, fallendo la mv del file); fallisce inoltre con i file estratti dai file zip scaricati che non siano .txt (per esempio con le cartelle).
 Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
 
 Progetto generale:
