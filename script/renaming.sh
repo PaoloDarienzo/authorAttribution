@@ -11,7 +11,7 @@ for dir in *; do
     fi
 done
 
-mkdir -p "AUTHOR_NOT_FOUND"
+mkdir -p "00000_AUTHOR_NOT_FOUND"
 
 #renaming and ordering txt files
 for filename in *.txt; do
@@ -26,7 +26,7 @@ for filename in *.txt; do
     if [ -z "$title" ]; then
         # >&2 redirect std output to stderr
         echo "Unable to find Title: in $filename; skipping" >&2
-        mv --backup=numbered -i -f "$filename" "AUTHOR_NOT_FOUND"/"$filename"
+        mv --backup=numbered -i -f "$filename" "00000_AUTHOR_NOT_FOUND"/"$filename"
         continue
     fi
 

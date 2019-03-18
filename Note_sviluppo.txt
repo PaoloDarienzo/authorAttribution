@@ -20,12 +20,18 @@ Per convenzione del project Gutenberg, i file txt sono nominati in modo non-user
 (dal libro numero 10000 in poi, il nome del file è il numero stesso del file; 
 per i primi 100000, la name convention utilizzata è una abbreviazione di qualche tipo del titolo del libro); 
 allo scopo di avere le basi per poter sviluppare il suddetto progetto, ho creato uno script che rinominasse tutti i file di testo con 
-autore + titolo (author,___,title). Siccome la maggioranza dei file ha, tra le prime 30 righe, una riga 
-del formato "Author: nome" e "Title: titolo", ho estratto tali campi e li ho utilizzati per rinominare i file;
+autore + titolo (author,___,title).
+Inoltre, i file dezippati non sono sempre il file txt, ma cartelle con all'interno il file txt in questione; ho estratto tali file
+e rimosso la cartella ora vuota.
+ Siccome la maggioranza dei file ha, tra le prime 30 righe, una riga del formato "Author: nome" e "Title: titolo",
+  ho estratto tali campi e li ho utilizzati per rinominare i file;
 inoltre ho creato una cartella per autore e spostato i file relativi a quell'autore nella sua cartella.
 Lo script fallisce nei casi in cui o nel nome dell'autore o nel titolo vengono utilizzati caratteri non codificati da UTF-8, o nel
 caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostare i file in modo automatico, legge quel carattere
-come se ci fosse una subdirectory, fallendo la mv del file); fallisce inoltre con i file estratti dai file zip scaricati che non siano .txt (per esempio con le cartelle).
+come se ci fosse una subdirectory, fallendo la mv del file).
+I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUHTOR_NOT_FOUND".
+I rimanenti file di testo sono stati spostati nella cartella "00001_NAMING_ERROR".
+Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils), Charlotte Bronte.
 Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
 
 Progetto generale:
