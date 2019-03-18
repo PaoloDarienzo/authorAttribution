@@ -31,7 +31,7 @@ caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostar
 come se ci fosse una subdirectory, fallendo la mv del file).
 I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUHTOR_NOT_FOUND".
 I rimanenti file di testo sono stati spostati nella cartella "00001_NAMING_ERROR".
-Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils), Charlotte Bronte.
+Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils), Charlotte Bronte, Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
 Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
 
 Progetto generale:
