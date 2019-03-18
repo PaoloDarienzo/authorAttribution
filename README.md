@@ -1,5 +1,5 @@
 # authorAttribution
-MapReduce project
+MapReduce project, UniVr, 2018/2019.
 
 Obiettivo:
 analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
