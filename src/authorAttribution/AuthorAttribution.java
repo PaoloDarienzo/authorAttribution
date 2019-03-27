@@ -20,18 +20,8 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
-/**
- * 
- * @author paolo
- *
- */
 public class AuthorAttribution extends Configured implements Tool {
 
-	/**
-	 * 
-	 * @param args
-	 * @throws Exception 
-	 */
 	public static void main(String[] args) throws Exception {
 		
 		int res = ToolRunner.run(new AuthorAttribution(), args);
@@ -45,6 +35,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			job.setJarByClass(this.getClass());
 			
 			//FileInputFormat.setInputDirRecursive(job, true);
+			
 			FileInputFormat.addInputPath(job, new Path(args[0]));
 			FileOutputFormat.setOutputPath(job, new Path(args[1]));
 			
@@ -52,53 +43,34 @@ public class AuthorAttribution extends Configured implements Tool {
 			
 			job.setMapperClass(AuthorAttrMapper.class);
 			job.setReducerClass(AuthorAttrReducer.class);
-			job.setOutputKeyClass(AuthorValuePair.class);
+			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(IntWritable.class);
 			
 			return job.waitForCompletion(true) ? 0 : 1;
 	    
 	  }
 	
-	/**
-	 * 
-	 * @author paolo
-	 *
-	 */
-	public static class AuthorAttrMapper extends Mapper<LongWritable, Text, AuthorValuePair, IntWritable> {
+	public static class AuthorAttrMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 		
 		private final static IntWritable one = new IntWritable(1);
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		
-		private Text author = new Text();
-		private AuthorValuePair currentPair = new AuthorValuePair();
-		//private Text currentWord = new Text();
+		private Text currentWord = new Text();
 		
-		/**
-		 * @throws InterruptedException 
-		 * @throws IOException 
-		 * 
-		 */
 		@Override
 		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
 			
-			FileSplit fileSplit = (FileSplit)context.getInputSplit();
-			String filename = fileSplit.getPath().getName();
-			String delimiters = ",___,";
-			String[] tokensVal = filename.split(delimiters);
-			author.set(tokensVal[0]);
-			
-			currentPair.setAuthor(author);
 			String line = lineText.toString();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				if (word.isEmpty()) {
 					continue;
 				}
-				word.toLowerCase();
-				currentPair.setWord(word);
+				word = word.toLowerCase();
+				currentWord.set(word);
 	            
-				context.write(currentPair, one);
+				context.write(currentWord, one);
 				
 			}
 			
@@ -106,12 +78,7 @@ public class AuthorAttribution extends Configured implements Tool {
 
 	} //end AuthorAttrMapper class
 
-	/**
-	 * 
-	 * @author paolo
-	 *
-	 */
-	public static class AuthorAttrReducer extends Reducer<AuthorValuePair, IntWritable, AuthorValuePair, IntWritable>{
+	public static class AuthorAttrReducer extends Reducer<Text, IntWritable, Text, IntWritable>{
 
 		//private MultipleOutputs<NullWritable, IntWritable> multipleOutputs;
 		
@@ -121,14 +88,9 @@ public class AuthorAttribution extends Configured implements Tool {
 			multipleOutputs = new MultipleOutputs<NullWritable, IntWritable>(context);
 		}
 		*/
-		
-		/**
-		 * @throws InterruptedException 
-		 * @throws IOException 
-		 * 
-		 */
+
 		@Override
-		public void reduce(AuthorValuePair key, Iterable<IntWritable> values, Context context) 
+		public void reduce(Text key, Iterable<IntWritable> values, Context context) 
 				throws IOException, InterruptedException {
 			
 			int sum = 0;

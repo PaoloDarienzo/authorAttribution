@@ -10,12 +10,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
-public class WordCount extends Configured implements Tool {
+public class WordCountAuth extends Configured implements Tool {
 	
 	public static void main(String[] args) throws Exception {
 	  
@@ -25,7 +26,7 @@ public class WordCount extends Configured implements Tool {
 
 	public int run(String[] args) throws Exception {
 	  
-		Job job = Job.getInstance(getConf(), "wordcount");
+		Job job = Job.getInstance(getConf(), "WordCountAuth");
 		job.setJarByClass(this.getClass());
 		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
@@ -34,9 +35,11 @@ public class WordCount extends Configured implements Tool {
 		job.setNumReduceTasks(Integer.parseInt(args[2]));
 		job.setMapperClass(Map.class);
 		job.setReducerClass(Reduce.class);
+		
+		job.setMapOutputKeyClass(TextPair.class);
+		job.setMapOutputValueClass(IntWritable.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
-
+		job.setOutputValueClass(TextPair.class);
 		/*
 		setOutputKeyClass e setOutputValue class
 		controllano il tipo di output di map e reduce;
@@ -53,15 +56,25 @@ public class WordCount extends Configured implements Tool {
     
 	}
 
-	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, TextPair, IntWritable> {
 		
 		private final static IntWritable one = new IntWritable(1);
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		
 		private Text currentWord = new Text();
+		private Text author = new Text();
+		private TextPair authWord = new TextPair();
 
 		public void map(LongWritable offset, Text lineText, Context context)
 				throws IOException, InterruptedException {
+			
+			FileSplit fileSplit = (FileSplit)context.getInputSplit();
+			String filename = fileSplit.getPath().getName();
+			String delimiters = ",___,";
+			String[] tokensVal = filename.split(delimiters);
+			author.set(tokensVal[0]);
+			
+			authWord.setFirst(author);
 			
 			String line = lineText.toString();
 			
@@ -74,22 +87,25 @@ public class WordCount extends Configured implements Tool {
 				word = word.toLowerCase();
 				currentWord.set(word);
 				
-				context.write(currentWord, one);
+				authWord.setSecond(currentWord);
+				context.write(authWord, one);
 			}
 		}
  
 	}
 
-	public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+	public static class Reduce extends Reducer<TextPair, IntWritable, Text, TextPair> {
 	
 		@Override
-		public void reduce(Text word, Iterable<IntWritable> counts, Context context)
+		public void reduce(TextPair authWord, Iterable<IntWritable> counts, Context context)
 				throws IOException, InterruptedException {
 			int sum = 0;
 			for (IntWritable count : counts) {
 				sum += count.get();
 			}
-			context.write(word, new IntWritable(sum));
+			
+			TextPair wordVal = new TextPair(authWord.getSecond(), new Integer(sum).toString());
+			context.write(authWord.getFirst(), wordVal);
 		}
 	}
 
