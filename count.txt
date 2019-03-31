@@ -128,7 +128,6 @@
    11 files in directory ./ORDERED_SET/William Walker Atkinson
    11 files in directory ./ORDERED_SET/William Wood
    11 files in directory ./ORDERED_SET/Winston Marks
- 1209 files in directory ./Altro/subset
   120 files in directory ./ORDERED_SET/George Manville Fenn
    12 files in directory ./ORDERED_SET/Ann Wilson
    12 files in directory ./ORDERED_SET/Charles Paul de Kock
@@ -207,7 +206,7 @@
    13 files in directory ./ORDERED_SET/Thomas Tapper
    13 files in directory ./ORDERED_SET/W. D. Howells
    13 files in directory ./ORDERED_SET/William E. Duellman
-14520 files in directory ./ORDERED_SET
+14518 files in directory ./ORDERED_SET
   148 files in directory ./ORDERED_SET/Unknown
    14 files in directory ./ORDERED_SET/'Abdu'l-Baha
    14 files in directory ./ORDERED_SET/Cyril Arthur Edward Ranger Gull
@@ -339,26 +338,6 @@
    19 files in directory ./ORDERED_SET/Washington Irving
    19 files in directory ./ORDERED_SET/William Black
    19 files in directory ./ORDERED_SET/William Morris
-    1 files in directory ./Altro/subset/10159
-    1 files in directory ./Altro/subset/10161
-    1 files in directory ./Altro/subset/10162
-    1 files in directory ./Altro/subset/10163
-    1 files in directory ./Altro/subset/10202
-    1 files in directory ./Altro/subset/10210
-    1 files in directory ./Altro/subset/10211
-    1 files in directory ./Altro/subset/10212
-    1 files in directory ./Altro/subset/10213
-    1 files in directory ./Altro/subset/10214
-    1 files in directory ./Altro/subset/10216
-    1 files in directory ./Altro/subset/10217
-    1 files in directory ./Altro/subset/10219
-    1 files in directory ./Altro/subset/10222
-    1 files in directory ./Altro/subset/10225
-    1 files in directory ./Altro/subset/10226
-    1 files in directory ./Altro/subset/10234
-    1 files in directory ./Altro/subset/10266
-    1 files in directory ./Altro/subset/10267
-    1 files in directory ./Altro/subset_sh
     1 files in directory ./ORDERED_SET/A. A. Crozier
     1 files in directory ./ORDERED_SET/A. A. Hayes
     1 files in directory ./ORDERED_SET/A. Alpheus
@@ -1712,7 +1691,6 @@
     1 files in directory ./ORDERED_SET/Catherine Cotton
     1 files in directory ./ORDERED_SET/Catherine Crowe
     1 files in directory ./ORDERED_SET/Catherine Dorset
-    1 files in directory ./ORDERED_SET/Catherine E. Beecher and Harriet Beecher Stowe
     1 files in directory ./ORDERED_SET/Catherine Esther Beecher
     1 files in directory ./ORDERED_SET/Catherine H. Birney
     1 files in directory ./ORDERED_SET/Catherine II, Empress of Russia
@@ -1762,7 +1740,7 @@
     1 files in directory ./ORDERED_SET/C. E. Orr
     1 files in directory ./ORDERED_SET/Cerinda W. Evans
     1 files in directory ./ORDERED_SET/C. E. Sanborn
-    1 files in directory ./ORDERED_SET/Cesar Lecat de Bazancourt
+    1 files in directory ./ORDERED_SET/Cesar Lecat de Bazancourt/Catherine E. Beecher and Harriet Beecher Stowe
     1 files in directory ./ORDERED_SET/C. E. Smith
     1 files in directory ./ORDERED_SET/C. E. W. Bean
     1 files in directory ./ORDERED_SET/C. F. [Constantin Francois de] Volney
@@ -11419,6 +11397,7 @@
     2 files in directory ./ORDERED_SET/Catherine Owen
     2 files in directory ./ORDERED_SET/Catherine Sinclair
     2 files in directory ./ORDERED_SET/Cecil B. Hartley
+    2 files in directory ./ORDERED_SET/Cesar Lecat de Bazancourt
     2 files in directory ./ORDERED_SET/Charles Asbury Stephens
     2 files in directory ./ORDERED_SET/Charles Baudelaire
     2 files in directory ./ORDERED_SET/Charles Beard
@@ -13496,6 +13475,7 @@
    48 files in directory ./ORDERED_SET/Miguel de Cervantes Saavedra
    49 files in directory ./ORDERED_SET/Charles Dickens
    49 files in directory ./ORDERED_SET/Rudyard Kipling
+    4 files in directory .
     4 files in directory ./Altro
     4 files in directory ./ORDERED_SET/Abraham Cahan
     4 files in directory ./ORDERED_SET/Adam Mickiewicz
@@ -13860,7 +13840,6 @@
   577 files in directory ./ORDERED_SET/Anonymous
    58 files in directory ./ORDERED_SET/Bret Harte
    59 files in directory ./ORDERED_SET/Henry James
-    5 files in directory .
     5 files in directory ./ORDERED_SET/Adeline Sergeant
     5 files in directory ./ORDERED_SET/Aesop
     5 files in directory ./ORDERED_SET/A. E. W. Mason

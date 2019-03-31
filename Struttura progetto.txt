@@ -1,0 +1,175 @@
+PROGETTO
+
+Riconoscimento autore tramite MapReduce;
+libri presi da project Gutenberg.
+
+Considerazioni:
+Verranno tratte le dovute conclusioni relative alle tecniche migliori per il riconoscimento,
+per la ricerca stessa ed estrazione delle impronte, della scalabilità del programma.
+
+###################################################################################################
+
+CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
+
+	INPUT:
+
+	Tutti i file.txt;
+	Ogni file ha come nome:
+	-> author,___,title.txt
+
+	MAP:
+		Per ogni file, raccoglie le informazioni volute.
+		Estrapola il nome dell'autore dal nome del file stesso.
+		
+	PARTITIONER:
+		Per ogni file, viene estratto il campo del nome dell'autore.
+		In base al nome dell'autore, verrà selezionato un reducer.
+		n = numero autori; r = numero reducer.
+		r >= n ---> ogni reducer si occupa di un autore; le informazioni relative
+					a quell'autore (nel calcolo percentuale) è preservata.
+		r < n  ---> ???
+
+	REDUCE:
+		Per ogni file, calcola i vari valori da calcolare.
+		Genererà così una serie di valori che saranno l'impronta dell'autore.
+		
+	OUTPUT:
+	
+	Un file per ogni autore.
+	Ogni file ha come nome:
+	-> nome_autore.rdddddd
+	
+DEDUZIONE AUTORE
+
+	INPUT
+	
+	Uno o più file di testo di cui l'autore non è conosciuto.
+	Rimozione delle prime ~50 righe in cui, per conformazione del progetto Gutenberg,
+	è possibile la presenza del nome dell'autore, al fine di non falsare la ricerca dell'autore.
+	
+	MAP:
+		Creazione dell'impronta del singolo file;
+		Estrazione dei valori desiderati.
+	
+	REDUCER:
+		Per ogni file, calcolo valori finali.
+		
+	OUTPUT
+		Un file per ogni impronta generata sconosciuta.
+	
+	MAP:
+		Confronto dell'impronta generata con le impronte di autori noti.
+		Calcolo percentuale di somiglianza.
+		Ogni map confronta un'impronta nota con l'impronta sconosciuta.
+	REDUCE (1):
+		Riceve tutti i risultati dei confronti ed emette una lista ordinata
+		di somiglianza.
+		
+	OUTPUT
+		Un file con una lista ordinata per punteggio di somiglianza;
+		Per ogni autore, il punteggio di somiglianza.
+		
+###################################################################################################
+
+PREPARAZIONE DEI FILE DI INPUT
+
+Fase di download dei dati;
+pulizia dati, ovvero organizzazione per autore ed estrazione di circa il 10% dei dati per essere usati come test.
+Lo script crawler dei dati dal sito project Gutenberg scarica tutti i file txt di lingua inglese.
+Per convenzione del project Gutenberg, i file txt sono nominati in modo non-userfriendly 
+(dal libro numero 10000 in poi, il nome del file è il numero stesso del file; 
+per i primi 100000, la name convention utilizzata è una abbreviazione di qualche tipo del titolo del libro); 
+allo scopo di avere le basi per poter sviluppare il suddetto progetto (ovvero conoscere l'autore),
+ ho creato uno script che rinominasse tutti i file di testo con autore + titolo (author,___,title).
+Inoltre, i file dezippati non sono sempre il file txt, ma cartelle con all'interno il file txt in questione; ho estratto tali file
+e rimosso la cartella ora vuota.
+ Siccome la maggioranza dei file ha, tra le prime 30 righe, una riga del formato "Author: nome" e "Title: titolo", 
+ ho estratto tali campi e li ho utilizzati per rinominare i file;
+inoltre ho creato una cartella per autore e spostato i file relativi a quell'autore nella sua cartella.
+Lo script fallisce nei casi in cui o nel nome dell'autore o nel titolo vengono utilizzati caratteri non codificati da UTF-8, o nel
+caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostare i file in modo automatico, legge quel carattere
+come se ci fosse una subdirectory, fallendo la mv del file).
+I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUHTOR_NOT_FOUND".
+I rimanenti file di testo sono stati spostati nella cartella "00001_NAMING_ERROR".
+Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils), Charlotte Bronte, Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
+Ho eseguito il conteggio dei file per ogni autore e salvato l'output nel file count.txt.
+I file di input nel progetto MapReduce non possono essere cartelle, quindi i file txt degli autori selezionati per lo studio
+ sono stati estratti di nuovo dalle cartelle.
+Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
+
+###################################################################################################
+
+CREAZIONE IMPRONTA
+
+Nella creazione dell'impronta di un autore, ovvero del profiling di un autore in esame,
+ho preso in considerazione:
+- la lunghezza media delle frasi nelle opere dell'autore in esame (line length) (?);
+- la lunghezza media delle parole utilizzate dall'autore (word length);
+- la ricchezza del vocabolario (vocabulary richness), andando a guardare:
+	- hapaxlegomena, ovvero parole che compaiono una volta soltanto in ogni testo;
+	- hapaxdislegomena, ovvero parole che compaiono due volte soltanto in ogni testo;
+	- il numero di parole uniche utilizzate e loro frequenza;
+- 2-grams, ovvero la vicinanza(*) di due parole;
+- 3-grams;
+- densità(*) delle "function words", ovvero 150 parole uniche (preposizioni, articolazioni, etc.);
+- densità della punteggiatura, ovvero { . , ? ! " ( ) - : ; } ;
+
+(*)
+- Il concetto di vicinanza può essere:
+	- parole a sinistra e a destra di ogni parola;
+	- parole che in generale compaiono nella stessa frase;
+	Ho scelto come concetto di vicinanza le parole contenute nella stessa frase.
+- Con densità si intende il rapporto tra la data parola o simbolo e il numero totale di parole o simboli analizzati 
+	(ovvero, sia x la parola da analizzare, x/token_total.size)
+
+1. line_length;
+2. word_length;
+3. 1_word;
+4. 2_word;
+5. 2_gram;
+6. 3_gram;
+7. punctuation_density;
+8. function_word_density;
+9. word_frequency (tra le 20 - 60 più utilizzate);
+
+Ognuno dei 9 valori è stato moltiplicato per un peso prima di generare un punteggio di somiglianza.
+
+###################################################################################################
+
+SCELTE PROGETTUALI
+
+hadoop version
+Hadoop 2.6.0-cdh5.7.0
+Minimum requirements: JDK 7
+
+Molti studi di author profiling generano la funzione di identificazione tramite tecniche di intelligenza artificiale.
+Non essendo questa implementata nel progetto, il peso delle varie caratteristiche nel determinare l'autore di un testo
+sono state scelte manualmente e impostate con alcuni lanci di prova con parametri diversi.
+
+Escluso:
+SVM, sentiment analysis, AI, naive bayes.
+
+Utilizzo librerie prese dal container installato sul mio computer. Essendo la versione di Cloudera
+non aggiornata all'ultima versione di hadoop, nonostante quest'ultima sia compatibile con JDK8, la versione
+precedente è compatibile con JDK7, pertanto verrà utilizzata questa versione di Java.
+
+Ho utilizzato uno script per scaricare tutti i libri necessari per lo studio. Sono stati utilizzati
+i formati txt e la lingua inglese. Data la non interpretazione della semantica, implementare il programma per la lingua
+inglese non influenza l'implementazione su dataset di altre lingue. Le uniche note da tenere in considerazione
+sono la lingua unica dei libri per autore (non posso avere un'impronta dell'autore X costituita da metà libri in inglese
+e metà libri in italiano; sarebbe come avere metà libri a disposizione) e la compatibilità con alfabeti differenti dal latino.
+
+###################################################################################################
+
+ALTRO
+
+Studio e ripasso di Hadoop:
+struttura libro hadoop
+Chapter 2: introduzione a MapReduce
+Chapter 3: Hadoop filesystems, HDFS
+Chapter 4: I/O in Hadoop, data integrity, compression, serialization, file-based data structures
+Chapter 5: building  a MapReduce application
+Chapter 6: MapReduce in Hadoop
+Chapter 7: MapReduce programming model and data formats
+Chapter 8: advanced MapReduce topics, come sorting e joining data
+

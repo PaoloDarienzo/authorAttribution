@@ -1,21 +1,21 @@
 #!/bin/bash
 
-read -p "Are you sure to launch the script? " -n 1 -r
+read -p "Are you sure to launch the script (y/n)? " -n 1 -r
 echo    #move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     # do dangerous stuff
 
     #extracting txt file(s) from directories
-    for dir in *; do
-        #if the file is a directory
-        if [ -d "$dir" ]; then
-          #move up by one the file(s)
-          mv $dir/*.txt .
-          #deleting directory (with content non-txt)
-          rm -r $dir
-        fi
-    done
+	for dir in *; do
+		#if the file is a directory
+		if [ -d "$dir" ]; then
+		  #move up by one the file(s)
+		  mv "$dir"/*.txt .
+		  #deleting directory (with content non-txt)
+		  rm -r "$dir"
+		fi
+	done
 
     mkdir -p "00000_AUTHOR_NOT_FOUND"
 
@@ -62,6 +62,11 @@ then
 
     done
 
+	#moving files not renamed
+	mkdir -p "00001_NAMING_ERROR"
+	for filename in *.txt; do
+		mv --backup=numbered -i -f "$filename" "00001_NAMING_ERROR"/"$filename"
+	done
     #end dangerous stuff
     
 fi
