@@ -1,6 +1,7 @@
-package authorAttribution;
+package Test;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
@@ -15,11 +16,11 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
-public class WordCount extends Configured implements Tool {
+public class WordCountMultipleOut extends Configured implements Tool {
 	
 	public static void main(String[] args) throws Exception {
 	  
-		int res = ToolRunner.run(new WordCount(), args);
+		int res = ToolRunner.run(new WordCountMultipleOut(), args);
 		System.exit(res);
 		}
 
@@ -59,15 +60,35 @@ public class WordCount extends Configured implements Tool {
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		
 		private Text currentWord = new Text();
+		
+		private  HashSet<String> conjuction = new HashSet<>();
 
 		public void map(LongWritable offset, Text lineText, Context context)
 				throws IOException, InterruptedException {
 			
+			//. , ? ! " ( ) - : ;
+			conjuction.add(".");
+			conjuction.add(",");
+			conjuction.add(":");
+			conjuction.add(";");
+			conjuction.add("?");
+			conjuction.add("!");
+			conjuction.add("(");
+			conjuction.add(")");
+			conjuction.add("-");
+			conjuction.add("\"");
+			
 			String line = lineText.toString();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
-				//skip spaces, and not alphanumerical characters
-				if (word.isEmpty() || !(word.matches("^[a-zA-Z0-9]*$"))) {
+				//skip is word is empty
+				//or is if is not a digit or a char
+				//and is not a conjuction symbol
+				if (word.isEmpty() 
+						|| (
+							!(word.matches("^[a-zA-Z0-9]*$")) && !(conjuction.contains(word))
+							) 
+					) {
 					continue;
 				}
 				//No differences in lower or uppercase

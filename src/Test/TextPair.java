@@ -1,4 +1,4 @@
-package authorAttribution;
+package Test;
 /*
  * Code from Tom White's "Hadoop the definitive guide"
  *
@@ -52,34 +52,30 @@ public class TextPair implements WritableComparable<TextPair> {
 	
 	public void setFirst(Text first) {
 		this.first = first;
+		this.second = new Text();
 	}
 	
 	public void setFirst(String first) {
 		this.first = new Text(first);
+		this.second = new Text();
 	}
 	
 	public void setSecond(Text second) {
+		this.first = new Text();
 		this.second = second;
 	}
 	
 	public void setSecond(String second) {
+		this.first = new Text();
 		this.second = new Text(second);
 	}
 
 	public Text getFirst() {
-		return this.first;
+		return first;
 	}
 	
 	public Text getSecond() {
-		return this.second;
-	}
-	
-	public String getFirstToString() {
-		return this.first.toString();
-	}
-	
-	public String getSecondToString() {
-		return this.second.toString();
+		return second;
 	}
 
 	@Override
@@ -155,6 +151,5 @@ public class TextPair implements WritableComparable<TextPair> {
 		return second.compareTo(tp.second);
 		
 	}
-	
+
 }
-//^^ TextPair

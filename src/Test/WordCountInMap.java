@@ -1,4 +1,4 @@
-package authorAttribution;
+package Test;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -7,7 +7,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 //import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -15,19 +14,20 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import authorAttribution.ArrayWritable;
+
 //import org.apache.log4j.Logger;
 
-public class WordCountInMapMulOut extends Configured implements Tool {
+public class WordCountInMap extends Configured implements Tool {
 
 	//private static final Logger LOG = Logger.getLogger(WordCountInMap.class);
 
 	public static void main(String[] args) throws Exception {
 		  
-		int res = ToolRunner.run(new WordCountInMapMulOut(), args);
+		int res = ToolRunner.run(new WordCountInMap(), args);
 		System.exit(res);
 	}
 	
@@ -47,7 +47,7 @@ public class WordCountInMapMulOut extends Configured implements Tool {
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(ArrayWritable.class);
-		job.setOutputKeyClass(NullWritable.class);
+		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(ArrayWritable.class);
 		
 		return job.waitForCompletion(true) ? 0 : 1;
@@ -90,15 +90,8 @@ public class WordCountInMapMulOut extends Configured implements Tool {
 	
 	}
 
-	public static class Reduce extends Reducer<Text, ArrayWritable, NullWritable, ArrayWritable> {
+	public static class Reduce extends Reducer<Text, ArrayWritable, Text, ArrayWritable> {
 	
-		private MultipleOutputs<NullWritable, ArrayWritable> multipleOutputs;
-		
-		public void setup(Context context) throws IOException, InterruptedException
-		{
-			multipleOutputs = new MultipleOutputs<NullWritable, ArrayWritable>(context);
-		}
-		
 		@Override
 		public void reduce(Text word, Iterable<ArrayWritable> counts, Context context)
 				throws IOException, InterruptedException {
@@ -108,15 +101,12 @@ public class WordCountInMapMulOut extends Configured implements Tool {
 			for(ArrayWritable value : counts) {
 				Hf.sum(value);
 			}
-			multipleOutputs.write(NullWritable.get(), Hf, word.toString());
-			//context.write(word, Hf);	
+			
+			context.write(word, Hf);
+			
+			Hf.clear();
+			
 		}
-		
-		public void cleanup(Context context) 
-				throws IOException, InterruptedException {
-			multipleOutputs.close();
-		}	
-		
 	}
 	
 }
