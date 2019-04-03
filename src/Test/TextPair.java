@@ -52,30 +52,34 @@ public class TextPair implements WritableComparable<TextPair> {
 	
 	public void setFirst(Text first) {
 		this.first = first;
-		this.second = new Text();
 	}
 	
 	public void setFirst(String first) {
 		this.first = new Text(first);
-		this.second = new Text();
 	}
 	
 	public void setSecond(Text second) {
-		this.first = new Text();
 		this.second = second;
 	}
 	
 	public void setSecond(String second) {
-		this.first = new Text();
 		this.second = new Text(second);
 	}
 
 	public Text getFirst() {
-		return first;
+		return this.first;
 	}
 	
 	public Text getSecond() {
-		return second;
+		return this.second;
+	}
+	
+	public String getFirstToString() {
+		return this.first.toString();
+	}
+	
+	public String getSecondToString() {
+		return this.second.toString();
 	}
 
 	@Override
@@ -151,5 +155,6 @@ public class TextPair implements WritableComparable<TextPair> {
 		return second.compareTo(tp.second);
 		
 	}
-
+	
 }
+//^^ TextPair

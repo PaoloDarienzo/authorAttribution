@@ -25,6 +25,11 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
+//TODO
+/*
+ * USE HASHMAP
+ */
+
 public class AuthorAttribution extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {

@@ -1,4 +1,4 @@
-package authorAttribution;
+package Test;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
