@@ -25,11 +25,11 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
-public class AuthorAttribution extends Configured implements Tool {
+public class AuthorAttributionPair extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 		
-		int res = ToolRunner.run(new AuthorAttribution(), args);
+		int res = ToolRunner.run(new AuthorAttributionPair(), args);
 		System.exit(res);
 		
 	} //end main class
@@ -53,7 +53,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		job.setMapperClass(Map.class);
 		job.setReducerClass(Reduce.class);
 		
-		job.setMapOutputKeyClass(TraceWord.class);
+		job.setMapOutputKeyClass(TextPair.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
@@ -66,17 +66,17 @@ public class AuthorAttribution extends Configured implements Tool {
 		
 	}
 		
-	public static class authorPartitioner extends Partitioner<TraceWord, IntWritable> {
+	public static class authorPartitioner extends Partitioner<TextPair, IntWritable> {
 		
 		@Override
-		public int getPartition(TraceWord key, IntWritable value, int numPartitions) {
+		public int getPartition(TextPair key, IntWritable value, int numPartitions) {
 			
-			return (key.getAuthor().hashCode() * 163 & Integer.MAX_VALUE) % numPartitions;
+			return (key.getFirst().hashCode() * 163 & Integer.MAX_VALUE) % numPartitions;
 			
 		}
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, TraceWord, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, TextPair, IntWritable> {
 		
 		private final static IntWritable one = new IntWritable(1);
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
@@ -87,9 +87,9 @@ public class AuthorAttribution extends Configured implements Tool {
 																		"-", "\""};
 		public static final Set<String> CONJUCTION = new HashSet<>(Arrays.asList(SET_CONJ_VALUES));
 		
-		//private TextPair currentPair = new TextPair();
+		private TextPair currentPair = new TextPair();
 		
-		private TraceWord currentTraceWord = new TraceWord();
+		//private TraceWord currentTraceWord = new TraceWord();
 		//private Text currentWord = new Text();
 		private Text author = new Text();
 		
@@ -104,7 +104,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			
 			//currentPair.setFirst(author);
 			
-			currentTraceWord.setAuthor(author);
+			currentPair.setFirst(author);
 			
 			String line = lineText.toString();
 			
@@ -121,10 +121,10 @@ public class AuthorAttribution extends Configured implements Tool {
 				}
 								
 				//currentWord.set(word.toLowerCase());
-				//currentPair.setSecond(word.toLowerCase());
-				currentTraceWord.setWord(word.toLowerCase());
+				currentPair.setSecond(word.toLowerCase());
+				//currentTraceWord.setWord(word.toLowerCase());
 	            
-				context.write(currentTraceWord, one);
+				context.write(currentPair, one);
 				
 			} //end for
 			
@@ -132,7 +132,7 @@ public class AuthorAttribution extends Configured implements Tool {
 
 	} //end Mapper class
 
-	public static class Reduce extends Reducer<TraceWord, IntWritable, Text, IntWritable>{
+	public static class Reduce extends Reducer<TextPair, IntWritable, Text, IntWritable>{
 
 		private MultipleOutputs<Text, IntWritable> multipleOutputs;
 		
@@ -142,7 +142,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		}
 
 		@Override
-		public void reduce(TraceWord key, Iterable<IntWritable> values, Context context) 
+		public void reduce(TextPair key, Iterable<IntWritable> values, Context context) 
 				throws IOException, InterruptedException {
 			
 			int sum = 0;
@@ -151,7 +151,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			}
 			
 			//context.write(key, new IntWritable(sum));
-			multipleOutputs.write(key.getWord(), new IntWritable(sum), key.getAuthorToString());
+			multipleOutputs.write(key.getSecond(), new IntWritable(sum), key.getFirstToString());
 			
 		}//end reduce
 		

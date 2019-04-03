@@ -122,6 +122,8 @@ ho preso in considerazione:
 - Con densità si intende il rapporto tra la data parola o simbolo e il numero totale di parole o simboli analizzati 
 	(ovvero, sia x la parola da analizzare, x/token_total.size)
 
+(Da word_count: word_length, 1_word, 2_word, punctuation_density, function_word_density, word_frequency)
+(Da analisi vicinanza: 2_gram, 3_gram, line_length(?))
 1. line_length;
 2. word_length;
 3. 1_word;
