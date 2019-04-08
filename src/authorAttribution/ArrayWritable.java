@@ -14,7 +14,7 @@ public class ArrayWritable implements Writable {
 	private HashMap<String, Integer> wordVal;
 
 	public ArrayWritable() {
-		this.wordVal = new HashMap<String, Integer>();
+		this.wordVal = new HashMap<>();
 	}
 	
 	public HashMap<String, Integer> getArray() {
@@ -40,18 +40,14 @@ public class ArrayWritable implements Writable {
 		wordVal.clear();
 		
 		int size = in.readInt();
-		
 		for(int i = 0; i < size; i++) {
-			
 			int sizeKey = in.readInt();
 			byte[] bytes = new byte[sizeKey];
 			for(int j = 0; j < sizeKey; j++) {
 				bytes[j] = in.readByte();
 			}
-			
 			String key = new String(bytes);
-			
-			Integer value = in.readInt();
+			Integer value = new Integer(in.readInt());
 			
 			this.wordVal.put(key, value);
 			

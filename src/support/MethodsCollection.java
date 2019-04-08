@@ -1,8 +1,10 @@
 package support;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class MethodsCollection {
 
@@ -41,17 +43,44 @@ public class MethodsCollection {
 
 	public static boolean puntuactionChecker(String word) {
 		
-		String[] set_conj_values = new String[] {	".", ",", ":", ";",
+		String[] set_punt_values = new String[] {	".", ",", ":", ";",
 													"?", "!", "(", ")",
 													"-", "\""};
-		Set<String> conjuction = new HashSet<>(Arrays.asList(set_conj_values));
+		Set<String> puntuaction = new HashSet<>(Arrays.asList(set_punt_values));
 		
-		if(conjuction.contains(word)) {
+		if(puntuaction.contains(word)) {
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	
+	public static long getTotalChars(HashMap<String, Integer> wordVal) {
+		
+		long totalChars = 0;
+				
+		for (Entry<String, Integer> entry : wordVal.entrySet()) {
+		    String key = entry.getKey();
+		    Integer value = entry.getValue();
+		    totalChars += key.length() * value.intValue();
+		}
+		
+		return totalChars;
+		
+	}
+
+	public static long getTotalWords(HashMap<String, Integer> wordVal) {
+		
+		long totalWords = 0;
+		
+		for (Entry<String, Integer> entry : wordVal.entrySet()) {
+		    Integer value = entry.getValue();
+		    totalWords += value.intValue();
+		}
+		
+		return totalWords;
+		
 	}
 
 }

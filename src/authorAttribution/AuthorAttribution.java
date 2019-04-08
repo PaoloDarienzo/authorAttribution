@@ -1,6 +1,7 @@
 package authorAttribution;
 
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -17,6 +18,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+
+import support.MethodsCollection;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -115,20 +118,30 @@ public class AuthorAttribution extends Configured implements Tool {
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		private final static String AUTHOR_DELIMITER = ",___,";		
 		//. , : ; ? ! ( ) - "
-		public static final String[] SET_CONJ_VALUES = new String[] {	".", ",", ":", ";",
+		public static final String[] SET_PUNT_VALUES = new String[] {	".", ",", ":", ";",
 																		"?", "!", "(", ")",
 																		"-", "\""};
-		public static final Set<String> CONJUCTION = new HashSet<>(Arrays.asList(SET_CONJ_VALUES));
+		public static final Set<String> PUNTUACTION = new HashSet<>(Arrays.asList(SET_PUNT_VALUES));
 		
 		private Text author = new Text();
-		//private BookTrace currentBookTrace = new BookTrace();
 		//per via del conteggio di lineNo, non può andare nel Map
+		
+		BookTrace currentBookTrace;
+		int lineNo, puntNo, funcNo;
+				
+		@Override
+		public void setup(Context context) throws IOException, InterruptedException {
+			currentBookTrace = new BookTrace();
+			lineNo = 0;
+			puntNo = 0;
+			funcNo = 0;
+		}
 		
 		@Override
 		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
 			
-			BookTrace currentBookTrace = new BookTrace();
+			//BookTrace currentBookTrace = new BookTrace();
 			
 			FileSplit fileSplit = (FileSplit)context.getInputSplit();
 			String filename = fileSplit.getPath().getName();
@@ -136,7 +149,8 @@ public class AuthorAttribution extends Configured implements Tool {
 			author.set(tokensVal[0]);
 						
 			String line = lineText.toString();
-			currentBookTrace.incrementLineNo();
+			lineNo++;
+			//currentBookTrace.incrementLineNo();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				//skip is word is empty
@@ -144,10 +158,18 @@ public class AuthorAttribution extends Configured implements Tool {
 				//and is not a conjuction symbol
 				if (word.isEmpty() 
 						|| (
-							!(word.matches("^[a-zA-Z0-9]*$")) && !(CONJUCTION.contains(word))
+							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNTUACTION.contains(word))
 							) 
 					) {
 					continue;
+				}
+				else {
+					if(MethodsCollection.puntuactionChecker(word)) {
+						puntNo++;
+					}
+					else if(MethodsCollection.functionWordChecker(word)) {
+						funcNo++;
+					}
 				}
 				
 				//wordCount
@@ -155,9 +177,17 @@ public class AuthorAttribution extends Configured implements Tool {
 				
 			} //end for
 			
-			context.write(author, currentBookTrace);
+			//context.write(author, currentBookTrace);
 			
 		}//end map
+		
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {
+			currentBookTrace.setLineNo(new IntWritable(lineNo));
+			currentBookTrace.setpuntNo(new IntWritable(puntNo));
+			currentBookTrace.setfuncNo(new IntWritable(funcNo));
+			context.write(author, currentBookTrace);
+		}
 
 	} //end Mapper class
 
@@ -177,36 +207,78 @@ public class AuthorAttribution extends Configured implements Tool {
 		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
 				throws IOException, InterruptedException {
 			
-			AuthorTrace TraceFinal = new AuthorTrace();
-			TraceFinal.setAuthor(key);
+			int nBooks = 0;
+			int totalLines = 0;
+			int totalPunt = 0;
+			int totalFunc = 0;
+			long totalChars = 0;
+			long numWords = 0;
 			
 			ArrayWritable HFinal = new ArrayWritable(); //for counting words
-			int totalLines = 0;
+			FloatWritable avgNoLine = new FloatWritable(0);
+			FloatWritable avgWordLength = new FloatWritable(0);
+			FloatWritable puntuactionDensity = new FloatWritable(0);
+			FloatWritable functionDensity = new FloatWritable(0);
+			
+			AuthorTrace authTrace = new AuthorTrace();
+			authTrace.setAuthor(key);
 		    
 			for (BookTrace book : values) {
+				
+				nBooks++;
+				
 				//sommo tutti gli array di words
 				//dei vari libri analizzati
 				HFinal.sum(book.getArray());
 				//avrò un array finale con il numero totale
 				//di parole utilizzate da un determinato autore
 				
-				//sommmo le linee totali
+				//sommo le linee/frasi totali
 				totalLines += book.getLineNo().get();
+				
+				//sommo punctuaction words
+				totalPunt += book.getpuntNo().get();
+				//sommo function words
+				totalFunc += book.getfuncNo().get();
+				
+				//somma i caratteri di tutte le parole contenute nel
+				//libro passato come valore;
+				//ogni libro analizzato è un value
+				totalChars += MethodsCollection.getTotalChars(book.getArray().getArray());
+				
+				//prendo il numero di parole totali,
+				//ovvero le singole parole moltiplicate per le volte in cui compaiono
+				numWords += MethodsCollection.getTotalWords(book.getArray().getArray());
 			}
-			
-		    TraceFinal.setWordsArray(HFinal);
-		    
-		    // TreeMap to store values of HashMap 
-		    TreeMap<String, Integer> sorted = new TreeMap<>();
+					    
+			//Ordering HashMap by key:
+		    //TreeMap to store values of HashMap 
+		    TreeMap<String, Integer> finalWordValOrdered = new TreeMap<>();
 		    // Copy all data from hashMap into TreeMap 
-		    sorted.putAll(HFinal.getArray());
+		    finalWordValOrdered.putAll(HFinal.getArray());
+		    authTrace.setTreeWordsArray(finalWordValOrdered);
 		    
-		    TraceFinal.setTree(sorted);
+		    avgNoLine = new FloatWritable((float) totalLines / (float) nBooks);
+		    authTrace.setAvgNoLine(avgNoLine);
 		    
-		    TraceFinal.getBookTrace().setLineNo(new IntWritable(totalLines));
+		    float avgWordLenFloat = (float) ((double) totalChars / (double) numWords);
+		    avgWordLength = new FloatWritable(avgWordLenFloat);
+		    authTrace.setAvgWordLength(avgWordLength);
 		    
+		    puntuactionDensity = new FloatWritable((float) totalPunt / (float) numWords);
+		    authTrace.setPuntuactionDensity(puntuactionDensity);
+		    
+		    functionDensity = new FloatWritable((float) totalFunc / (float) numWords);
+		    authTrace.setFunctionDensity(functionDensity);
+		    
+		    authTrace.commenti =	"Autore: " + key.toString() + 
+		    						"\n N° parole: " + numWords +
+		    						"\n N° totale caratteri: " + totalChars +
+		    						"\n N° function words: " + totalPunt +
+		    						"\n N° puntuaction words: " + totalFunc + "\n";
+		    						
 		    //context.write(key, TraceFinal);
-			multipleOutputs.write(NullWritable.get(), TraceFinal, key.toString());
+			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());
 			
 		}//end reduce
 		

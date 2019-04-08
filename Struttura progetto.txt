@@ -161,6 +161,16 @@ inglese non influenza l'implementazione su dataset di altre lingue. Le uniche no
 sono la lingua unica dei libri per autore (non posso avere un'impronta dell'autore X costituita da metà libri in inglese
 e metà libri in italiano; sarebbe come avere metà libri a disposizione) e la compatibilità con alfabeti differenti dal latino.
 
+
+L'output del reduce, ovvero l'authorTrace, contiene un wordCount, ovvero il numero delle parole usate.
+Ho voluto restituire tale insieme di parole in modo ordinato, pertanto passo da hashMap a TreeMap,
+che è naturalmente ordinato, dopo aver usato l'HashMap per le ricerche e le somme delle parole, in 
+quanto più veloce.
+
+Per la lineDensity, un float è più che sufficiente rispetto al tipo double; tale scelta è inoltre
+maggiormente motivata poichè DoubleWritable non funziona correttamente.
+
+
 ###################################################################################################
 
 ALTRO
