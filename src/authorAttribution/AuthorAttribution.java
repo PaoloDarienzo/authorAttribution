@@ -3,6 +3,7 @@ package authorAttribution;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -21,18 +22,44 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
-//TODO
-/*
- * USE HASHMAP
- */
-
 public class AuthorAttribution extends Configured implements Tool {
 
+	/**
+	 * @param args input path, output path, number of reducers
+	 */
 	public static void main(String[] args) throws Exception {
+		
+		/*
+		 * 
+		 * MAP
+		 * (K, V)
+		 * CHIAVE: AUTORE
+		 * VALORE: INSIEME DI VALORI
+		 * -> array di words (wordCount)
+		 * -> numero linee
+		 * -> vicinanza
+		 * REDUCE (K, riceve per chiave/autore)
+		 * (K, V)
+		 * deve fare somma V
+		 * -> somma di words (wordCount)
+		 * -> stat su numero linee, densità varie, lunghezze varie...
+		 * -> vicinanza
+		 * 
+		 * Chiave del reduce non utile da scrivere
+		 */
+		
+		/*
+		 * MAP INPUT: TEXTS
+		 * MAP OUTPUT: BOOKTRACE
+		 * ---partitioner---
+		 * REDUCE INPUT: BOOKTRACE (of same author)
+		 * REDUCE OUTPUT(S): AUTHORTRACE (of that author)
+		 */
 		
 		int res = ToolRunner.run(new AuthorAttribution(), args);
 		System.exit(res);
@@ -44,6 +71,8 @@ public class AuthorAttribution extends Configured implements Tool {
 		Job job = Job.getInstance(getConf(), "Author Attribution");
 		job.setJarByClass(this.getClass());
 		
+		//For reading directories in input path recursively
+		//not needed/not working
 		//FileInputFormat.setInputDirRecursive(job, true);
 		
 		//input e output path
@@ -58,10 +87,10 @@ public class AuthorAttribution extends Configured implements Tool {
 		job.setMapperClass(Map.class);
 		job.setReducerClass(Reduce.class);
 		
-		job.setMapOutputKeyClass(TraceWord.class);
-		job.setMapOutputValueClass(IntWritable.class);
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(BookTrace.class);
+		job.setOutputKeyClass(NullWritable.class);
+		job.setOutputValueClass(AuthorTrace.class);
 		
 		job.setPartitionerClass(authorPartitioner.class);
 		//job.setGroupingComparatorClass(GroupComparator.class);
@@ -71,47 +100,43 @@ public class AuthorAttribution extends Configured implements Tool {
 		
 	}
 		
-	public static class authorPartitioner extends Partitioner<TraceWord, IntWritable> {
+	public static class authorPartitioner extends Partitioner<Text, BookTrace> {
 		
 		@Override
-		public int getPartition(TraceWord key, IntWritable value, int numPartitions) {
+		public int getPartition(Text key, BookTrace value, int numPartitions) {
 			
-			return (key.getAuthor().hashCode() * 163 & Integer.MAX_VALUE) % numPartitions;
+			return (key.hashCode() * 163 & Integer.MAX_VALUE) % numPartitions;
 			
 		}
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, TraceWord, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, Text, BookTrace> {
 		
-		private final static IntWritable one = new IntWritable(1);
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
-		private final static String DELIMITERS = ",___,";		
+		private final static String AUTHOR_DELIMITER = ",___,";		
 		//. , : ; ? ! ( ) - "
 		public static final String[] SET_CONJ_VALUES = new String[] {	".", ",", ":", ";",
 																		"?", "!", "(", ")",
 																		"-", "\""};
 		public static final Set<String> CONJUCTION = new HashSet<>(Arrays.asList(SET_CONJ_VALUES));
 		
-		//private TextPair currentPair = new TextPair();
-		
-		private TraceWord currentTraceWord = new TraceWord();
-		//private Text currentWord = new Text();
 		private Text author = new Text();
+		//private BookTrace currentBookTrace = new BookTrace();
+		//per via del conteggio di lineNo, non può andare nel Map
 		
 		@Override
 		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
 			
+			BookTrace currentBookTrace = new BookTrace();
+			
 			FileSplit fileSplit = (FileSplit)context.getInputSplit();
 			String filename = fileSplit.getPath().getName();
-			String[] tokensVal = filename.split(DELIMITERS);
+			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
 			author.set(tokensVal[0]);
-			
-			//currentPair.setFirst(author);
-			
-			currentTraceWord.setAuthor(author);
-			
+						
 			String line = lineText.toString();
+			currentBookTrace.incrementLineNo();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				//skip is word is empty
@@ -124,42 +149,68 @@ public class AuthorAttribution extends Configured implements Tool {
 					) {
 					continue;
 				}
-								
-				//currentWord.set(word.toLowerCase());
-				//currentPair.setSecond(word.toLowerCase());
-				currentTraceWord.setWord(word.toLowerCase());
-	            
-				context.write(currentTraceWord, one);
+				
+				//wordCount
+				currentBookTrace.addWord(word.toLowerCase());
 				
 			} //end for
+			
+			context.write(author, currentBookTrace);
 			
 		}//end map
 
 	} //end Mapper class
 
-	public static class Reduce extends Reducer<TraceWord, IntWritable, Text, IntWritable>{
+	/*
+	 * Ogni reducer riceve tutti i lavori su un autore
+	 */
+	public static class Reduce extends Reducer<Text, BookTrace, NullWritable, AuthorTrace>{
 
-		private MultipleOutputs<Text, IntWritable> multipleOutputs;
+		private MultipleOutputs<NullWritable, AuthorTrace> multipleOutputs;
 		
-		public void setup(Context context) throws IOException, InterruptedException
-		{
-			multipleOutputs = new MultipleOutputs<Text, IntWritable>(context);
+		@Override
+		public void setup(Context context) throws IOException, InterruptedException {
+			multipleOutputs = new MultipleOutputs<NullWritable, AuthorTrace>(context);
 		}
 
 		@Override
-		public void reduce(TraceWord key, Iterable<IntWritable> values, Context context) 
+		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
 				throws IOException, InterruptedException {
 			
-			int sum = 0;
-			for (IntWritable count : values) {
-				sum += count.get();
+			AuthorTrace TraceFinal = new AuthorTrace();
+			TraceFinal.setAuthor(key);
+			
+			ArrayWritable HFinal = new ArrayWritable(); //for counting words
+			int totalLines = 0;
+		    
+			for (BookTrace book : values) {
+				//sommo tutti gli array di words
+				//dei vari libri analizzati
+				HFinal.sum(book.getArray());
+				//avrò un array finale con il numero totale
+				//di parole utilizzate da un determinato autore
+				
+				//sommmo le linee totali
+				totalLines += book.getLineNo().get();
 			}
 			
-			//context.write(key, new IntWritable(sum));
-			multipleOutputs.write(key.getWord(), new IntWritable(sum), key.getAuthorToString());
+		    TraceFinal.setWordsArray(HFinal);
+		    
+		    // TreeMap to store values of HashMap 
+		    TreeMap<String, Integer> sorted = new TreeMap<>();
+		    // Copy all data from hashMap into TreeMap 
+		    sorted.putAll(HFinal.getArray());
+		    
+		    TraceFinal.setTree(sorted);
+		    
+		    TraceFinal.getBookTrace().setLineNo(new IntWritable(totalLines));
+		    
+		    //context.write(key, TraceFinal);
+			multipleOutputs.write(NullWritable.get(), TraceFinal, key.toString());
 			
 		}//end reduce
 		
+		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			multipleOutputs.close();
 		}		

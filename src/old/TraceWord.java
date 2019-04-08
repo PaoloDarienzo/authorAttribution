@@ -1,4 +1,4 @@
-package authorAttribution;
+package old;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -87,6 +87,10 @@ public class TraceWord implements WritableComparable<TraceWord>  {
 	public IntWritable getWordLength() {
 		return new IntWritable(this.word.toString().length());
 	}
+	
+	public int getWordLengthInt() {
+		return this.word.toString().length();
+	}
 
 	/*
 	public void setWordLength(IntWritable wordLength) {
@@ -123,19 +127,6 @@ public class TraceWord implements WritableComparable<TraceWord>  {
 	}
 	
 	@Override
-	public void write(DataOutput out) throws IOException {
-		this.author.write(out);
-		this.word.write(out);
-		//this.wordLength.write(out);
-		
-		String booleanPuntuaction = new Boolean(this.isPuntuaction()).toString();
-		out.writeInt(booleanPuntuaction.length());
-		out.writeBytes(booleanPuntuaction);
-		//this.isPuntuaction.write(out);
-		//this.isFunctionWord.write(out);
-	}
-	
-	@Override
 	public void readFields(DataInput in) throws IOException {
 		this.author.readFields(in);
 		this.word.readFields(in);
@@ -150,6 +141,19 @@ public class TraceWord implements WritableComparable<TraceWord>  {
 		this.isPuntuaction = new BooleanWritable(new Boolean(booleanPuntuaction).booleanValue());
 		//this.isPuntuaction.readFields(in);
 		//this.isFunctionWord.readFields(in);
+	}
+	
+	@Override
+	public void write(DataOutput out) throws IOException {
+		this.author.write(out);
+		this.word.write(out);
+		//this.wordLength.write(out);
+		
+		String booleanPuntuaction = new Boolean(this.isPuntuaction()).toString();
+		out.writeInt(booleanPuntuaction.length());
+		out.writeBytes(booleanPuntuaction);
+		//this.isPuntuaction.write(out);
+		//this.isFunctionWord.write(out);
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package authorAttribution;
+package old;
 /*
  * Code from Tom White's "Hadoop the definitive guide"
  *
