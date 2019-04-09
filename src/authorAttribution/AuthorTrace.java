@@ -127,7 +127,7 @@ public class AuthorTrace implements Writable {
 	@Override
 	public String toString() {
 		
-		String first = "commenti: " + this.commenti + "\n";
+		String first = "Commenti: " + this.commenti + "\n";
 		
 		String avgPhrases = "Average number of phrases: " + this.avgNoLine.toString() + "\n";
 		String avgWordLength = "Average word length: " + this.avgWordLength.toString() + "\n";

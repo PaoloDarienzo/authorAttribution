@@ -1,3 +1,17 @@
+###################################################################################################
+
+DA FARE/CONTROLLARE
+A causa dei diversi modi di scrivere il nome dell'autore, uno stesso autore può essere 
+indicato in diverso modo, con iniziali puntate, con solo nome puntato, con pseudonimi,
+con traduzioni diverse etc. I file di testo avranno nel nome diversi autori indicati,
+pertanto verrebbero trattati come autori diversi dal programma MapReduce.
+Ho identificato alcuni di questi casi che potrebbero essere utili nel caso studio:
+E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils),
+ Charlotte Bronte, Thomas De Quincey, Gordon Stables, Charles Egbert Craddock.
+ 
+
+###################################################################################################
+
 PROGETTO
 
 Riconoscimento autore tramite MapReduce;
@@ -91,7 +105,8 @@ caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostar
 come se ci fosse una subdirectory, fallendo la mv del file).
 I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUHTOR_NOT_FOUND".
 I rimanenti file di testo sono stati spostati nella cartella "00001_NAMING_ERROR".
-Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils), Charlotte Bronte, Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
+Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, 
+Alexandre Dumas (pere e fils), Charlotte Bronte, Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
 Ho eseguito il conteggio dei file per ogni autore e salvato l'output nel file count.txt.
 I file di input nel progetto MapReduce non possono essere cartelle, quindi i file txt degli autori selezionati per lo studio
  sono stati estratti di nuovo dalle cartelle.
