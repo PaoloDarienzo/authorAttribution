@@ -131,8 +131,10 @@ public class AuthorTrace implements Writable {
 		
 		String avgPhrases = "Average number of phrases: " + this.avgNoLine.toString() + "\n";
 		String avgWordLength = "Average word length: " + this.avgWordLength.toString() + "\n";
-		String avgPunt = "Puntuaction density: " + this.puntuactionDensity.toString() + "\n";
-		String avgFunc = "Function words density:  " + this.functionDensity.toString() + "\n";
+		String avgPunt = 	"Puntuaction density (caratteri di punteggiatura / parole totali): " 
+							+ this.puntuactionDensity.toString() + "\n";
+		String avgFunc = 	"Function words density (parole dette \"functions\" / parole totali):  "
+							+ this.functionDensity.toString() + "\n";
 		
 		return first + 
 				avgPhrases + avgWordLength + avgPunt + avgFunc +

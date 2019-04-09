@@ -17,6 +17,8 @@ public class BookTrace implements Writable {
 	private IntWritable funcNo;
 	//vicinanza...
 	
+	public String commenti = "";
+	
 	public BookTrace() {
 		this.wordVal = new ArrayWritable();
 		this.lineNo = new IntWritable(0);
@@ -81,6 +83,14 @@ public class BookTrace implements Writable {
 		this.lineNo.readFields(in);
 		this.puntNo.readFields(in);
 		this.funcNo.readFields(in);
+		
+		int sizeString = in.readInt();
+		byte[] bytes = new byte[sizeString];
+		for(int i = 0; i < sizeString; i++) {
+			bytes[i] = in.readByte();
+		}
+		commenti = new String(bytes);
+			
 	}
 	
 	@Override
@@ -89,6 +99,10 @@ public class BookTrace implements Writable {
 		this.lineNo.write(out);
 		this.puntNo.write(out);
 		this.funcNo.write(out);
+		
+		out.writeInt(commenti.length());
+    	out.writeBytes(commenti);
+    	
 	}
 	
 	@Override
@@ -98,7 +112,8 @@ public class BookTrace implements Writable {
 		String puntNo = "puntNo: " + this.puntNo + "\n";
 		String funcNo = "funcNo: " + this.funcNo + "\n";
 		
-		return lineNo + puntNo + funcNo + wordVal.toString();
+		return 	"\nCommenti del libro: " + commenti + "\n" + 
+				lineNo + puntNo + funcNo + wordVal.toString();
 	}
 
 }

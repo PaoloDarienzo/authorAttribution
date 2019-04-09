@@ -30,6 +30,23 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
+//TODO
+/*
+ * line length -> number of sentences (". ", "?", "!")
+ * 
+ * Sistemare stampa dei commenti;
+ * Sistemare conteggio frasi;
+ * Aggiungere concetto vicinanza;
+ * 
+ */
+
+/*
+ * The default text separator is the newline char (\n);
+ * Everytime the program encounters a stop line (?, !, .)
+ * increments the sentence counter.
+ * For counting the ".", we use as escape dot and space, ". ".
+ */
+
 public class AuthorAttribution extends Configured implements Tool {
 
 	/**
@@ -124,10 +141,9 @@ public class AuthorAttribution extends Configured implements Tool {
 		public static final Set<String> PUNTUACTION = new HashSet<>(Arrays.asList(SET_PUNT_VALUES));
 		
 		private Text author = new Text();
-		//per via del conteggio di lineNo, non può andare nel Map
 		
-		BookTrace currentBookTrace;
-		int lineNo, puntNo, funcNo;
+		private BookTrace currentBookTrace;
+		private int lineNo, puntNo, funcNo;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
@@ -140,9 +156,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		@Override
 		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
-			
-			//BookTrace currentBookTrace = new BookTrace();
-			
+						
 			FileSplit fileSplit = (FileSplit)context.getInputSplit();
 			String filename = fileSplit.getPath().getName();
 			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
@@ -150,7 +164,6 @@ public class AuthorAttribution extends Configured implements Tool {
 						
 			String line = lineText.toString();
 			lineNo++;
-			//currentBookTrace.incrementLineNo();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				//skip is word is empty
@@ -174,18 +187,24 @@ public class AuthorAttribution extends Configured implements Tool {
 				
 				//wordCount
 				currentBookTrace.addWord(word.toLowerCase());
-				
+								
 			} //end for
 			
-			//context.write(author, currentBookTrace);
+			//wordCount support phase
+			currentBookTrace.setLineNo(new IntWritable(lineNo));
+			currentBookTrace.setpuntNo(new IntWritable(puntNo));
+			currentBookTrace.setfuncNo(new IntWritable(funcNo));
+			
+			/////
+			currentBookTrace.commenti =	"\nBook: " + filename +
+										"\nlineNo " + lineNo +
+										"\npuntNo " + puntNo +
+										"\nfuncNo " + funcNo + "\n";
 			
 		}//end map
 		
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
-			currentBookTrace.setLineNo(new IntWritable(lineNo));
-			currentBookTrace.setpuntNo(new IntWritable(puntNo));
-			currentBookTrace.setfuncNo(new IntWritable(funcNo));
 			context.write(author, currentBookTrace);
 		}
 
@@ -198,29 +217,40 @@ public class AuthorAttribution extends Configured implements Tool {
 
 		private MultipleOutputs<NullWritable, AuthorTrace> multipleOutputs;
 		
+		private AuthorTrace authTrace;
+		
+		private int nBooks, totalLines, totalPunt, totalFunc;
+		private long totalChars, numWords;
+		
+		private ArrayWritable HFinal; //for counting words
+		private FloatWritable avgNoLine, avgWordLength, puntuactionDensity, functionDensity;
+				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
+			
 			multipleOutputs = new MultipleOutputs<NullWritable, AuthorTrace>(context);
+			
+			authTrace = new AuthorTrace();
+			
+			nBooks = 0;
+			totalLines = 0;
+			totalPunt = 0;
+			totalFunc = 0;
+			totalChars = 0;
+			numWords = 0;
+			
+			HFinal = new ArrayWritable(); //for counting words
+			avgNoLine = new FloatWritable(0);
+			avgWordLength = new FloatWritable(0);
+			puntuactionDensity = new FloatWritable(0);
+			functionDensity = new FloatWritable(0);
+			
 		}
-
+		
 		@Override
 		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
 				throws IOException, InterruptedException {
 			
-			int nBooks = 0;
-			int totalLines = 0;
-			int totalPunt = 0;
-			int totalFunc = 0;
-			long totalChars = 0;
-			long numWords = 0;
-			
-			ArrayWritable HFinal = new ArrayWritable(); //for counting words
-			FloatWritable avgNoLine = new FloatWritable(0);
-			FloatWritable avgWordLength = new FloatWritable(0);
-			FloatWritable puntuactionDensity = new FloatWritable(0);
-			FloatWritable functionDensity = new FloatWritable(0);
-			
-			AuthorTrace authTrace = new AuthorTrace();
 			authTrace.setAuthor(key);
 		    
 			for (BookTrace book : values) {
@@ -249,6 +279,8 @@ public class AuthorAttribution extends Configured implements Tool {
 				//prendo il numero di parole totali,
 				//ovvero le singole parole moltiplicate per le volte in cui compaiono
 				numWords += MethodsCollection.getTotalWords(book.getArray().getArray());
+				
+				authTrace.commenti += book.commenti;
 			}
 					    
 			//Ordering HashMap by key:
@@ -261,7 +293,8 @@ public class AuthorAttribution extends Configured implements Tool {
 		    avgNoLine = new FloatWritable((float) totalLines / (float) nBooks);
 		    authTrace.setAvgNoLine(avgNoLine);
 		    
-		    float avgWordLenFloat = (float) ((double) totalChars / (double) numWords);
+		    //Excluding puntuaction when calculating average word length
+		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunt));
 		    avgWordLength = new FloatWritable(avgWordLenFloat);
 		    authTrace.setAvgWordLength(avgWordLength);
 		    
@@ -271,11 +304,12 @@ public class AuthorAttribution extends Configured implements Tool {
 		    functionDensity = new FloatWritable((float) totalFunc / (float) numWords);
 		    authTrace.setFunctionDensity(functionDensity);
 		    
-		    authTrace.commenti =	"Autore: " + key.toString() + 
+		    authTrace.commenti +=	"\nAutore: " + key.toString() + 
+		    						"\n N books: " + nBooks +
 		    						"\n N° parole: " + numWords +
 		    						"\n N° totale caratteri: " + totalChars +
-		    						"\n N° function words: " + totalPunt +
-		    						"\n N° puntuaction words: " + totalFunc + "\n";
+		    						"\n N° function words: " + totalFunc +
+		    						"\n N° puntuaction words: " + totalPunt + "\n";
 		    						
 		    //context.write(key, TraceFinal);
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());

@@ -63,7 +63,7 @@ public class ArrayWritable implements Writable {
 		for(Entry<String, Integer> entry : wordVal.entrySet()) {
 			String key = entry.getKey();
         	out.writeInt(key.length());
-        	out.writeBytes(key);   
+        	out.writeBytes(key);
         	out.writeInt(entry.getValue());
         }
 		
@@ -92,7 +92,7 @@ public class ArrayWritable implements Writable {
 	public void increment(String t, int value) {
 		int count = value;
 		if(wordVal.containsKey(t)) {
-			count += wordVal.get(t) + count;
+			count += wordVal.get(t);
 		}
 		wordVal.put(t, count);
 	}
