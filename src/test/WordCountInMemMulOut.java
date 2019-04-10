@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import authorAttribution.ArrayWritable;
+import authorAttribution.WordsArrayWritable;
 
 //import org.apache.log4j.Logger;
 
@@ -48,14 +48,14 @@ public class WordCountInMemMulOut extends Configured implements Tool {
 		job.setReducerClass(Reduce.class);
 		
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(ArrayWritable.class);
+		job.setMapOutputValueClass(WordsArrayWritable.class);
 		job.setOutputKeyClass(NullWritable.class);
-		job.setOutputValueClass(ArrayWritable.class);
+		job.setOutputValueClass(WordsArrayWritable.class);
 		
 		return job.waitForCompletion(true) ? 0 : 1;
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, Text, ArrayWritable> {
+	public static class Map extends Mapper<LongWritable, Text, Text, WordsArrayWritable> {
 		
 		private static final Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		
@@ -63,7 +63,7 @@ public class WordCountInMemMulOut extends Configured implements Tool {
 		//private IntWritable currentValue = new IntWritable();
 		
 		private Text author = new Text();
-		private ArrayWritable H = new ArrayWritable();
+		private WordsArrayWritable H = new WordsArrayWritable();
 
 		public void map(LongWritable offset, Text lineText, Context context)
 				throws IOException, InterruptedException {
@@ -92,22 +92,22 @@ public class WordCountInMemMulOut extends Configured implements Tool {
 	
 	}
 
-	public static class Reduce extends Reducer<Text, ArrayWritable, NullWritable, ArrayWritable> {
+	public static class Reduce extends Reducer<Text, WordsArrayWritable, NullWritable, WordsArrayWritable> {
 	
-		private MultipleOutputs<NullWritable, ArrayWritable> multipleOutputs;
+		private MultipleOutputs<NullWritable, WordsArrayWritable> multipleOutputs;
 		
 		public void setup(Context context) throws IOException, InterruptedException
 		{
-			multipleOutputs = new MultipleOutputs<NullWritable, ArrayWritable>(context);
+			multipleOutputs = new MultipleOutputs<NullWritable, WordsArrayWritable>(context);
 		}
 		
 		@Override
-		public void reduce(Text word, Iterable<ArrayWritable> counts, Context context)
+		public void reduce(Text word, Iterable<WordsArrayWritable> counts, Context context)
 				throws IOException, InterruptedException {
 			
-			ArrayWritable Hf = new ArrayWritable();
+			WordsArrayWritable Hf = new WordsArrayWritable();
 			
-			for(ArrayWritable value : counts) {
+			for(WordsArrayWritable value : counts) {
 				Hf.sum(value);
 			}
 			multipleOutputs.write(NullWritable.get(), Hf, word.toString());

@@ -5,16 +5,15 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
 
-public class ArrayWritable implements Writable {
+public class WordsArrayWritable implements Writable {
 	
 	private HashMap<String, Integer> wordVal;
 
-	public ArrayWritable() {
-		this.wordVal = new HashMap<>();
+	public WordsArrayWritable() {
+		this.wordVal = new HashMap<String, Integer>();
 	}
 	
 	public HashMap<String, Integer> getArray() {
@@ -32,6 +31,36 @@ public class ArrayWritable implements Writable {
 	@Override
 	public String toString() {
 		return wordVal.toString();
+	}
+	
+	public void sum(WordsArrayWritable wordVal) {
+		HashMap<String, Integer> wordValTemp = wordVal.getArray();
+		
+		for(Entry<String, Integer> entry : wordValTemp.entrySet()) {
+			String key = entry.getKey();
+			if(this.wordVal.containsKey(key)) {
+				this.wordVal.put(key, this.wordVal.get(key) + entry.getValue());
+			}
+			else {
+				this.wordVal.put(key, entry.getValue());
+			}
+        }
+	}
+	
+	public boolean containsKey(String otherWord) {
+		return wordVal.containsKey(otherWord);
+	}
+	
+	public void increment(String t, int value) {
+		int count = value;
+		if(wordVal.containsKey(t)) {
+			count += wordVal.get(t);
+		}
+		wordVal.put(t, count);
+	}
+	
+	public void increment(String t) {
+		this.increment(t, 1);
 	}
 	
 	@Override
@@ -67,42 +96,6 @@ public class ArrayWritable implements Writable {
         	out.writeInt(entry.getValue());
         }
 		
-	}
-	
-	public void sum(ArrayWritable wordVal) {
-		
-		HashMap<String, Integer> wordValTemp = wordVal.getArray();
-		
-		for(Entry<String, Integer> entry : wordValTemp.entrySet()) {
-			String key = entry.getKey();
-			if(this.wordVal.containsKey(key)) {
-				this.wordVal.put(key, this.wordVal.get(key) + entry.getValue());
-			}
-			else {
-				this.wordVal.put(key, entry.getValue());
-			}
-        }
-		
-	}
-	
-	public boolean containsKey(String otherWord) {
-		return wordVal.containsKey(otherWord);
-	}
-	
-	public void increment(String t, int value) {
-		int count = value;
-		if(wordVal.containsKey(t)) {
-			count += wordVal.get(t);
-		}
-		wordVal.put(t, count);
-	}
-	
-	public void increment(String t) {
-		this.increment(t, 1);
-	}
-	
-	public Set<Entry<String, Integer>> entrySet(){
-		return wordVal.entrySet();
 	}
 
 }

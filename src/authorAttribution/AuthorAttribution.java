@@ -22,8 +22,10 @@ import org.apache.hadoop.util.ToolRunner;
 import support.MethodsCollection;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -34,17 +36,8 @@ import org.apache.hadoop.conf.Configured;
 /*
  * line length -> number of sentences (". ", "?", "!")
  * 
- * Sistemare stampa dei commenti;
- * Sistemare conteggio frasi;
  * Aggiungere concetto vicinanza;
  * 
- */
-
-/*
- * The default text separator is the newline char (\n);
- * Everytime the program encounters a stop line (?, !, .)
- * increments the sentence counter.
- * For counting the ".", we use as escape dot and space, ". ".
  */
 
 public class AuthorAttribution extends Configured implements Tool {
@@ -133,7 +126,7 @@ public class AuthorAttribution extends Configured implements Tool {
 	public static class Map extends Mapper<LongWritable, Text, Text, BookTrace> {
 		
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
-		private final static String AUTHOR_DELIMITER = ",___,";		
+		private final static String AUTHOR_DELIMITER = ",___,";
 		//. , : ; ? ! ( ) - "
 		public static final String[] SET_PUNT_VALUES = new String[] {	".", ",", ":", ";",
 																		"?", "!", "(", ")",
@@ -143,12 +136,14 @@ public class AuthorAttribution extends Configured implements Tool {
 		private Text author = new Text();
 		
 		private BookTrace currentBookTrace;
-		private int lineNo, puntNo, funcNo;
+		private TextPair currentPair; //for computing twoGrams
+		private boolean isWord;
+		private int puntNo, funcNo;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 			currentBookTrace = new BookTrace();
-			lineNo = 0;
+			currentPair = new TextPair(); //for computing twoGrams
 			puntNo = 0;
 			funcNo = 0;
 		}
@@ -163,7 +158,9 @@ public class AuthorAttribution extends Configured implements Tool {
 			author.set(tokensVal[0]);
 						
 			String line = lineText.toString();
-			lineNo++;
+			
+			//twoGrams
+			List<String> words = new ArrayList<String>();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				//skip is word is empty
@@ -177,29 +174,61 @@ public class AuthorAttribution extends Configured implements Tool {
 					continue;
 				}
 				else {
+					isWord = true;
 					if(MethodsCollection.puntuactionChecker(word)) {
 						puntNo++;
+						isWord = false;
 					}
 					else if(MethodsCollection.functionWordChecker(word)) {
 						funcNo++;
+						isWord = false;
 					}
 				}
 				
 				//wordCount
 				currentBookTrace.addWord(word.toLowerCase());
+				if(isWord) {
+					//twoGrams with only words
+					words.add(word);	
+				}
 								
 			} //end for
 			
+			//twoGrams creating and counting
+			int indexSingle = -1;
+			int indexOther = -1;
+			for(String singleWord : words) {
+				indexSingle++; //index of singleWord
+				for(String otherWord : words) {
+					indexOther++; //index of otherWord
+					if(indexSingle == indexOther) { //avoiding word itself
+						continue;
+					}
+					//fixed first word w1, cycling over every other word wn;
+					//for each occurrence of <w1, wn>, emits a pair
+					currentPair.set(singleWord, otherWord);
+					currentBookTrace.addPair(currentPair);
+				}
+				indexOther = -1;
+			}
+			
 			//wordCount support phase
-			currentBookTrace.setLineNo(new IntWritable(lineNo));
 			currentBookTrace.setpuntNo(new IntWritable(puntNo));
 			currentBookTrace.setfuncNo(new IntWritable(funcNo));
 			
-			/////
-			currentBookTrace.commenti =	"\nBook: " + filename +
-										"\nlineNo " + lineNo +
-										"\npuntNo " + puntNo +
-										"\nfuncNo " + funcNo + "\n";
+			/////commenti del libro analizzato
+			String intestazione = "\nBook: " + filename;
+			String puntAndFunc = 	"\npuntNo " + puntNo +
+									"\nfuncNo " + funcNo + "\n";
+			String fromWordCount = "\n N° of different words: " +
+									currentBookTrace.getWordsArray().getArray().size();
+			String fromTwoGrams = "\n N° of woGrams counted: " +
+									currentBookTrace.getTwoGramsWritable().getTwoGrams().size();
+
+			currentBookTrace.commenti =	intestazione +
+										fromWordCount +
+										fromTwoGrams +
+										puntAndFunc;
 			
 		}//end map
 		
@@ -219,11 +248,12 @@ public class AuthorAttribution extends Configured implements Tool {
 		
 		private AuthorTrace authTrace;
 		
-		private int nBooks, totalLines, totalPunt, totalFunc;
+		private int nBooks, totalPunt, totalFunc;
 		private long totalChars, numWords;
 		
-		private ArrayWritable HFinal; //for counting words
-		private FloatWritable avgNoLine, avgWordLength, puntuactionDensity, functionDensity;
+		private WordsArrayWritable HFinal; //for counting words
+		private TwoGramsWritable finalTwoGrams; //for twoGrams
+		private FloatWritable avgWordLength, puntuactionDensity, functionDensity;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
@@ -233,14 +263,13 @@ public class AuthorAttribution extends Configured implements Tool {
 			authTrace = new AuthorTrace();
 			
 			nBooks = 0;
-			totalLines = 0;
 			totalPunt = 0;
 			totalFunc = 0;
 			totalChars = 0;
 			numWords = 0;
 			
-			HFinal = new ArrayWritable(); //for counting words
-			avgNoLine = new FloatWritable(0);
+			HFinal = new WordsArrayWritable(); //for counting words
+			finalTwoGrams = new TwoGramsWritable();
 			avgWordLength = new FloatWritable(0);
 			puntuactionDensity = new FloatWritable(0);
 			functionDensity = new FloatWritable(0);
@@ -257,15 +286,13 @@ public class AuthorAttribution extends Configured implements Tool {
 				
 				nBooks++;
 				
-				//sommo tutti gli array di words
-				//dei vari libri analizzati
-				HFinal.sum(book.getArray());
-				//avrò un array finale con il numero totale
-				//di parole utilizzate da un determinato autore
+				//summing array of words of each analyzed book
+				HFinal.sum(book.getWordsArray());
+				//Having final array with total numbers of utilized words of each author
 				
-				//sommo le linee/frasi totali
-				totalLines += book.getLineNo().get();
-				
+				//summing twoGrams from each book
+				finalTwoGrams.sum(book.getTwoGramsWritable());
+								
 				//sommo punctuaction words
 				totalPunt += book.getpuntNo().get();
 				//sommo function words
@@ -274,13 +301,13 @@ public class AuthorAttribution extends Configured implements Tool {
 				//somma i caratteri di tutte le parole contenute nel
 				//libro passato come valore;
 				//ogni libro analizzato è un value
-				totalChars += MethodsCollection.getTotalChars(book.getArray().getArray());
+				totalChars += MethodsCollection.getTotalChars(book.getWordsArray().getArray());
 				
 				//prendo il numero di parole totali,
 				//ovvero le singole parole moltiplicate per le volte in cui compaiono
-				numWords += MethodsCollection.getTotalWords(book.getArray().getArray());
+				numWords += MethodsCollection.getTotalWords(book.getWordsArray().getArray());
 				
-				authTrace.commenti += book.commenti;
+				authTrace.commenti +=	book.commenti;
 			}
 					    
 			//Ordering HashMap by key:
@@ -290,8 +317,8 @@ public class AuthorAttribution extends Configured implements Tool {
 		    finalWordValOrdered.putAll(HFinal.getArray());
 		    authTrace.setTreeWordsArray(finalWordValOrdered);
 		    
-		    avgNoLine = new FloatWritable((float) totalLines / (float) nBooks);
-		    authTrace.setAvgNoLine(avgNoLine);
+		    //Setting twoGram of author
+		    authTrace.setFinalTwoGrams(finalTwoGrams);
 		    
 		    //Excluding puntuaction when calculating average word length
 		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunt));
@@ -305,7 +332,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		    authTrace.setFunctionDensity(functionDensity);
 		    
 		    authTrace.commenti +=	"\nAutore: " + key.toString() + 
-		    						"\n N books: " + nBooks +
+		    						"\n N° books: " + nBooks +
 		    						"\n N° parole: " + numWords +
 		    						"\n N° totale caratteri: " + totalChars +
 		    						"\n N° function words: " + totalFunc +

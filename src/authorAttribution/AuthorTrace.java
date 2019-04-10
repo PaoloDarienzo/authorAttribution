@@ -14,7 +14,7 @@ public class AuthorTrace implements Writable {
 	
 	private Text author;
 	private TreeMap<String, Integer> finalWordValOrdered;
-	private FloatWritable avgNoLine;
+	private TwoGramsWritable finalTwoGrams;
 	private FloatWritable avgWordLength;
 	private FloatWritable puntuactionDensity;
 	private FloatWritable functionDensity;
@@ -24,7 +24,7 @@ public class AuthorTrace implements Writable {
 	public AuthorTrace() {
 		this.author = new Text();
 		this.finalWordValOrdered = new TreeMap<>();
-		this.avgNoLine = new FloatWritable(0);
+		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
 		this.puntuactionDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
@@ -46,14 +46,14 @@ public class AuthorTrace implements Writable {
 		this.finalWordValOrdered = finalWordValOrdered;
 	}
 	
-	public FloatWritable getAvgNoLine() {
-		return this.avgNoLine;
+	public TwoGramsWritable getFinalTwoGrams() {
+		return finalTwoGrams;
 	}
-	
-	public void setAvgNoLine(FloatWritable avgNoLine) {
-		this.avgNoLine = avgNoLine;
+
+	public void setFinalTwoGrams(TwoGramsWritable finalTwoGrams) {
+		this.finalTwoGrams = finalTwoGrams;
 	}
-	
+
 	public FloatWritable getAvgWordLength() {
 		return this.avgWordLength;
 	}
@@ -96,7 +96,7 @@ public class AuthorTrace implements Writable {
 			this.finalWordValOrdered.put(key, value);
 		}
 		
-		this.avgNoLine.readFields(in);
+		this.finalTwoGrams.readFields(in);
 		this.avgWordLength.readFields(in);
 		this.puntuactionDensity.readFields(in);
 		this.functionDensity.readFields(in);
@@ -117,7 +117,7 @@ public class AuthorTrace implements Writable {
         	out.writeInt(entry.getValue());
         }
 		
-		this.avgNoLine.write(out);
+		this.finalTwoGrams.write(out);
 		this.avgWordLength.write(out);
 		this.puntuactionDensity.write(out);
 		this.functionDensity.write(out);
@@ -127,18 +127,18 @@ public class AuthorTrace implements Writable {
 	@Override
 	public String toString() {
 		
-		String first = "Commenti: " + this.commenti + "\n";
+		String comments = "Commenti: " + this.commenti + "\n";
 		
-		String avgPhrases = "Average number of phrases: " + this.avgNoLine.toString() + "\n";
 		String avgWordLength = "Average word length: " + this.avgWordLength.toString() + "\n";
 		String avgPunt = 	"Puntuaction density (caratteri di punteggiatura / parole totali): " 
 							+ this.puntuactionDensity.toString() + "\n";
 		String avgFunc = 	"Function words density (parole dette \"functions\" / parole totali):  "
 							+ this.functionDensity.toString() + "\n";
 		
-		return first + 
-				avgPhrases + avgWordLength + avgPunt + avgFunc +
-				finalWordValOrdered.toString();
+		return 	comments + 
+				avgWordLength + avgPunt + avgFunc +
+				"\nTwoGrams results: \n" + this.finalTwoGrams.toString() +
+				"\nWordCount results: \n" +	this.finalWordValOrdered.toString();
 	
 	}
 

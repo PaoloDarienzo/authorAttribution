@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import java.io.DataInput;
 import java.io.DataOutput;

@@ -11,26 +11,26 @@ import support.Unused;
 
 public class BookTrace implements Writable {
 	
-	private ArrayWritable wordVal;
-	private IntWritable lineNo;
+	private WordsArrayWritable wordVal;
 	private IntWritable puntNo;
 	private IntWritable funcNo;
-	//vicinanza...
+	private TwoGramsWritable twoGrams;
+	//private int threeGram;
 	
 	public String commenti = "";
 	
 	public BookTrace() {
-		this.wordVal = new ArrayWritable();
-		this.lineNo = new IntWritable(0);
+		this.wordVal = new WordsArrayWritable();
 		this.puntNo = new IntWritable(0);
 		this.funcNo = new IntWritable(0);
+		this.twoGrams = new TwoGramsWritable();
 	}
 	
-	public ArrayWritable getArray() {
+	public WordsArrayWritable getWordsArray() {
 		return this.wordVal;
 	}
 	
-	public void setArray(ArrayWritable wordVal) {
+	public void setWordsArray(WordsArrayWritable wordVal) {
 		this.wordVal = wordVal;
 	}
 	
@@ -38,19 +38,18 @@ public class BookTrace implements Writable {
 		this.wordVal.increment(word);
 	}
 	
-	public IntWritable getLineNo() {
-		return this.lineNo;
+	public TwoGramsWritable getTwoGramsWritable() {
+		return this.twoGrams;
+	}
+
+	public void setTwoGramsWritable(TwoGramsWritable twoGrams) {
+		this.twoGrams = twoGrams;
 	}
 	
-	public void setLineNo(IntWritable lineNo) {
-		this.lineNo = lineNo;
+	public void addPair(TextPair newPair) {
+		this.twoGrams.increment(newPair);
 	}
-	
-	@Unused
-	public void incrementLineNo() {
-		this.lineNo = new IntWritable(this.lineNo.get() + 1);
-	}
-	
+
 	public IntWritable getpuntNo() {
 		return this.puntNo;
 	}
@@ -80,10 +79,11 @@ public class BookTrace implements Writable {
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		this.wordVal.readFields(in);
-		this.lineNo.readFields(in);
 		this.puntNo.readFields(in);
 		this.funcNo.readFields(in);
+		this.twoGrams.readFields(in);
 		
+		//commenti
 		int sizeString = in.readInt();
 		byte[] bytes = new byte[sizeString];
 		for(int i = 0; i < sizeString; i++) {
@@ -95,11 +95,12 @@ public class BookTrace implements Writable {
 	
 	@Override
 	public void write(DataOutput out) throws IOException {
-		this.wordVal.write(out);	
-		this.lineNo.write(out);
+		this.wordVal.write(out);
 		this.puntNo.write(out);
 		this.funcNo.write(out);
+		this.twoGrams.write(out);
 		
+		//commenti
 		out.writeInt(commenti.length());
     	out.writeBytes(commenti);
     	
@@ -107,13 +108,7 @@ public class BookTrace implements Writable {
 	
 	@Override
 	public String toString() {
-		
-		String lineNo = "lineNo: " + this.lineNo + "\n";
-		String puntNo = "puntNo: " + this.puntNo + "\n";
-		String funcNo = "funcNo: " + this.funcNo + "\n";
-		
-		return 	"\nCommenti del libro: " + commenti + "\n" + 
-				lineNo + puntNo + funcNo + wordVal.toString();
+		return 	"\n" + this.wordVal.toString() +"\n" + this.twoGrams.toString() + "\n";
 	}
 
 }

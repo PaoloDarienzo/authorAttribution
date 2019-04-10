@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,11 +16,11 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
-public class WordCountMultipleOut extends Configured implements Tool {
+public class WordCount extends Configured implements Tool {
 	
 	public static void main(String[] args) throws Exception {
 	  
-		int res = ToolRunner.run(new WordCountMultipleOut(), args);
+		int res = ToolRunner.run(new WordCount(), args);
 		System.exit(res);
 		}
 
