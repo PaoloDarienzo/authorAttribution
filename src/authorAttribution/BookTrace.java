@@ -15,7 +15,7 @@ public class BookTrace implements Writable {
 	private IntWritable punctNo; //number of punctuation words
 	private IntWritable funcNo; //number of function words
 	private TwoGramsWritable twoGrams;
-	//private int threeGram;
+	private ThreeGramsWritable threeGrams;
 	
 	public String commenti = "";
 	
@@ -24,6 +24,7 @@ public class BookTrace implements Writable {
 		this.punctNo = new IntWritable(0);
 		this.funcNo = new IntWritable(0);
 		this.twoGrams = new TwoGramsWritable();
+		this.threeGrams = new ThreeGramsWritable();
 	}
 	
 	public WordsArrayWritable getWordsArray() {
@@ -46,8 +47,20 @@ public class BookTrace implements Writable {
 		this.twoGrams = twoGrams;
 	}
 	
+	public ThreeGramsWritable getThreeGramsWritable() {
+		return this.threeGrams;
+	}
+
+	public void setThreeGramsWritable(ThreeGramsWritable threeGrams) {
+		this.threeGrams = threeGrams;
+	}
+	
 	public void addPair(TextPair newPair) {
 		this.twoGrams.increment(newPair);
+	}
+	
+	public void addTrigram(TextTrigram newTrigram) {
+		this.threeGrams.increment(newTrigram);
 	}
 
 	public IntWritable getPunctNo() {
@@ -82,6 +95,7 @@ public class BookTrace implements Writable {
 		this.punctNo.readFields(in);
 		this.funcNo.readFields(in);
 		this.twoGrams.readFields(in);
+		this.threeGrams.readFields(in);
 		
 		//commenti
 		int sizeString = in.readInt();
@@ -99,6 +113,7 @@ public class BookTrace implements Writable {
 		this.punctNo.write(out);
 		this.funcNo.write(out);
 		this.twoGrams.write(out);
+		this.threeGrams.write(out);
 		
 		//commenti
 		out.writeInt(commenti.length());
@@ -108,7 +123,9 @@ public class BookTrace implements Writable {
 	
 	@Override
 	public String toString() {
-		return 	"\n" + this.wordVal.toString() +"\n" + this.twoGrams.toString() + "\n";
+		return 	"\n" + 	this.wordVal.toString() +"\n" +
+						this.twoGrams.toString() + "\n" +
+						this.threeGrams.toString() + "\n";
 	}
 
 }

@@ -7,46 +7,34 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-/*
- * Code from Tom White's "Hadoop the definitive guide"
- *
- * */
-
-//cc TextPair A Writable implementation that stores a pair of Text objects
-//cc TextPairComparator A RawComparator for comparing TextPair byte representations
-//cc TextPairFirstComparator A custom RawComparator for comparing the first field of TextPair byte representations
-//vv TextPair
-
-/*
- * Tom White's "Hadoop the definitive guide"
- * */
-
-public class TextPair implements WritableComparable<TextPair> {
-
+public class TextTrigram implements WritableComparable<TextTrigram> {
+	
 	private Text first;
 	private Text second;
-
-	public TextPair() {
-		set(new Text(), new Text());
-	}
-
-	public TextPair(String first, String second) {
-		set(new Text(first), new Text(second));
-	}
-
-	public TextPair(Text first, Text second) {
-		set(first, second);
+	private Text third;
+	
+	public TextTrigram() {
+		set(new Text(), new Text(), new Text());
 	}
 	
-	public void set(String first, String second) {
-		set(new Text(first), new Text(second));
+	public TextTrigram(String first, String second, String third) {
+		set(new Text(first), new Text(second), new Text(third));
 	}
 	
-	public void set(Text first, Text second) {
-		this.first = first;
+	public TextTrigram(Text first, Text second, Text third) {
+		set(first, second, third);
+	}
+
+	private void set(Text first, Text second, Text third) {
+		this.setFirst(first);
 		this.second = second;
+		this.third = third;
 	}
-	
+
+	public Text getFirst() {
+		return this.first;
+	}
+
 	public void setFirst(Text first) {
 		this.first = first;
 	}
@@ -55,6 +43,10 @@ public class TextPair implements WritableComparable<TextPair> {
 		this.first = new Text(first);
 	}
 	
+	public Text getSecond() {
+		return this.second;
+	}
+
 	public void setSecond(Text second) {
 		this.second = second;
 	}
@@ -62,13 +54,17 @@ public class TextPair implements WritableComparable<TextPair> {
 	public void setSecond(String second) {
 		this.second = new Text(second);
 	}
+	
+	public Text getThird() {
+		return this.third;
+	}
 
-	public Text getFirst() {
-		return this.first;
+	public void setThird(Text third) {
+		this.third = third;
 	}
 	
-	public Text getSecond() {
-		return this.second;
+	public void setThird(String third) {
+		this.third = new Text(third);
 	}
 	
 	public String getFirstToString() {
@@ -78,30 +74,36 @@ public class TextPair implements WritableComparable<TextPair> {
 	public String getSecondToString() {
 		return this.second.toString();
 	}
+	
+	public String getThirdToString() {
+		return this.third.toString();
+	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
 		this.first.write(out);
 		this.second.write(out);
+		this.third.write(out);
 	}
 	
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		this.first.readFields(in);
 		this.second.readFields(in);
+		this.third.readFields(in);
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.first.hashCode() * 59 + this.second.hashCode();
+		return (first.hashCode() * 59 + this.second.hashCode()) * 101 + this.third.hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		
-		if(o instanceof TextPair) {
-			TextPair tp = (TextPair) o;
-			return first.equals(tp.first) && second.equals(tp.second);
+		if(o instanceof TextTrigram) {
+			TextTrigram tp = (TextTrigram) o;
+			return first.equals(tp.first) && second.equals(tp.second) && third.equals(tp.third);
 		}
 		return false;
 		
@@ -109,7 +111,10 @@ public class TextPair implements WritableComparable<TextPair> {
 	
 	@Override
 	public String toString() {
-		return "(" + this.first.toString() + ", " + this.second.toString() + ")";
+		return "(" + 	this.first.toString() + ", " + 
+						this.second.toString() + ", " +
+						this.third.toString() +
+				")";
 	}
 	
 	/*
@@ -124,14 +129,16 @@ public class TextPair implements WritableComparable<TextPair> {
 	 * this object is less than, equal to, or greater than the specified object.
 	 */
 	@Override
-	public int compareTo(TextPair tp) {
+	public int compareTo(TextTrigram tp) {
 		
 		int cmp = first.compareTo(tp.first);
 		if (cmp != 0)
 			return cmp;
-		return second.compareTo(tp.second);
+		cmp = second.compareTo(tp.second);
+		if (cmp != 0)
+			return cmp;
+		return third.compareTo(tp.third);
 		
 	}
-	
+
 }
-//^^ TextPair

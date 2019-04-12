@@ -136,6 +136,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		private BookTrace currentBookTrace;
 		private boolean isWord;
 		private int punctNo, funcNo;
+		private String prec, prePrec, post, postPost;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
@@ -143,6 +144,8 @@ public class AuthorAttribution extends Configured implements Tool {
 			isWord = false;
 			punctNo = 0;
 			funcNo = 0;
+			prec = ""; prePrec = "";
+			post = ""; postPost = "";
 		}
 		
 		@Override
@@ -185,29 +188,54 @@ public class AuthorAttribution extends Configured implements Tool {
 								
 			} //end for
 			
-			//twoGrams creating and counting
-			int indexSingle = -1;
-			int indexOther = -1;
-			for(String singleWord : words) {
-				indexSingle++; //index of singleWord
-				for(String otherWord : words) {
-					indexOther++; //index of otherWord
-					if(indexSingle == indexOther) { //avoiding word itself
-						continue;
-					}
-					//fixed first word w1, cycling over every other word wn;
-					//for each occurrence of <w1, wn>, emits a (new) pair
-					//I cannot use a single pair and then changing
-					//through the set method the two words, because the
-					//map that stores all the pairs, are referenced
-					//to the SAME pair; in that case, we will have all the pair
-					//with the same string in first and second field.
-					//So the string field's a pass by reference and not pass by value
-					currentBookTrace.addPair(new TextPair(singleWord, otherWord));
+			//twoGrams and threeGrams creating and counting
+			int indexTerm = -1;
+			for(String term : words) {
+				prec = ""; prePrec = "";
+				post = ""; postPost = "";
+				indexTerm++;
+				if(!(indexTerm - 2 < 0)) {
+					prePrec = words.get(indexTerm - 2);
 				}
-				indexOther = -1;
+				if(!(indexTerm - 1 < 0)) {
+					prec = words.get(indexTerm - 1);
+				}
+				if(!(indexTerm + 2 >= words.size())) {
+					postPost = words.get(indexTerm + 2);
+				}
+				if(!(indexTerm + 1 >= words.size())) {
+					post = words.get(indexTerm + 1);
+				}
+				//if prePrec is empty, term is second word in sentence
+				//so prePrec doesn't exists
+				if(!prePrec.isEmpty()) {
+					//if prePrec exists, prec exists
+					currentBookTrace.addTrigram(new TextTrigram(term, prePrec, prec));
+					//currentBookTrace.commenti += "\n" + new TextTrigram(term, prePrec, prec).toString();
+				}
+				if(!prec.isEmpty()) {
+					currentBookTrace.addPair(new TextPair(term, prec));
+					//currentBookTrace.commenti += "\n" + prec + ", " + term + "\n";
+				}
+				if(!post.isEmpty()) {
+					currentBookTrace.addPair(new TextPair(term, post));
+					//currentBookTrace.commenti += "\n" + post + ", " + term + "\n";
+				}
+				if(!postPost.isEmpty()) {
+					//if postPost exists, post exists
+					currentBookTrace.addTrigram(new TextTrigram(term, post, postPost));
+					//currentBookTrace.commenti += "\n" + new TextTrigram(term, post, postPost).toString();
+				}
+				//fixed first word w1, cycling over every other word wn;
+				//for each occurrence of <w1, wn>, emits a (new) pair
+				//I cannot use a single pair and then changing
+				//through the set method the two words, because the
+				//map that stores all the pairs, are referenced
+				//to the SAME pair; in that case, we will have all the pair
+				//with the same string in first and second field.
+				//So the string field's a pass by reference and not pass by value
 			}
-			
+
 			//wordCount support phase
 			currentBookTrace.setPunctNo(new IntWritable(punctNo));
 			currentBookTrace.setFuncNo(new IntWritable(funcNo));		
@@ -225,10 +253,11 @@ public class AuthorAttribution extends Configured implements Tool {
 			
 			//Updating comments
 			currentBookTrace.commenti+= "Book: " + filename + "\n";
-			String daAgg =	"puntNo " + punctNo + "\n" +
+			String daAgg =	"punctNo " + punctNo + "\n" +
 							"funcNo " + funcNo + "\n" + 
 							"Number of words: " + currentBookTrace.getWordsArray().getArray().size() + "\n" +
-							"Number of couples: " + currentBookTrace.getTwoGramsWritable().getTwoGrams().size() + "\n\n";
+							"Number of couples: " + currentBookTrace.getTwoGramsWritable().getTwoGrams().size() + "\n" +
+							"Number of trigrams: " + currentBookTrace.getThreeGramsWritable().getThreeGrams().size() + "\n\n";
 			currentBookTrace.commenti+= daAgg;
 			context.write(author, currentBookTrace);
 		}
@@ -249,6 +278,7 @@ public class AuthorAttribution extends Configured implements Tool {
 		
 		private WordsArrayWritable HFinal; //for counting words
 		private TwoGramsWritable finalTwoGrams; //for twoGrams
+		private ThreeGramsWritable finalThreeGrams; //for threeGrams
 		private FloatWritable avgWordLength, puntuactionDensity, functionDensity;
 				
 		@Override
@@ -266,6 +296,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			
 			HFinal = new WordsArrayWritable(); //for counting words
 			finalTwoGrams = new TwoGramsWritable();
+			finalThreeGrams = new ThreeGramsWritable();
 			avgWordLength = new FloatWritable(0);
 			puntuactionDensity = new FloatWritable(0);
 			functionDensity = new FloatWritable(0);
@@ -288,6 +319,9 @@ public class AuthorAttribution extends Configured implements Tool {
 				
 				//summing twoGrams from each book
 				finalTwoGrams.sum(book.getTwoGramsWritable());
+				
+				//summing threeGrams from each book
+				finalThreeGrams.sum(book.getThreeGramsWritable());
 								
 				//sommo punctuaction words
 				totalPunct += book.getPunctNo().get();
@@ -314,6 +348,9 @@ public class AuthorAttribution extends Configured implements Tool {
 		    //Setting twoGram of author
 		    authTrace.setFinalTwoGrams(finalTwoGrams);
 		    
+		    //Setting threeGram of author
+		    authTrace.setFinalThreeGrams(finalThreeGrams);
+		    
 		    //Excluding punctuation when calculating average word length
 		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunct));
 		    avgWordLength = new FloatWritable(avgWordLenFloat);
@@ -331,11 +368,14 @@ public class AuthorAttribution extends Configured implements Tool {
 		    						"\n N° parole: " + numWords +
 		    						"\n N° totale caratteri: " + totalChars +
 		    						"\n N° function words: " + totalFunc +
-		    						"\n N° punctuation words: " + totalPunct + "\n" + 
+		    						"\n N° punctuation words: " + totalPunct + 
 		    						"\n N° coppie: " + authTrace.getFinalTwoGrams().getTwoGrams().size() + "\n" +
 		    						"Coppie: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + 
-		    						"\n\n" + 
-		    						"Parole: \n" + authTrace.getTreeWordsArray().toString();
+		    						"\n" + 
+		    						"\n N° trigrammi: " + authTrace.getFinalThreeGrams().getThreeGrams().size() + "\n" +
+		    						"Trigrammi: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString() + 
+		    						"\n" + 
+		    						"Parole: \n" + authTrace.getTreeWordsArray().toString() + "\n";
 		    	
 		    
 		    //context.write(key, TraceFinal);

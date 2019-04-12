@@ -15,6 +15,7 @@ public class AuthorTrace implements Writable {
 	private Text author;
 	private TreeMap<String, Integer> finalWordValOrdered;
 	private TwoGramsWritable finalTwoGrams;
+	private ThreeGramsWritable finalThreeGrams;
 	private FloatWritable avgWordLength;
 	private FloatWritable punctuationDensity;
 	private FloatWritable functionDensity;
@@ -25,6 +26,7 @@ public class AuthorTrace implements Writable {
 		this.author = new Text();
 		this.finalWordValOrdered = new TreeMap<>();
 		this.setFinalTwoGrams(new TwoGramsWritable());
+		this.setFinalThreeGrams(new ThreeGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
@@ -47,11 +49,19 @@ public class AuthorTrace implements Writable {
 	}
 	
 	public TwoGramsWritable getFinalTwoGrams() {
-		return finalTwoGrams;
+		return this.finalTwoGrams;
 	}
 
 	public void setFinalTwoGrams(TwoGramsWritable finalTwoGrams) {
 		this.finalTwoGrams = finalTwoGrams;
+	}
+	
+	public ThreeGramsWritable getFinalThreeGrams() {
+		return this.finalThreeGrams;
+	}
+	
+	public void setFinalThreeGrams(ThreeGramsWritable finalThreeGrams) {
+		this.finalThreeGrams = finalThreeGrams;
 	}
 
 	public FloatWritable getAvgWordLength() {
@@ -97,6 +107,7 @@ public class AuthorTrace implements Writable {
 		}
 		
 		this.finalTwoGrams.readFields(in);
+		this.finalThreeGrams.readFields(in);
 		this.avgWordLength.readFields(in);
 		this.punctuationDensity.readFields(in);
 		this.functionDensity.readFields(in);
@@ -126,6 +137,7 @@ public class AuthorTrace implements Writable {
         }
 		
 		this.finalTwoGrams.write(out);
+		this.finalThreeGrams.write(out);
 		this.avgWordLength.write(out);
 		this.punctuationDensity.write(out);
 		this.functionDensity.write(out);

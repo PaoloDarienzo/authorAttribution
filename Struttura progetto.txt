@@ -20,6 +20,10 @@ E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Du
  possono dare falsi positivi tutte le abbreviazioni "etc.; dott.; sig.;...". Considerando solo il punto,
  potrebbero essere falsi positivi i numeri decimali separati da punto, "3.14$".
  Pertanto escludo questo parametro. 
+ 3.
+ Il calcolo degli n-grams prevede un concetto di vicinanza. Per il punto 2, dobbiamo escludere il concetto
+ di vicinanza come parole continue nella frase, in quanto una frase non è ben delimitata.
+ Pertanto utilizzo come concetto di vicinanza le parole contigue nella line in analisi.
 
 ###################################################################################################
 
@@ -146,9 +150,9 @@ ho preso in considerazione:
 
 (*)
 - Il concetto di vicinanza può essere:
-	- parole a sinistra e a destra di ogni parola;
+	- parole a sinistra e a destra di ogni parola (contigue);
 	- parole che in generale compaiono nella stessa frase;
-	Ho scelto come concetto di vicinanza le parole contenute nella stessa frase.
+	Ho scelto come concetto di vicinanza le parole contigue alla parola in esame.
 - Con densità si intende il rapporto tra la data parola o simbolo e il numero totale di parole o simboli analizzati 
 	(ovvero, sia x la parola da analizzare, x/token_total.size)
 
