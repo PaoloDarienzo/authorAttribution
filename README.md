@@ -10,20 +10,34 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 - accostamenti di parole utilizzate (vicinanza; 2grams e 3grams)
 
 FASE MAP:
+
 (K, V)
+
 CHIAVE: AUTORE
+
 VALORE: INSIEME DI VALORI
+
 -> array di words (wordCount)
+
 -> numero linee
+
 -> vicinanza
 
+
 FASE REDUCE:
+
 (K, riceve per chiave/autore)
+
 (K, V)
+
 deve fare somma V
+
 -> somma di words (wordCount)
+
 -> stat su numero linee, densità varie, lunghezze varie...
+
 -> vicinanza
+
 
 Passare come input un set di libri non utilizzati per creare l'impronta degli autori e calcolare la percentuale di successo.
 
