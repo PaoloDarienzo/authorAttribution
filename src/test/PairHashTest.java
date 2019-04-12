@@ -65,6 +65,9 @@ public class PairHashTest {
 		tempBookTrace.setTwoGrams(twoGrams);
 		System.out.println(twoGrams.getTwoGrams().size());
 		System.out.println(tempBookTrace.getTwoGrams().getTwoGrams().size());
+		System.out.println("ciao" + 3);
+		String fromWordCount = "\nN° of different words: ";
+		System.out.println(fromWordCount);
 		
 	}
 	

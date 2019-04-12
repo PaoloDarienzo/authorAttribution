@@ -1,6 +1,8 @@
 ###################################################################################################
 
 DA FARE/CONTROLLARE
+
+1.
 A causa dei diversi modi di scrivere il nome dell'autore, uno stesso autore può essere 
 indicato in diverso modo, con iniziali puntate, con solo nome puntato, con pseudonimi,
 con traduzioni diverse etc. I file di testo avranno nel nome diversi autori indicati,
@@ -8,7 +10,16 @@ pertanto verrebbero trattati come autori diversi dal programma MapReduce.
 Ho identificato alcuni di questi casi che potrebbero essere utili nel caso studio:
 E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils),
  Charlotte Bronte, Thomas De Quincey, Gordon Stables, Charles Egbert Craddock.
- 
+ 2.
+ Nel calcolo del numero medio di parole utilizzate in una frase, bisognerebbe poter contare
+ correttamente le frasi. Siccome la terminazione di una frase è data da caratteri quali punto interrogativo,
+ punto escalamtivo, punto fermo, si potrebbero utilizzare tali caratteri come caratteri separatori;
+ purtroppo non ho trovato un metodo efficiente per poter separare le frasi grazie al punto.
+ Per esempio, se una frase termina col punto, spazio e parola successiva inizia con una maiuscola,
+ possono esserci falsi positivi, come "Dott. Zivago"; allo stesso modo, ignorando la maiuscola, 
+ possono dare falsi positivi tutte le abbreviazioni "etc.; dott.; sig.;...". Considerando solo il punto,
+ potrebbero essere falsi positivi i numeri decimali separati da punto, "3.14$".
+ Pertanto escludo questo parametro. 
 
 ###################################################################################################
 
@@ -41,7 +52,11 @@ CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
 		n = numero autori; r = numero reducer.
 		r >= n ---> ogni reducer si occupa di un autore; le informazioni relative
 					a quell'autore (nel calcolo percentuale) è preservata.
-		r < n  ---> ???
+		r < n  ---> ERRORE; se i reducer indicati non sono sufficienti,
+					verranno indicati stessi reducer per autori diversi 
+					(rispettivamente al modulo; se ci sono 6 autori e vengono indicati 4 reducer,
+					6 % 4 = 2, i primi due reducer ricevono ognuno 2 autori diversi);
+					pertanto i risultati saranno falsati.
 
 	REDUCE:
 		Per ogni file, calcola i vari valori da calcolare.
@@ -118,7 +133,7 @@ CREAZIONE IMPRONTA
 
 Nella creazione dell'impronta di un autore, ovvero del profiling di un autore in esame,
 ho preso in considerazione:
-- la lunghezza media delle frasi nelle opere dell'autore in esame (line length) (?);
+- la lunghezza media delle frasi nelle opere dell'autore in esame (line length) (non utilizzato);
 - la lunghezza media delle parole utilizzate dall'autore (word length);
 - la ricchezza del vocabolario (vocabulary richness), andando a guardare:
 	- hapaxlegomena, ovvero parole che compaiono una volta soltanto in ogni testo;
@@ -138,9 +153,9 @@ ho preso in considerazione:
 	(ovvero, sia x la parola da analizzare, x/token_total.size)
 
 (Da word_count: word_length, 1_word, 2_word, punctuation_density, function_word_density, word_frequency)
-(Da analisi vicinanza: 2_gram, 3_gram, line_length(?))
-1. line_length;
-2. word_length;
+(Da analisi vicinanza: 2_gram, 3_gram)
+1. line_length (non utilizzato);
+2. word_length_avg;
 3. 1_word;
 4. 2_word;
 5. 2_gram;
@@ -184,6 +199,11 @@ quanto più veloce.
 
 Per la lineDensity, un float è più che sufficiente rispetto al tipo double; tale scelta è inoltre
 maggiormente motivata poichè DoubleWritable non funziona correttamente.
+
+Il numero di reducer (nella creazione impronta) indicato deve essere necessariamente 
+almeno uguale al numero di autori analizzati; siccome nella creazione, gli autori sono noti,
+lo sarà anche il loro numero. In caso di mancanza di reducer disponibili, si può fare
+una pre-selezione degli autori da passare per creare le impronte.
 
 
 ###################################################################################################

@@ -36,8 +36,6 @@ import org.apache.hadoop.conf.Configured;
 /*
  * line length -> number of sentences (". ", "?", "!")
  * 
- * Aggiungere concetto vicinanza;
- * 
  */
 
 public class AuthorAttribution extends Configured implements Tool {
@@ -136,15 +134,14 @@ public class AuthorAttribution extends Configured implements Tool {
 		private Text author = new Text();
 		
 		private BookTrace currentBookTrace;
-		private TextPair currentPair; //for computing twoGrams
 		private boolean isWord;
-		private int puntNo, funcNo;
+		private int punctNo, funcNo;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 			currentBookTrace = new BookTrace();
-			currentPair = new TextPair(); //for computing twoGrams
-			puntNo = 0;
+			isWord = false;
+			punctNo = 0;
 			funcNo = 0;
 		}
 		
@@ -152,44 +149,38 @@ public class AuthorAttribution extends Configured implements Tool {
 		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
 						
-			FileSplit fileSplit = (FileSplit)context.getInputSplit();
-			String filename = fileSplit.getPath().getName();
-			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
-			author.set(tokensVal[0]);
-						
 			String line = lineText.toString();
 			
-			//twoGrams
+			//twoGrams/threeGrams
 			List<String> words = new ArrayList<String>();
 			
 			for (String word : WORD_BOUNDARY.split(line)) {
 				//skip is word is empty
-				//or is if is not a digit or a char
+				//or if is not a digit or a char
 				//and is not a conjuction symbol
 				if (word.isEmpty() 
 						|| (
 							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNTUACTION.contains(word))
 							) 
 					) {
-					continue;
+					continue; //skipping to next legitimate word
 				}
 				else {
 					isWord = true;
 					if(MethodsCollection.puntuactionChecker(word)) {
-						puntNo++;
+						punctNo++;
 						isWord = false;
 					}
 					else if(MethodsCollection.functionWordChecker(word)) {
 						funcNo++;
-						isWord = false;
 					}
 				}
-				
+				String lowCaseWord = word.toLowerCase();
 				//wordCount
-				currentBookTrace.addWord(word.toLowerCase());
+				currentBookTrace.addWord(lowCaseWord);
 				if(isWord) {
-					//twoGrams with only words
-					words.add(word);	
+					//twoGrams/threeGrams with only words
+					words.add(lowCaseWord);
 				}
 								
 			} //end for
@@ -205,50 +196,55 @@ public class AuthorAttribution extends Configured implements Tool {
 						continue;
 					}
 					//fixed first word w1, cycling over every other word wn;
-					//for each occurrence of <w1, wn>, emits a pair
-					currentPair.set(singleWord, otherWord);
-					currentBookTrace.addPair(currentPair);
+					//for each occurrence of <w1, wn>, emits a (new) pair
+					//I cannot use a single pair and then changing
+					//through the set method the two words, because the
+					//map that stores all the pairs, are referenced
+					//to the SAME pair; in that case, we will have all the pair
+					//with the same string in first and second field.
+					//So the string field's a pass by reference and not pass by value
+					currentBookTrace.addPair(new TextPair(singleWord, otherWord));
 				}
 				indexOther = -1;
 			}
 			
 			//wordCount support phase
-			currentBookTrace.setpuntNo(new IntWritable(puntNo));
-			currentBookTrace.setfuncNo(new IntWritable(funcNo));
-			
-			/////commenti del libro analizzato
-			String intestazione = "\nBook: " + filename;
-			String puntAndFunc = 	"\npuntNo " + puntNo +
-									"\nfuncNo " + funcNo + "\n";
-			String fromWordCount = "\n N° of different words: " +
-									currentBookTrace.getWordsArray().getArray().size();
-			String fromTwoGrams = "\n N° of woGrams counted: " +
-									currentBookTrace.getTwoGramsWritable().getTwoGrams().size();
-
-			currentBookTrace.commenti =	intestazione +
-										fromWordCount +
-										fromTwoGrams +
-										puntAndFunc;
+			currentBookTrace.setPunctNo(new IntWritable(punctNo));
+			currentBookTrace.setFuncNo(new IntWritable(funcNo));		
 			
 		}//end map
 		
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
+			
+			//Extracting author name from filename
+			FileSplit fileSplit = (FileSplit)context.getInputSplit();
+			String filename = fileSplit.getPath().getName();
+			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
+			author.set(tokensVal[0]);
+			
+			//Updating comments
+			currentBookTrace.commenti+= "Book: " + filename + "\n";
+			String daAgg =	"puntNo " + punctNo + "\n" +
+							"funcNo " + funcNo + "\n" + 
+							"Number of words: " + currentBookTrace.getWordsArray().getArray().size() + "\n" +
+							"Number of couples: " + currentBookTrace.getTwoGramsWritable().getTwoGrams().size() + "\n\n";
+			currentBookTrace.commenti+= daAgg;
 			context.write(author, currentBookTrace);
 		}
 
 	} //end Mapper class
 
 	/*
-	 * Ogni reducer riceve tutti i lavori su un autore
+	 * Each reducer gets all jobs relatively to an author, thanks to the partitioner
 	 */
-	public static class Reduce extends Reducer<Text, BookTrace, NullWritable, AuthorTrace>{
+	public static class Reduce extends Reducer<Text, BookTrace, NullWritable, AuthorTrace> {
 
 		private MultipleOutputs<NullWritable, AuthorTrace> multipleOutputs;
 		
 		private AuthorTrace authTrace;
 		
-		private int nBooks, totalPunt, totalFunc;
+		private int nBooks, totalPunct, totalFunc;
 		private long totalChars, numWords;
 		
 		private WordsArrayWritable HFinal; //for counting words
@@ -263,7 +259,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			authTrace = new AuthorTrace();
 			
 			nBooks = 0;
-			totalPunt = 0;
+			totalPunct = 0;
 			totalFunc = 0;
 			totalChars = 0;
 			numWords = 0;
@@ -288,26 +284,24 @@ public class AuthorAttribution extends Configured implements Tool {
 				
 				//summing array of words of each analyzed book
 				HFinal.sum(book.getWordsArray());
-				//Having final array with total numbers of utilized words of each author
+				//Having a final array HFinal with total numbers of utilized words of each author
 				
 				//summing twoGrams from each book
 				finalTwoGrams.sum(book.getTwoGramsWritable());
 								
 				//sommo punctuaction words
-				totalPunt += book.getpuntNo().get();
+				totalPunct += book.getPunctNo().get();
 				//sommo function words
-				totalFunc += book.getfuncNo().get();
+				totalFunc += book.getFuncNo().get();
 				
-				//somma i caratteri di tutte le parole contenute nel
-				//libro passato come valore;
-				//ogni libro analizzato è un value
+				//Summing characters of every words contained in the book (passed as value)
 				totalChars += MethodsCollection.getTotalChars(book.getWordsArray().getArray());
 				
-				//prendo il numero di parole totali,
-				//ovvero le singole parole moltiplicate per le volte in cui compaiono
+				//Taking total number of words
+				//i.e. single words multiplied for the times they appear
 				numWords += MethodsCollection.getTotalWords(book.getWordsArray().getArray());
 				
-				authTrace.commenti +=	book.commenti;
+				authTrace.commenti += book.commenti;
 			}
 					    
 			//Ordering HashMap by key:
@@ -320,24 +314,30 @@ public class AuthorAttribution extends Configured implements Tool {
 		    //Setting twoGram of author
 		    authTrace.setFinalTwoGrams(finalTwoGrams);
 		    
-		    //Excluding puntuaction when calculating average word length
-		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunt));
+		    //Excluding punctuation when calculating average word length
+		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunct));
 		    avgWordLength = new FloatWritable(avgWordLenFloat);
 		    authTrace.setAvgWordLength(avgWordLength);
 		    
-		    puntuactionDensity = new FloatWritable((float) totalPunt / (float) numWords);
-		    authTrace.setPuntuactionDensity(puntuactionDensity);
+		    puntuactionDensity = new FloatWritable((float) totalPunct / (float) numWords);
+		    authTrace.setPunctuationDensity(puntuactionDensity);
 		    
 		    functionDensity = new FloatWritable((float) totalFunc / (float) numWords);
 		    authTrace.setFunctionDensity(functionDensity);
+		    
 		    
 		    authTrace.commenti +=	"\nAutore: " + key.toString() + 
 		    						"\n N° books: " + nBooks +
 		    						"\n N° parole: " + numWords +
 		    						"\n N° totale caratteri: " + totalChars +
 		    						"\n N° function words: " + totalFunc +
-		    						"\n N° puntuaction words: " + totalPunt + "\n";
-		    						
+		    						"\n N° punctuation words: " + totalPunct + "\n" + 
+		    						"\n N° coppie: " + authTrace.getFinalTwoGrams().getTwoGrams().size() + "\n" +
+		    						"Coppie: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + 
+		    						"\n\n" + 
+		    						"Parole: \n" + authTrace.getTreeWordsArray().toString();
+		    	
+		    
 		    //context.write(key, TraceFinal);
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());
 			

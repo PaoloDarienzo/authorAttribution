@@ -12,8 +12,8 @@ import support.Unused;
 public class BookTrace implements Writable {
 	
 	private WordsArrayWritable wordVal;
-	private IntWritable puntNo;
-	private IntWritable funcNo;
+	private IntWritable punctNo; //number of punctuation words
+	private IntWritable funcNo; //number of function words
 	private TwoGramsWritable twoGrams;
 	//private int threeGram;
 	
@@ -21,7 +21,7 @@ public class BookTrace implements Writable {
 	
 	public BookTrace() {
 		this.wordVal = new WordsArrayWritable();
-		this.puntNo = new IntWritable(0);
+		this.punctNo = new IntWritable(0);
 		this.funcNo = new IntWritable(0);
 		this.twoGrams = new TwoGramsWritable();
 	}
@@ -50,36 +50,36 @@ public class BookTrace implements Writable {
 		this.twoGrams.increment(newPair);
 	}
 
-	public IntWritable getpuntNo() {
-		return this.puntNo;
+	public IntWritable getPunctNo() {
+		return this.punctNo;
 	}
 	
-	public void setpuntNo(IntWritable puntNo) {
-		this.puntNo = puntNo;
+	public void setPunctNo(IntWritable punctNo) {
+		this.punctNo = punctNo;
 	}
 	
 	@Unused
-	public void incrementpuntNo() {
-		this.puntNo = new IntWritable(this.puntNo.get() + 1);
+	public void incrementPunctNo() {
+		this.punctNo = new IntWritable(this.punctNo.get() + 1);
 	}
 	
-	public IntWritable getfuncNo() {
+	public IntWritable getFuncNo() {
 		return this.funcNo;
 	}
 	
-	public void setfuncNo(IntWritable funcNo) {
+	public void setFuncNo(IntWritable funcNo) {
 		this.funcNo = funcNo;
 	}
 	
 	@Unused
-	public void incrementfuncNo() {
+	public void incrementFuncNo() {
 		this.funcNo = new IntWritable(this.funcNo.get() + 1);
 	}
 	
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		this.wordVal.readFields(in);
-		this.puntNo.readFields(in);
+		this.punctNo.readFields(in);
 		this.funcNo.readFields(in);
 		this.twoGrams.readFields(in);
 		
@@ -96,7 +96,7 @@ public class BookTrace implements Writable {
 	@Override
 	public void write(DataOutput out) throws IOException {
 		this.wordVal.write(out);
-		this.puntNo.write(out);
+		this.punctNo.write(out);
 		this.funcNo.write(out);
 		this.twoGrams.write(out);
 		

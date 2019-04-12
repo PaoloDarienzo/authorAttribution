@@ -16,7 +16,7 @@ public class AuthorTrace implements Writable {
 	private TreeMap<String, Integer> finalWordValOrdered;
 	private TwoGramsWritable finalTwoGrams;
 	private FloatWritable avgWordLength;
-	private FloatWritable puntuactionDensity;
+	private FloatWritable punctuationDensity;
 	private FloatWritable functionDensity;
 	
 	public String commenti = "";
@@ -26,7 +26,7 @@ public class AuthorTrace implements Writable {
 		this.finalWordValOrdered = new TreeMap<>();
 		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
-		this.puntuactionDensity = new FloatWritable(0);
+		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
 	}
 	
@@ -62,12 +62,12 @@ public class AuthorTrace implements Writable {
 		this.avgWordLength = avgWordLength;
 	}
 	
-	public FloatWritable getPuntuactionDensity() {
-		return this.puntuactionDensity;
+	public FloatWritable getPunctuationDensity() {
+		return this.punctuationDensity;
 	}
 	
-	public void setPuntuactionDensity(FloatWritable puntuactionDensity) {
-		this.puntuactionDensity = puntuactionDensity;
+	public void setPunctuationDensity(FloatWritable punctuationDensity) {
+		this.punctuationDensity = punctuationDensity;
 	}
 	
 	public FloatWritable getFunctionDensity() {
@@ -98,8 +98,16 @@ public class AuthorTrace implements Writable {
 		
 		this.finalTwoGrams.readFields(in);
 		this.avgWordLength.readFields(in);
-		this.puntuactionDensity.readFields(in);
+		this.punctuationDensity.readFields(in);
 		this.functionDensity.readFields(in);
+		
+		//commenti
+		int sizeString = in.readInt();
+		byte[] bytes = new byte[sizeString];
+		for(int i = 0; i < sizeString; i++) {
+			bytes[i] = in.readByte();
+		}
+		commenti = new String(bytes);
 		
 	}
 	
@@ -119,26 +127,21 @@ public class AuthorTrace implements Writable {
 		
 		this.finalTwoGrams.write(out);
 		this.avgWordLength.write(out);
-		this.puntuactionDensity.write(out);
+		this.punctuationDensity.write(out);
 		this.functionDensity.write(out);
+		
+		//commenti
+		out.writeInt(commenti.length());
+    	out.writeBytes(commenti);
 		
 	}
 	
 	@Override
 	public String toString() {
-		
-		String comments = "Commenti: " + this.commenti + "\n";
-		
-		String avgWordLength = "Average word length: " + this.avgWordLength.toString() + "\n";
-		String avgPunt = 	"Puntuaction density (caratteri di punteggiatura / parole totali): " 
-							+ this.puntuactionDensity.toString() + "\n";
-		String avgFunc = 	"Function words density (parole dette \"functions\" / parole totali):  "
-							+ this.functionDensity.toString() + "\n";
-		
-		return 	comments + 
-				avgWordLength + avgPunt + avgFunc +
-				"\nTwoGrams results: \n" + this.finalTwoGrams.toString() +
-				"\nWordCount results: \n" +	this.finalWordValOrdered.toString();
+		//TODO
+		//Setting here the output to file for each author trace
+		//actually it is set in AuthorAttribution, reduce phase
+		return this.commenti;
 	
 	}
 
