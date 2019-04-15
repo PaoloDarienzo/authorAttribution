@@ -3,7 +3,8 @@ package support;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.TreeMap;
+//import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.hadoop.io.FloatWritable;
@@ -13,7 +14,8 @@ import org.apache.hadoop.io.Writable;
 public class AuthorTrace implements Writable {
 	
 	private Text author;
-	private TreeMap<String, Integer> finalWordValOrdered;
+	//private TreeMap<String, Integer> finalWordValOrdered;
+	private HashMap<String, Integer> finalWordVal;
 	private TwoGramsWritable finalTwoGrams;
 	private ThreeGramsWritable finalThreeGrams;
 	private FloatWritable avgWordLength;
@@ -24,7 +26,8 @@ public class AuthorTrace implements Writable {
 	
 	public AuthorTrace() {
 		this.author = new Text();
-		this.finalWordValOrdered = new TreeMap<>();
+		//this.finalWordValOrdered = new TreeMap<>();
+		this.finalWordVal = new HashMap<>();
 		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.setFinalThreeGrams(new ThreeGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
@@ -40,12 +43,22 @@ public class AuthorTrace implements Writable {
 		this.author = author;
 	}
 	
+	/*
 	public TreeMap<String, Integer> getTreeWordsArray() {
 		return this.finalWordValOrdered;
 	}
 	
 	public void setTreeWordsArray(TreeMap<String, Integer> finalWordValOrdered) {
 		this.finalWordValOrdered = finalWordValOrdered;
+	}
+	*/
+	
+	public HashMap<String, Integer> getWordsArray(){
+		return this.finalWordVal;
+	}
+	
+	public void setWordsArray(HashMap<String, Integer> finalWordVal) {
+		this.finalWordVal = finalWordVal;
 	}
 	
 	public TwoGramsWritable getFinalTwoGrams() {
@@ -93,7 +106,8 @@ public class AuthorTrace implements Writable {
 		
 		this.author.readFields(in);
 		
-		finalWordValOrdered.clear();
+		/*
+		this.finalWordValOrdered.clear();
 		int size = in.readInt();
 		for(int i = 0; i < size; i++) {
 			int sizeKey = in.readInt();
@@ -104,6 +118,20 @@ public class AuthorTrace implements Writable {
 			String key = new String(bytes);
 			Integer value = new Integer(in.readInt());
 			this.finalWordValOrdered.put(key, value);
+		}
+		*/
+		
+		this.finalWordVal.clear();
+		int size = in.readInt();
+		for(int i = 0; i < size; i++) {
+			int sizeKey = in.readInt();
+			byte[] bytes = new byte[sizeKey];
+			for(int j = 0; j < sizeKey; j++) {
+				bytes[j] = in.readByte();
+			}
+			String key = new String(bytes);
+			Integer value = new Integer(in.readInt());
+			this.finalWordVal.put(key, value);
 		}
 		
 		this.finalTwoGrams.readFields(in);
@@ -127,9 +155,20 @@ public class AuthorTrace implements Writable {
 		
 		this.author.write(out);
 		
+		/*
 		out.writeInt(this.finalWordValOrdered.size());
 		
 		for(Entry<String, Integer> entry : finalWordValOrdered.entrySet()) {
+			String key = entry.getKey();
+        	out.writeInt(key.length());
+        	out.writeBytes(key);   
+        	out.writeInt(entry.getValue());
+        }
+		*/
+		
+		out.writeInt(this.finalWordVal.size());
+		
+		for(Entry<String, Integer> entry : finalWordVal.entrySet()) {
 			String key = entry.getKey();
         	out.writeInt(key.length());
         	out.writeBytes(key);   

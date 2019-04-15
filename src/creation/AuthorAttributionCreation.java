@@ -26,11 +26,13 @@ import support.TextPair;
 import support.TextTrigram;
 import support.ThreeGramsWritable;
 import support.TwoGramsWritable;
+import support.Unused;
 import support.WordsArrayWritable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -280,7 +282,8 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		
 		private AuthorTrace authTrace;
 		
-		private int nBooks, totalPunct, totalFunc;
+		//private int nBooks;
+		private int totalPunct, totalFunc;
 		private long totalChars, numWords;
 		
 		private WordsArrayWritable HFinal; //for counting words
@@ -295,7 +298,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			
 			authTrace = new AuthorTrace();
 			
-			nBooks = 0;
+			//nBooks = 0;
 			totalPunct = 0;
 			totalFunc = 0;
 			totalChars = 0;
@@ -318,7 +321,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    
 			for (BookTrace book : values) {
 				
-				nBooks++;
+				//nBooks++;
 				
 				//summing array of words of each analyzed book
 				HFinal.sum(book.getWordsArray());
@@ -345,12 +348,9 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				authTrace.commenti += book.commenti;
 			}
 					    
-			//Ordering HashMap by key:
-		    //TreeMap to store values of HashMap 
-		    TreeMap<String, Integer> finalWordValOrdered = new TreeMap<>();
-		    // Copy all data from hashMap into TreeMap 
-		    finalWordValOrdered.putAll(HFinal.getArray());
-		    authTrace.setTreeWordsArray(finalWordValOrdered);
+			//Ordering HashMap by key; used
+		    //authTrace.setTreeWordsArray(orderArray(HFinal.getArray()));
+			authTrace.setWordsArray(HFinal.getArray());
 		    
 		    //Setting twoGram of author
 		    authTrace.setFinalTwoGrams(finalTwoGrams);
@@ -372,20 +372,22 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    
 		    //##### means the values start;
 		    //@@@@@ means the values end.
-		    String startValue = "##### ";
-		    String endValue = " @@@@@";
+		    String fieldSeparator = "#####";
+		    //String endValue = " @@@@@";
 		    authTrace.commenti +=	
-		    		"\n" + startValue + "Autore: " + key.toString() + endValue + 
-					"\nNum books: " + nBooks +
-					"\n" + startValue + "Num words: " + numWords + endValue + 
-					"\n" + startValue + "Num total chars: " + totalChars + endValue + 
-					"\n" + startValue +  "Num function words: " + totalFunc + endValue +
-					"\n" + startValue + "Num punctuation words: " + totalPunct + endValue +
-					"\n" + startValue + "Num couples: "+ authTrace.getFinalTwoGrams().getTwoGrams().size() + endValue +
-					"\n" + startValue + "Num trigrams: " + authTrace.getFinalThreeGrams().getThreeGrams().size()+ endValue +
-					"\n\n" + startValue + "WordCount: \n" + authTrace.getTreeWordsArray().toString() + endValue +
-					"\n" + startValue + "Couples: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + endValue +
-					"\n" + startValue + "Trigrams: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString() + endValue;
+		    		fieldSeparator + "\n" + "@Autore: " + key.toString() + "\n" + 
+					//"\nNum books: " + nBooks +
+					"\n" + fieldSeparator + "\n" + "@Num words: " + numWords + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Num total chars: " + totalChars + "\n" +
+					"\n" + fieldSeparator + "\n" +  "@Num function words: " + totalFunc + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Num punctuation words: " + totalPunct + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Num couples: "+ authTrace.getFinalTwoGrams().getTwoGrams().size() + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Num trigrams: " + authTrace.getFinalThreeGrams().getThreeGrams().size() + "\n" +
+					//Tree was used for WordCount ordered
+					//"\n\n" + startValue + "WordCount: \n" + authTrace.getTreeWordsArray().toString() + "\n" +
+					"\n\n" + fieldSeparator + "\n" + "@WordCount: \n" + authTrace.getWordsArray().toString() + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Couples: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + "\n" +
+					"\n" + fieldSeparator + "\n" + "@Trigrams: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString() + "\n" + fieldSeparator;
 					
 		    	
 		    
@@ -397,7 +399,22 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			multipleOutputs.close();
-		}		
+		}	
+		
+		/*
+		 * Used for debugging of WordCount
+		 */
+		@Unused
+		public TreeMap<String, Integer> orderArray(HashMap<String, Integer> toOrderByKey) {
+			//Ordering HashMap by key:
+		    //TreeMap to store values of HashMap 
+		    TreeMap<String, Integer> finalWordValOrdered = new TreeMap<>();
+		    // Copy all data from hashMap into TreeMap (that is naturally ordered)
+		    finalWordValOrdered.putAll(toOrderByKey);
+		    
+		    return finalWordValOrdered;
+			
+		}
 		
 	} //end Reducer class	
 	
