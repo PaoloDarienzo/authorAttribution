@@ -1,4 +1,12 @@
-package old;
+package support;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.WritableComparable;
+
 /*
  * Code from Tom White's "Hadoop the definitive guide"
  *
@@ -8,9 +16,6 @@ package old;
 //cc TextPairComparator A RawComparator for comparing TextPair byte representations
 //cc TextPairFirstComparator A custom RawComparator for comparing the first field of TextPair byte representations
 //vv TextPair
-import java.io.*;
-
-import org.apache.hadoop.io.*;
 
 /*
  * Tom White's "Hadoop the definitive guide"
@@ -31,14 +36,6 @@ public class TextPair implements WritableComparable<TextPair> {
 
 	public TextPair(Text first, Text second) {
 		set(first, second);
-	}
-	
-	public TextPair(Text first, String second) {
-		set(first, new Text(second));
-	}
-	
-	public TextPair(String first, Text second) {
-		set(new Text(first), second);
 	}
 	
 	public void set(String first, String second) {
@@ -84,39 +81,19 @@ public class TextPair implements WritableComparable<TextPair> {
 
 	@Override
 	public void write(DataOutput out) throws IOException {
-		//serializzazione; come scrivere byte su disco
-		//es: context.write chiama tale metodo
 		this.first.write(out);
 		this.second.write(out);
-		//l'importante e' l'ordine di scrittura simmetrico all'ordine di lettura
 	}
 	
 	@Override
 	public void readFields(DataInput in) throws IOException {
-		//deserializzazione
 		this.first.readFields(in);
 		this.second.readFields(in);
 	}
 	
 	@Override
 	public int hashCode() {
-		/*
-		 * hash(w)mod#R; per 1 word sola (mod#R fatto dal sistema)
-		 * 
-		 * hash(i, j) ?
-		 * 
-		 */
-		//return Objects.hash(this.first, this.second);	
-		
-		//Doing hash on first elem, it allows research based on first elem,
-		//allowing efficiency on normalization
-		//Fare hash sul primo elemento, mi assicuro che il partitioner mandi pair
-		//con prima parola uguale sullo stesso reducer; ma e' poco efficiente
-		//e non generico (mi serve poche volte)
-		//return this.first.hashCode();
-		
-		//i coeff della combinazione lineare devono essere numeri primi
-		return first.hashCode() * 163 + second.hashCode();
+		return this.first.hashCode() * 59 + this.second.hashCode();
 	}
 	
 	@Override

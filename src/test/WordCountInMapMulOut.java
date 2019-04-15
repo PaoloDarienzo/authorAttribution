@@ -22,7 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import authorAttribution.WordsArrayWritable;
+import support.WordsArrayWritable;
 
 //import org.apache.log4j.Logger;
 

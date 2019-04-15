@@ -1,4 +1,4 @@
-package authorAttribution;
+package support;
 
 import java.io.DataInput;
 import java.io.DataOutput;

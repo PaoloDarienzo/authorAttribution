@@ -1,4 +1,4 @@
-package authorAttribution;
+package creation;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.FloatWritable;
@@ -19,7 +19,14 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import support.AuthorTrace;
+import support.BookTrace;
 import support.MethodsCollection;
+import support.TextPair;
+import support.TextTrigram;
+import support.ThreeGramsWritable;
+import support.TwoGramsWritable;
+import support.WordsArrayWritable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +45,7 @@ import org.apache.hadoop.conf.Configured;
  * 
  */
 
-public class AuthorAttribution extends Configured implements Tool {
+public class AuthorAttributionCreation extends Configured implements Tool {
 
 	/**
 	 * @param args input path, output path, number of reducers
@@ -72,14 +79,14 @@ public class AuthorAttribution extends Configured implements Tool {
 		 * REDUCE OUTPUT(S): AUTHORTRACE (of that author)
 		 */
 		
-		int res = ToolRunner.run(new AuthorAttribution(), args);
+		int res = ToolRunner.run(new AuthorAttributionCreation(), args);
 		System.exit(res);
 		
 	} //end main class
 		
 	public int run(String[] args) throws Exception {
 					
-		Job job = Job.getInstance(getConf(), "Author Attribution");
+		Job job = Job.getInstance(getConf(), "Author Attribution Creation");
 		job.setJarByClass(this.getClass());
 		
 		//For reading directories in input path recursively
@@ -255,7 +262,7 @@ public class AuthorAttribution extends Configured implements Tool {
 			currentBookTrace.commenti+= "Book: " + filename + "\n";
 			String daAgg =	"punctNo " + punctNo + "\n" +
 							"funcNo " + funcNo + "\n" + 
-							"Number of words: " + currentBookTrace.getWordsArray().getArray().size() + "\n" +
+							"Number of different words: " + currentBookTrace.getWordsArray().getArray().size() + "\n" +
 							"Number of couples: " + currentBookTrace.getTwoGramsWritable().getTwoGrams().size() + "\n" +
 							"Number of trigrams: " + currentBookTrace.getThreeGramsWritable().getThreeGrams().size() + "\n\n";
 			currentBookTrace.commenti+= daAgg;
@@ -363,19 +370,23 @@ public class AuthorAttribution extends Configured implements Tool {
 		    authTrace.setFunctionDensity(functionDensity);
 		    
 		    
-		    authTrace.commenti +=	"\nAutore: " + key.toString() + 
-		    						"\n N° books: " + nBooks +
-		    						"\n N° parole: " + numWords +
-		    						"\n N° totale caratteri: " + totalChars +
-		    						"\n N° function words: " + totalFunc +
-		    						"\n N° punctuation words: " + totalPunct + 
-		    						"\n N° coppie: " + authTrace.getFinalTwoGrams().getTwoGrams().size() + "\n" +
-		    						"Coppie: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + 
-		    						"\n" + 
-		    						"\n N° trigrammi: " + authTrace.getFinalThreeGrams().getThreeGrams().size() + "\n" +
-		    						"Trigrammi: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString() + 
-		    						"\n" + 
-		    						"Parole: \n" + authTrace.getTreeWordsArray().toString() + "\n";
+		    //##### means the values start;
+		    //@@@@@ means the values end.
+		    String startValue = "##### ";
+		    String endValue = " @@@@@";
+		    authTrace.commenti +=	
+		    		"\n" + startValue + "Autore: " + key.toString() + endValue + 
+					"\nNum books: " + nBooks +
+					"\n" + startValue + "Num words: " + numWords + endValue + 
+					"\n" + startValue + "Num total chars: " + totalChars + endValue + 
+					"\n" + startValue +  "Num function words: " + totalFunc + endValue +
+					"\n" + startValue + "Num punctuation words: " + totalPunct + endValue +
+					"\n" + startValue + "Num couples: "+ authTrace.getFinalTwoGrams().getTwoGrams().size() + endValue +
+					"\n" + startValue + "Num trigrams: " + authTrace.getFinalThreeGrams().getThreeGrams().size()+ endValue +
+					"\n\n" + startValue + "WordCount: \n" + authTrace.getTreeWordsArray().toString() + endValue +
+					"\n" + startValue + "Couples: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() + endValue +
+					"\n" + startValue + "Trigrams: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString() + endValue;
+					
 		    	
 		    
 		    //context.write(key, TraceFinal);

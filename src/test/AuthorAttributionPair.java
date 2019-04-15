@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import authorAttribution.TextPair;
+import support.TextPair;
 
 import java.io.IOException;
 import java.util.Arrays;
