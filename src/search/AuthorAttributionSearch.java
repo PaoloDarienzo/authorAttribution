@@ -118,12 +118,13 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 					continue;
 				}
 				
+				/*
 				if(line.contains("Autore: ")) {
 					String boundary = "Autore: ";
 					String[] tokensVal = line.split(boundary);
 					author = tokensVal[1];
 				}
-				else if(line.contains("Num words: ")) {
+				else*/ if(line.contains("Num words: ")) {
 					String boundary = "Num words: ";
 					String[] tokensVal = line.split(boundary);
 					numWords = tokensVal[1];
