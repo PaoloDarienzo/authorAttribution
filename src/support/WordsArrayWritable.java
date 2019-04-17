@@ -30,7 +30,12 @@ public class WordsArrayWritable implements Writable {
 
 	@Override
 	public String toString() {
-		return wordVal.toString();
+		String wordValToString = "";
+		for(Entry<String, Integer> entry : this.wordVal.entrySet()) {
+			String key = "@" + entry.getKey();
+			wordValToString += key + "=" + entry.getValue() + "\n";
+		}
+		return wordValToString;
 	}
 	
 	public void sum(WordsArrayWritable wordVal) {

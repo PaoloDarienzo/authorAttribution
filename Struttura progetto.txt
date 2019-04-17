@@ -152,7 +152,8 @@ ho preso in considerazione:
 - Il concetto di vicinanza può essere:
 	- parole a sinistra e a destra di ogni parola (contigue);
 	- parole che in generale compaiono nella stessa frase;
-	Ho scelto come concetto di vicinanza le parole contigue alla parola in esame.
+	Ho scelto come concetto di vicinanza le parole contigue alla parola in esame, ovvero la parola in esame
+	e la sua successiva.
 - Con densità si intende il rapporto tra la data parola o simbolo e il numero totale di parole o simboli analizzati 
 	(ovvero, sia x la parola da analizzare, x/token_total.size)
 
@@ -209,6 +210,7 @@ almeno uguale al numero di autori analizzati; siccome nella creazione, gli autor
 lo sarà anche il loro numero. In caso di mancanza di reducer disponibili, si può fare
 una pre-selezione degli autori da passare per creare le impronte.
 
+Vicinanza in n-grams: https://en.wikipedia.org/wiki/N-gram
 
 ###################################################################################################
 

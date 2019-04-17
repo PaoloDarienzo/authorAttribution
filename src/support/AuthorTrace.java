@@ -4,8 +4,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 //import java.util.TreeMap;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
@@ -15,7 +13,7 @@ public class AuthorTrace implements Writable {
 	
 	private Text author;
 	//private TreeMap<String, Integer> finalWordValOrdered;
-	private HashMap<String, Integer> finalWordVal;
+	private WordsArrayWritable finalWordVal;
 	private TwoGramsWritable finalTwoGrams;
 	private ThreeGramsWritable finalThreeGrams;
 	private FloatWritable avgWordLength;
@@ -27,7 +25,7 @@ public class AuthorTrace implements Writable {
 	public AuthorTrace() {
 		this.author = new Text();
 		//this.finalWordValOrdered = new TreeMap<>();
-		this.finalWordVal = new HashMap<>();
+		this.finalWordVal = new WordsArrayWritable();
 		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.setFinalThreeGrams(new ThreeGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
@@ -53,11 +51,11 @@ public class AuthorTrace implements Writable {
 	}
 	*/
 	
-	public HashMap<String, Integer> getWordsArray(){
+	public WordsArrayWritable getWordsArray(){
 		return this.finalWordVal;
 	}
 	
-	public void setWordsArray(HashMap<String, Integer> finalWordVal) {
+	public void setWordsArray(WordsArrayWritable finalWordVal) {
 		this.finalWordVal = finalWordVal;
 	}
 	
@@ -121,19 +119,7 @@ public class AuthorTrace implements Writable {
 		}
 		*/
 		
-		this.finalWordVal.clear();
-		int size = in.readInt();
-		for(int i = 0; i < size; i++) {
-			int sizeKey = in.readInt();
-			byte[] bytes = new byte[sizeKey];
-			for(int j = 0; j < sizeKey; j++) {
-				bytes[j] = in.readByte();
-			}
-			String key = new String(bytes);
-			Integer value = new Integer(in.readInt());
-			this.finalWordVal.put(key, value);
-		}
-		
+		this.finalWordVal.readFields(in);		
 		this.finalTwoGrams.readFields(in);
 		this.finalThreeGrams.readFields(in);
 		this.avgWordLength.readFields(in);
@@ -166,15 +152,7 @@ public class AuthorTrace implements Writable {
         }
 		*/
 		
-		out.writeInt(this.finalWordVal.size());
-		
-		for(Entry<String, Integer> entry : finalWordVal.entrySet()) {
-			String key = entry.getKey();
-        	out.writeInt(key.length());
-        	out.writeBytes(key);   
-        	out.writeInt(entry.getValue());
-        }
-		
+		this.finalWordVal.write(out);
 		this.finalTwoGrams.write(out);
 		this.finalThreeGrams.write(out);
 		this.avgWordLength.write(out);

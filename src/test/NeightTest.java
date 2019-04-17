@@ -8,6 +8,8 @@ public class NeightTest {
 	public static void main(String[] args) {
 		
 		List<String> words = new ArrayList<String>();
+		String prec, prePrec, post, postPost;
+		int indexTerm;
 		
 		words.add("ciao");
 		words.add("come");
@@ -19,11 +21,37 @@ public class NeightTest {
 		words.add("uovo");
 		words.add("in");
 		words.add("camicia");
+		words.add("ultimo");
 		
-		System.out.println(words.toString());
+		System.out.println(words.indexOf("ultimo"));
 		
-		int indexTerm = -1;
-		String prec, prePrec, post, postPost;
+		System.out.println(words.size() + ", " + words.toString());
+		
+		indexTerm = -1;
+		for(String term : words) {
+			post = ""; postPost = "";
+			indexTerm++;
+			if(!(indexTerm + 2 >= words.size())) {
+				//if postPost exists, post exists
+				postPost = words.get(indexTerm + 2);
+				post = words.get(indexTerm + 1);
+			}
+			else if(!(indexTerm + 1 >= words.size())) {
+				post = words.get(indexTerm + 1);
+			}
+			if(!postPost.isEmpty()) {
+				//if postPost exists, post exists
+				System.out.println("term: " + term + ", post: " + post + ", postPost: " + postPost);
+				System.out.println("term: " + term + ", post: " + post);
+			}
+			else if(!post.isEmpty()) {
+				System.out.println("term: " + term + ", post: " + post);
+			}
+		}
+		
+		System.out.println("#######################");
+		
+		indexTerm = -1;
 		for(String term : words) {
 			prec = ""; prePrec = "";
 			post = ""; postPost = "";
