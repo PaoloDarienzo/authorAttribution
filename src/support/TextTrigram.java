@@ -111,10 +111,9 @@ public class TextTrigram implements WritableComparable<TextTrigram> {
 	
 	@Override
 	public String toString() {
-		return "(" + 	this.first.toString() + ", " + 
-						this.second.toString() + ", " +
-						this.third.toString() +
-				")";
+		return this.first.toString() + "|" + 
+						this.second.toString() + "|" +
+						this.third.toString();
 	}
 	
 	/*

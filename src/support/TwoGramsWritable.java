@@ -30,10 +30,12 @@ public class TwoGramsWritable implements Writable {
 
 	@Override
 	public String toString() {
-		//default:
-		//TextPair.toString()=Integer.toString();
-		//TextPair string:= (first, second)
-		return twoGrams.toString();
+		String wordValToString = "";
+		for(Entry<TextPair, Integer> entry : this.twoGrams.entrySet()) {
+			String key = "%" + entry.getKey();
+			wordValToString += key + "=" + entry.getValue() + "\n";
+		}
+		return wordValToString;
 	}
 	
 	public void sum(TwoGramsWritable otherTwoGram) {

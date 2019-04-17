@@ -210,6 +210,15 @@ almeno uguale al numero di autori analizzati; siccome nella creazione, gli autor
 lo sarà anche il loro numero. In caso di mancanza di reducer disponibili, si può fare
 una pre-selezione degli autori da passare per creare le impronte.
 
+Per poter leggere le strutture utilizzate, le stampo con caratteri speciali per distinguere
+ogni valore di ogni struttura:
+wordcount:
+@parola=valore
+couples:
+%parola1|parola2=valore
+trigrams:
+#parola1|parola2|parola3=valore
+
 Vicinanza in n-grams: https://en.wikipedia.org/wiki/N-gram
 
 ###################################################################################################

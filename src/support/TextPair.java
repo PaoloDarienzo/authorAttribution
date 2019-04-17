@@ -109,7 +109,7 @@ public class TextPair implements WritableComparable<TextPair> {
 	
 	@Override
 	public String toString() {
-		return "(" + this.first.toString() + ", " + this.second.toString() + ")";
+		return this.first.toString() + "|" + this.second.toString();
 	}
 	
 	/*

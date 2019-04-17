@@ -30,10 +30,12 @@ public class ThreeGramsWritable implements Writable {
 
 	@Override
 	public String toString() {
-		//default:
-		//TextTrigram.toString()=Integer.toString();
-		//TextTrigram string:= (first, second, third)
-		return threeGrams.toString();
+		String wordValToString = "";
+		for(Entry<TextTrigram, Integer> entry : this.threeGrams.entrySet()) {
+			String key = "#" + entry.getKey();
+			wordValToString += key + "=" + entry.getValue() + "\n";
+		}
+		return wordValToString;
 	}
 
 	public void sum(ThreeGramsWritable otherTrigram) {

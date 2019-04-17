@@ -368,8 +368,8 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 					//Tree was used for WordCount ordered
 					//"\n" + "WordCount: \n" + authTrace.getTreeWordsArray().toString() +
 					"\n\n"+ "WordCount: \n" + authTrace.getWordsArray().toString() +
-					"\n" + "Couples: \n" + authTrace.getFinalTwoGrams().getTwoGrams().toString() +
-					"\n" + "Trigrams: \n" + authTrace.getFinalThreeGrams().getThreeGrams().toString();		    	
+					"\n" + "Couples: \n" + authTrace.getFinalTwoGrams().toString() +
+					"\n" + "Trigrams: \n" + authTrace.getFinalThreeGrams().toString();		    	
 		    
 		    //context.write(key, TraceFinal);
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());

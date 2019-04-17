@@ -95,12 +95,16 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		
 		private String author, numWords, totChars, funcWords, punctWords, noCouples, noTrigrams;
 		private HashMap<String, Integer> wordCount;
+		private HashMap<TextPair, Integer> twoGrams;
+		private HashMap<TextTrigram, Integer> threeGrams;
 		
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 			author = numWords = totChars = funcWords = punctWords = noCouples = noTrigrams = "";
 			wordCount = new HashMap<>();
-}
+			twoGrams = new HashMap<>();
+			threeGrams = new HashMap<>();
+		}
 		
 		@Override
 		public void map(LongWritable offset, Text lineText, Context context) 
@@ -149,12 +153,22 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 					String[] tokensVal = line.split(boundary);
 					noTrigrams = tokensVal[1];
 				}
-				else if(line.contains("@")) {
+				else if(line.contains("@")) { //wordCount
 					line = line.replace("@", "");
 					String[] tokensVal = line.split("=");
-					String key = tokensVal[0];
-					Integer value = new Integer(tokensVal[1]);
-					wordCount.put(key, value);
+					wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+				}
+				else if(line.contains("%")) { //couple
+					line = line.replace("%", "");
+					String[] tokensVal = line.split("=");
+					String[] words = tokensVal[0].split("\\|");
+					twoGrams.put(new TextPair(words[0], words[1]), new Integer(tokensVal[1]));
+				}
+				else if(line.contains("#")) { //trigrams
+					line = line.replace("#", "");
+					String[] tokensVal = line.split("=");
+					String[] words = tokensVal[0].split("\\|");
+					threeGrams.put(new TextTrigram(words[0], words[1], words[2]), new Integer(tokensVal[1]));
 				}
 			}
 			
@@ -170,7 +184,9 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 					"\nPunctWords: " + punctWords +
 					"\nCouples: " + noCouples +
 					"\nTrigrams: " + noTrigrams + "\n" + 
-					"\nWordCount: \n" + wordCount.toString() + "\n";
+					"\nWordCount: \n" + wordCount.toString() + "\n" +
+					"\nCouples: \n" + twoGrams.toString() + "\n" +
+					"\nTrigrams: \n"+ threeGrams.toString();;
 			
 			context.write(NullWritable.get(), new Text(toEmit));
 			
@@ -178,9 +194,6 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 
 	} //end Mapper class
 
-	/*
-	 * Each reducer gets all jobs relatively to an author, thanks to the partitioner
-	 */
 	public static class Reduce extends Reducer<Text, BookTrace, NullWritable, AuthorTrace> {
 		
 		/*
