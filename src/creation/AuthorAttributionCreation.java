@@ -88,7 +88,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		
 	public int run(String[] args) throws Exception {
 					
-		Job job = Job.getInstance(getConf(), "Author Attribution Creation");
+		Job job = Job.getInstance(getConf(), "Profiles creation");
 		job.setJarByClass(this.getClass());
 		
 		//For reading directories in input path recursively

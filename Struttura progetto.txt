@@ -1,43 +1,5 @@
 ###################################################################################################
 
-DA FARE/CONTROLLARE
-
-1.
-A causa dei diversi modi di scrivere il nome dell'autore, uno stesso autore può essere 
-indicato in diverso modo, con iniziali puntate, con solo nome puntato, con pseudonimi,
-con traduzioni diverse etc. I file di testo avranno nel nome diversi autori indicati,
-pertanto verrebbero trattati come autori diversi dal programma MapReduce.
-Ho identificato alcuni di questi casi che potrebbero essere utili nel caso studio:
-E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils),
- Charlotte Bronte, Thomas De Quincey, Gordon Stables, Charles Egbert Craddock.
- 2.
- Nel calcolo del numero medio di parole utilizzate in una frase, bisognerebbe poter contare
- correttamente le frasi. Siccome la terminazione di una frase è data da caratteri quali punto interrogativo,
- punto escalamtivo, punto fermo, si potrebbero utilizzare tali caratteri come caratteri separatori;
- purtroppo non ho trovato un metodo efficiente per poter separare le frasi grazie al punto.
- Per esempio, se una frase termina col punto, spazio e parola successiva inizia con una maiuscola,
- possono esserci falsi positivi, come "Dott. Zivago"; allo stesso modo, ignorando la maiuscola, 
- possono dare falsi positivi tutte le abbreviazioni "etc.; dott.; sig.;...". Considerando solo il punto,
- potrebbero essere falsi positivi i numeri decimali separati da punto, "3.14$".
- Pertanto escludo questo parametro. 
- 3.
- Il calcolo degli n-grams prevede un concetto di vicinanza. Per il punto 2, dobbiamo escludere il concetto
- di vicinanza come parole continue nella frase, in quanto una frase non è ben delimitata.
- Pertanto utilizzo come concetto di vicinanza le parole contigue nella line in analisi.
-
-###################################################################################################
-
-PROGETTO
-
-Riconoscimento autore tramite MapReduce;
-libri presi da project Gutenberg.
-
-Considerazioni:
-Verranno tratte le dovute conclusioni relative alle tecniche migliori per il riconoscimento,
-per la ricerca stessa ed estrazione delle impronte, della scalabilità del programma.
-
-###################################################################################################
-
 CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
 
 	INPUT:
@@ -49,6 +11,8 @@ CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
 	MAP:
 		Per ogni file, raccoglie le informazioni volute.
 		Estrapola il nome dell'autore dal nome del file stesso.
+		Fondamentalmente, 3 calcoli: wordCount, 2-grams, 3-grams.
+		Utilizza un in-memory combiner.
 		
 	PARTITIONER:
 		Per ogni file, viene estratto il campo del nome dell'autore.
@@ -63,7 +27,8 @@ CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
 					pertanto i risultati saranno falsati.
 
 	REDUCE:
-		Per ogni file, calcola i vari valori da calcolare.
+		Riceve i calcoli di ogni libro dello stesso autore.
+		Somma i valori e calcola i valori percentuale.
 		Genererà così una serie di valori che saranno l'impronta dell'autore.
 		
 	OUTPUT:
@@ -80,20 +45,13 @@ DEDUZIONE AUTORE
 	Rimozione delle prime ~50 righe in cui, per conformazione del progetto Gutenberg,
 	è possibile la presenza del nome dell'autore, al fine di non falsare la ricerca dell'autore.
 	
-	MAP:
-		Creazione dell'impronta del singolo file;
-		Estrazione dei valori desiderati.
-	
-	REDUCER:
-		Per ogni file, calcolo valori finali.
-		
-	OUTPUT
-		Un file per ogni impronta generata sconosciuta.
+	Chiamata al Job di creazione impronta.
 	
 	MAP:
-		Confronto dell'impronta generata con le impronte di autori noti.
+		Caricamento impronta in HDFS condiviso.
 		Calcolo percentuale di somiglianza.
-		Ogni map confronta un'impronta nota con l'impronta sconosciuta.
+		Ogni map confronta un'impronta nota con l'impronta sconosciuta	
+	
 	REDUCE (1):
 		Riceve tutti i risultati dei confronti ed emette una lista ordinata
 		di somiglianza.
@@ -121,15 +79,19 @@ e rimosso la cartella ora vuota.
 inoltre ho creato una cartella per autore e spostato i file relativi a quell'autore nella sua cartella.
 Lo script fallisce nei casi in cui o nel nome dell'autore o nel titolo vengono utilizzati caratteri non codificati da UTF-8, o nel
 caso in cui nel nome o nel titolo viene utilizzato il carattere / (nello spostare i file in modo automatico, legge quel carattere
-come se ci fosse una subdirectory, fallendo la mv del file).
-I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUHTOR_NOT_FOUND".
+come se ci fosse una subdirectory, fallendo la mv del file), o nel caso nel titolo sia presente il carattere ":"; HDFS non permette
+di trasferire file con tale carattere nel nome.
+I file che non hanno la stringa Author: X o Title: X sono stati spostati in una cartella a parte chiamata "00000_AUTHOR_NOT_FOUND".
 I rimanenti file di testo sono stati spostati nella cartella "00001_NAMING_ERROR".
 Ho manualmente eseguito il merge delle cartelle degli autori E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, 
 Alexandre Dumas (pere e fils), Charlotte Bronte, Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
 Ho eseguito il conteggio dei file per ogni autore e salvato l'output nel file count.txt.
 I file di input nel progetto MapReduce non possono essere cartelle, quindi i file txt degli autori selezionati per lo studio
- sono stati estratti di nuovo dalle cartelle.
-Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento.
+ sono stati estratti di nuovo dalle cartelle; i file di input potrebbero essere letti dalle cartelle se al HFDS venisse indicato
+ di leggere in modo ricorsivo nel path input, ma non è un'operazione necessaria.
+Nello sviluppo del progetto, ho quindi ignorato i file con una name convention non conforme al mio script di ordinamento;
+nella creazione delle impronte, ho ignorato gli autori con un solo libro come opera;
+nella ricerca dell'autore, ho utilizzato un sottoinsieme degli autori così rimasti.
 
 ###################################################################################################
 
@@ -179,37 +141,52 @@ hadoop version
 Hadoop 2.6.0-cdh5.7.0
 Minimum requirements: JDK 7
 
-Molti studi di author profiling generano la funzione di identificazione tramite tecniche di intelligenza artificiale.
-Non essendo questa implementata nel progetto, il peso delle varie caratteristiche nel determinare l'autore di un testo
-sono state scelte manualmente e impostate con alcuni lanci di prova con parametri diversi.
-
-Escluso:
-SVM, sentiment analysis, AI, naive bayes.
-
-Utilizzo librerie prese dal container installato sul mio computer. Essendo la versione di Cloudera
-non aggiornata all'ultima versione di hadoop, nonostante quest'ultima sia compatibile con JDK8, la versione
-precedente è compatibile con JDK7, pertanto verrà utilizzata questa versione di Java.
-
-Ho utilizzato uno script per scaricare tutti i libri necessari per lo studio. Sono stati utilizzati
+1.
+A causa dei diversi modi di scrivere il nome dell'autore, uno stesso autore può essere 
+indicato in diverso modo, con iniziali puntate, con solo nome puntato, con pseudonimi,
+con traduzioni diverse etc. I file di testo avranno nel nome diversi autori indicati,
+pertanto verrebbero trattati come autori diversi dal programma MapReduce.
+Ho identificato alcuni di questi casi che potrebbero essere utili nel caso studio:
+E. A. Poe, A. C. Doyle, Dostoevskij, Arthur Quiller-Couch, Tolstoj, Alexandre Dumas (pere e fils),
+ Charlotte Bronte, Thomas De Quincey, Gordon Stables, Charles Egbert Craddock.
+ 1.1
+ Ho utilizzato uno script per scaricare tutti i libri necessari per lo studio. Sono stati utilizzati
 i formati txt e la lingua inglese. Data la non interpretazione della semantica, implementare il programma per la lingua
 inglese non influenza l'implementazione su dataset di altre lingue. Le uniche note da tenere in considerazione
 sono la lingua unica dei libri per autore (non posso avere un'impronta dell'autore X costituita da metà libri in inglese
 e metà libri in italiano; sarebbe come avere metà libri a disposizione) e la compatibilità con alfabeti differenti dal latino.
-
-
-L'output del reduce, ovvero l'authorTrace, contiene un wordCount, ovvero il numero delle parole usate.
-Ho voluto restituire tale insieme di parole in modo ordinato, pertanto passo da hashMap a TreeMap,
-che è naturalmente ordinato, dopo aver usato l'HashMap per le ricerche e le somme delle parole, in 
-quanto più veloce.
-
+ 2.
+ Nel calcolo del numero medio di parole utilizzate in una frase, bisognerebbe poter contare
+ correttamente le frasi. Siccome la terminazione di una frase è data da caratteri quali punto interrogativo,
+ punto escalamtivo, punto fermo, si potrebbero utilizzare tali caratteri come caratteri separatori;
+ purtroppo non ho trovato un metodo efficiente per poter separare le frasi grazie al punto.
+ Per esempio, se una frase termina col punto, spazio e parola successiva inizia con una maiuscola,
+ possono esserci falsi positivi, come "Dott. Zivago"; allo stesso modo, ignorando la maiuscola, 
+ possono dare falsi positivi tutte le abbreviazioni "etc.; dott.; sig.;...". Considerando solo il punto,
+ potrebbero essere falsi positivi i numeri decimali separati da punto, "3.14$".
+ Pertanto escludo questo parametro. 
+ 3.
+ Il calcolo degli n-grams prevede un concetto di vicinanza. Per il punto 2, dobbiamo escludere il concetto
+ di vicinanza come parole continue nella frase, in quanto una frase non è ben delimitata.
+ Pertanto utilizzo come concetto di vicinanza le parole contigue nella line in analisi.
+ Vicinanza in n-grams: https://en.wikipedia.org/wiki/N-gram.
+4.
+Molti studi di author profiling generano la funzione di identificazione tramite tecniche di intelligenza artificiale.
+Non essendo questa implementata nel progetto, il peso delle varie caratteristiche nel determinare l'autore di un testo
+sono state scelte manualmente e impostate con alcuni lanci di prova con parametri diversi.
+5.
+Utilizzo librerie prese dal container installato sul mio computer. Essendo la versione di Cloudera
+non aggiornata all'ultima versione di hadoop, nonostante quest'ultima sia compatibile con JDK8, la versione
+precedente è compatibile con JDK7, pertanto verrà utilizzata questa versione di Java.
+6.
 Per la lineDensity, un float è più che sufficiente rispetto al tipo double; tale scelta è inoltre
 maggiormente motivata poichè DoubleWritable non funziona correttamente.
-
-Il numero di reducer (nella creazione impronta) indicato deve essere necessariamente 
-almeno uguale al numero di autori analizzati; siccome nella creazione, gli autori sono noti,
+7.
+Il numero di reducer indicato (nella creazione impronta) deve essere necessariamente 
+almeno uguale al numero di autori analizzati; siccome nella creazione delle impronte gli autori sono noti,
 lo sarà anche il loro numero. In caso di mancanza di reducer disponibili, si può fare
 una pre-selezione degli autori da passare per creare le impronte.
-
+8.
 Per poter leggere le strutture utilizzate, le stampo con caratteri speciali per distinguere
 ogni valore di ogni struttura:
 wordcount:
@@ -219,7 +196,12 @@ couples:
 trigrams:
 #parola1|parola2|parola3=valore
 
-Vicinanza in n-grams: https://en.wikipedia.org/wiki/N-gram
+Escluso:
+SVM, sentiment analysis, naive bayes, AI.
+
+Considerazioni:
+Verranno tratte le dovute conclusioni relative alle tecniche migliori per il riconoscimento,
+per la ricerca stessa ed estrazione delle impronte, della scalabilità del programma.
 
 ###################################################################################################
 

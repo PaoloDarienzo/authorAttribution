@@ -1,0 +1,40 @@
+Data Forensics: Author Attribution & Author Profiling
+Faima Abbasi
+Stylometric features;
+lexical:
+token-based, vocabulary richness, word frequencies and word n-grams,
+character:
+character-types, character n-grams whether fixed or variable length, compression methods, 
+syntactic:
+Parts of speech, chunks, sentence and phrase structures, rewrite rule frequencies,
+semantic: 
+synonyms and semantic dependencies,
+application specific:
+structural, content-specific and language specific
+
+Joachim et al., SVM, word frequencies, 60-80%; -> The statistical analysis of style, stylometry.
+-> sentence length, word lengths, counts of words beginning with a vowel or counts of words with specific lengths.
+-> "ricchezza" di diversità del vocabolario di un autore: num parole a(f) che compaiono f volte è calcolato come
+alpha(f) = f^gamma, dove gamma=(circa)2.
+Moesteller and Wallace, contato uso di parole come "while" e "upon"; uso di un insieme di 50+ parole ad alta frequenza.
+
+Pavan et al., preposition frequencies.
+
+Martinc et al., n-gram features in their final model such as word unigrams, word bigrams, 
+punctuation trigrams, suffix character tetra grams and word bound character tetra-grams.
+
+Authorship Attribution
+David I. Holmes
+Rapporto parole V / lunghezza testo N.
+Studio sul vocabolario periferale o marginale.
+word-length;
+n-grams
+
+
+IDEA:
+Parole rare; più le parole sono rare, più queste, quando usate, indicano un autore.
+Grandezza del vocabolario.
+Lemmalization.
+Naive Bayes classifiers.
+
+Word count -> set<key, value1>; lemmatization(set)-> <key_lemmatized, value2>, value2 >= value1.

@@ -39,7 +39,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		//Path toMatchPath;
 		Path resultPath = new Path(out, "result");
 		
-		Job creation = Job.getInstance(getConf(), "Creation footprint of unknown file");
+		Job creation = Job.getInstance(getConf(), "Creation profile of unknown file");
 		creation.setJarByClass(this.getClass());
 		
 		FileInputFormat.addInputPath(creation, new Path(args[0]));
