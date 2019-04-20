@@ -7,20 +7,6 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-/*
- * Code from Tom White's "Hadoop the definitive guide"
- *
- * */
-
-//cc TextPair A Writable implementation that stores a pair of Text objects
-//cc TextPairComparator A RawComparator for comparing TextPair byte representations
-//cc TextPairFirstComparator A custom RawComparator for comparing the first field of TextPair byte representations
-//vv TextPair
-
-/*
- * Tom White's "Hadoop the definitive guide"
- * */
-
 public class TextPair implements WritableComparable<TextPair> {
 
 	private Text first;

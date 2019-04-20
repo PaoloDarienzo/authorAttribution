@@ -8,6 +8,21 @@ import java.util.Map.Entry;
 
 public class MethodsCollection {
 
+	public static boolean punctuationChecker(String word) {
+		
+		String[] set_punct_values = new String[] {	".", ",", ":", ";",
+													"?", "!", "(", ")",
+													"-", "\""};
+		Set<String> punctuation = new HashSet<>(Arrays.asList(set_punct_values));
+		
+		if(punctuation.contains(word)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public static boolean functionWordChecker(String word) {
 		
 		String[] set_function_words = new String[] 
@@ -39,21 +54,6 @@ public class MethodsCollection {
 			return false;
 		}
 		
-	}
-
-	public static boolean puntuactionChecker(String word) {
-		
-		String[] set_punt_values = new String[] {	".", ",", ":", ";",
-													"?", "!", "(", ")",
-													"-", "\""};
-		Set<String> puntuaction = new HashSet<>(Arrays.asList(set_punt_values));
-		
-		if(puntuaction.contains(word)) {
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 	
 	public static long getTotalChars(HashMap<String, Integer> wordVal) {

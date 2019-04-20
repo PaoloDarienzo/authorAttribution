@@ -41,12 +41,6 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
-//TODO
-/*
- * line length -> number of sentences (". ", "?", "!")
- * 
- */
-
 public class AuthorAttributionCreation extends Configured implements Tool {
 
 	/**
@@ -58,19 +52,18 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		 * 
 		 * MAP
 		 * (K, V)
-		 * CHIAVE: AUTORE
-		 * VALORE: INSIEME DI VALORI
-		 * -> array di words (wordCount)
-		 * -> numero linee
-		 * -> vicinanza
-		 * REDUCE (K, riceve per chiave/autore)
+		 * KEY: AUTHOR
+		 * VALUE: VALUES SET
+		 * -> array of words (wordCount)
+		 * -> n-grams
+		 * REDUCE (K, receive per key/author)
 		 * (K, V)
-		 * deve fare somma V
-		 * -> somma di words (wordCount)
-		 * -> stat su numero linee, densità varie, lunghezze varie...
-		 * -> vicinanza
+		 * needs to compute sum V
+		 * -> sum of words (wordCount)
+		 * -> stats on density values...
+		 * -> n-grams
 		 * 
-		 * Chiave del reduce non utile da scrivere
+		 * Key of reducer not needed to be written
 		 */
 		
 		/*
@@ -135,10 +128,10 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		private final static String AUTHOR_DELIMITER = ",___,";
 		//. , : ; ? ! ( ) - "
-		public static final String[] SET_PUNT_VALUES = new String[] {	".", ",", ":", ";",
+		public static final String[] SET_PUNCT_VALUES = new String[] {	".", ",", ":", ";",
 																		"?", "!", "(", ")",
 																		"-", "\""};
-		public static final Set<String> PUNTUACTION = new HashSet<>(Arrays.asList(SET_PUNT_VALUES));
+		public static final Set<String> PUNCTUATION = new HashSet<>(Arrays.asList(SET_PUNCT_VALUES));
 		
 		private Text author = new Text();
 		
@@ -171,14 +164,14 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				//and is not a conjuction symbol
 				if (word.isEmpty() 
 						|| (
-							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNTUACTION.contains(word))
+							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNCTUATION.contains(word))
 							) 
 					) {
 					continue; //skipping to next legitimate word
 				}
 				else {
 					isWord = true;
-					if(MethodsCollection.puntuactionChecker(word)) {
+					if(MethodsCollection.punctuationChecker(word)) {
 						punctNo++;
 						isWord = false;
 					}
@@ -246,15 +239,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
 			author.set(tokensVal[0]);
 			
-			//Updating comments
-			//currentBookTrace.commenti+= "Book: " + filename + "\n";
-			/*String daAgg =	"punctNo " + punctNo + "\n" +
-							"funcNo " + funcNo + "\n" + 
-							"Number of different words: " + currentBookTrace.getWordsArray().getArray().size() + "\n" +
-							"Number of couples: " + currentBookTrace.getTwoGramsWritable().getTwoGrams().size() + "\n" +
-							"Number of trigrams: " + currentBookTrace.getThreeGramsWritable().getThreeGrams().size() + "\n\n";
-			currentBookTrace.commenti+= daAgg;
-			*/
 			context.write(author, currentBookTrace);
 		}
 
@@ -276,7 +260,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		private WordsArrayWritable HFinal; //for counting words
 		private TwoGramsWritable finalTwoGrams; //for twoGrams
 		private ThreeGramsWritable finalThreeGrams; //for threeGrams
-		private FloatWritable avgWordLength, puntuactionDensity, functionDensity;
+		private FloatWritable avgWordLength, punctuationDensity, functionDensity;
 				
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
@@ -295,7 +279,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			finalTwoGrams = new TwoGramsWritable();
 			finalThreeGrams = new ThreeGramsWritable();
 			avgWordLength = new FloatWritable(0);
-			puntuactionDensity = new FloatWritable(0);
+			punctuationDensity = new FloatWritable(0);
 			functionDensity = new FloatWritable(0);
 			
 		}
@@ -350,26 +334,11 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    avgWordLength = new FloatWritable(avgWordLenFloat);
 		    authTrace.setAvgWordLength(avgWordLength);
 		    
-		    puntuactionDensity = new FloatWritable((float) totalPunct / (float) numWords);
-		    authTrace.setPunctuationDensity(puntuactionDensity);
+		    punctuationDensity = new FloatWritable((float) totalPunct / (float) numWords);
+		    authTrace.setPunctuationDensity(punctuationDensity);
 		    
 		    functionDensity = new FloatWritable((float) totalFunc / (float) numWords);
 		    authTrace.setFunctionDensity(functionDensity);
-		    
-		    authTrace.commenti +=	
-		    		"Autore: " + key.toString() + "\n" + 
-					//"\nNum books: " + nBooks +
-					"\n" + "Num words: " + numWords +
-					"\n" + "Num total chars: " + totalChars +
-					"\n" + "Num function words: " + totalFunc +
-					"\n" + "Num punctuation words: " + totalPunct +
-					"\n" + "Num couples: "+ authTrace.getFinalTwoGrams().getTwoGrams().size() +
-					"\n" + "Num trigrams: " + authTrace.getFinalThreeGrams().getThreeGrams().size() +
-					//Tree was used for WordCount ordered
-					//"\n" + "WordCount: \n" + authTrace.getTreeWordsArray().toString() +
-					"\n\n"+ "WordCount: \n" + authTrace.getWordsArray().toString() +
-					"\n" + "Couples: \n" + authTrace.getFinalTwoGrams().toString() +
-					"\n" + "Trigrams: \n" + authTrace.getFinalThreeGrams().toString();		    	
 		    
 		    //context.write(key, TraceFinal);
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());
@@ -398,4 +367,4 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		
 	} //end Reducer class	
 	
-} //end AuthorAttribution class
+} //end AuthorAttributionCreation class

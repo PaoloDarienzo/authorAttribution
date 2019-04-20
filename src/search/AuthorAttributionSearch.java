@@ -1,18 +1,21 @@
 package search;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.regex.Pattern;
-
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+
+import org.apache.hadoop.io.FloatWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -20,10 +23,18 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import creation.AuthorAttributionCreation.authorPartitioner;
 import support.*;
 
-public class AuthorAttributionSearch extends Configured implements Tool{
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
+import org.apache.hadoop.conf.Configured;
+
+public class AuthorAttributionSearch extends Configured implements Tool{
+	
 	public static void main(String[] args) throws Exception {
 		
 		int res = ToolRunner.run(new AuthorAttributionSearch(), args);
@@ -33,16 +44,26 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	
 	public int run(String[] args) throws Exception {
 		
-		Path out = new Path(args[1]);
-		Path creationPath = new Path(out, "creation");
-		//TODO
-		//Path toMatchPath;
-		Path resultPath = new Path(out, "result");
+		//arg0: path to input file to analyze
+		//arg1: path to output directory
+		//arg2: number of reducers (same as number of authors)
+		//arg3: path to author-known files to compare with
 		
-		Job creation = Job.getInstance(getConf(), "Creation profile of unknown file");
+		Path inPath = new Path(args[0]);
+		Path outPath = new Path(args[1]);
+		Path creationPath = new Path(outPath, "creation");
+		Path resultPath = new Path(outPath, "result");
+		//TODO
+		Path toMatchPath = new Path("/user/paolo/authorAttr/output/creation/veryshort");
+		//Path toMatchPath = new Path(args[3]);
+		
+		//JOB 1: Creation profile of unknown file
+		///////////////////////////////////////////////////////////////////////////////////////////
+
+		Job creation = Job.getInstance(getConf(), "1. Creation profile of unknown file");
 		creation.setJarByClass(this.getClass());
 		
-		FileInputFormat.addInputPath(creation, new Path(args[0]));
+		FileInputFormat.addInputPath(creation, inPath);
 		FileOutputFormat.setOutputPath(creation, creationPath);
 		LazyOutputFormat.setOutputFormatClass(creation, TextOutputFormat.class);
 		
@@ -63,47 +84,59 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		  System.exit(1);
 		}
 		
+		//JOB 2: Merging profiles and generating similarity percentage
 		///////////////////////////////////////////////////////////////////////////////////////////
 		
-		Job search = Job.getInstance(getConf(), "Search for best match");
+		Job search = Job.getInstance(getConf(), "2. Merging and searching");
 		search.setJarByClass(this.getClass());
 		
-		search.setMapperClass(Map.class);
-		//TODO
-		//search.setReducerClass(Reduce.class);
+		MultipleInputs.addInputPath(search, creationPath, TextInputFormat.class);
+		MultipleInputs.addInputPath(search, toMatchPath, TextInputFormat.class);
 		
+		FileOutputFormat.setOutputPath(search, resultPath);
+		search.setNumReduceTasks(Integer.parseInt(args[2]));
+		
+		search.setMapperClass(Map.class);
+		search.setReducerClass(Reduce.class);
+		
+		search.setMapOutputKeyClass(AuthorTrace.class);
+		search.setMapOutputValueClass(IntWritable.class);
+		//TODO
 		search.setOutputKeyClass(NullWritable.class);
 		search.setOutputValueClass(Text.class);
 		
-		//TODO
-		search.setNumReduceTasks(0);
+		//search.setPartitionerClass(authorFieldPartitioner.class);
 		
-		FileInputFormat.addInputPath(search, creationPath);
-		FileOutputFormat.setOutputPath(search, resultPath);
-		
-		if (!search.waitForCompletion(true)) {
-		  System.exit(1);
-		}
-		
-		return 0;
+		return search.waitForCompletion(true) ? 0 : 1;
 				
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, NullWritable, Text> {
+	public static class Map extends Mapper<LongWritable, Text, AuthorTrace, IntWritable> {
 		
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		
-		private String author, numWords, totChars, funcWords, punctWords, noCouples, noTrigrams;
-		private HashMap<String, Integer> wordCount;
-		private HashMap<TextPair, Integer> twoGrams;
-		private HashMap<TextTrigram, Integer> threeGrams;
+		private static AuthorTrace authorTrace;
+		
+		//AuthorTrace fields
+		private static String author;
+		private static float avgWordLength;
+		private static float punctuationDensity;
+		private static float functionDensity;
+		private static HashMap<String, Integer> wordCount;
+		private static HashMap<TextPair, Integer> twoGrams;
+		private static HashMap<TextTrigram, Integer> threeGrams;
 		
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
-			author = numWords = totChars = funcWords = punctWords = noCouples = noTrigrams = "";
+		
+			authorTrace = new AuthorTrace();
+			
+			author = "";
+			avgWordLength =	punctuationDensity = functionDensity = 0;
 			wordCount = new HashMap<>();
 			twoGrams = new HashMap<>();
 			threeGrams = new HashMap<>();
+			
 		}
 		
 		@Override
@@ -118,41 +151,28 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 					continue;
 				}
 				
-				/*
-				if(line.contains("Autore: ")) {
-					String boundary = "Autore: ";
+				if(line.contains("Author: ")) {
+					String boundary = "Author: ";
 					String[] tokensVal = line.split(boundary);
 					author = tokensVal[1];
-				}
-				else*/ if(line.contains("Num words: ")) {
-					String boundary = "Num words: ";
+				}//overwritten in cleanup if file is unknown
+				else if(line.contains("Avg word length: ")) {
+					String boundary = "Avg word length: ";
 					String[] tokensVal = line.split(boundary);
-					numWords = tokensVal[1];
+					String avgWordLengthStr = tokensVal[1];
+					avgWordLength = Float.parseFloat(avgWordLengthStr);
 				}
-				else if(line.contains("Num total chars: ")) {
-					String boundary = "Num total chars: ";
+				else if(line.contains("Punctuation words density: ")) {
+					String boundary = "Punctuation words density: ";
 					String[] tokensVal = line.split(boundary);
-					totChars = tokensVal[1];
+					String punctDensityStr = tokensVal[1];
+					punctuationDensity = Float.parseFloat(punctDensityStr);
 				}
-				else if(line.contains("Num function words: ")) {
-					String boundary = "Num function words: ";
+				else if(line.contains("Function words density: ")) {
+					String boundary = "Function words density: ";
 					String[] tokensVal = line.split(boundary);
-					funcWords = tokensVal[1];
-				}
-				else if(line.contains("Num punctuation words: ")) {
-					String boundary = "Num punctuation words: ";
-					String[] tokensVal = line.split(boundary);
-					punctWords = tokensVal[1];
-				}
-				else if(line.contains("Num couples: ")) {
-					String boundary = "Num couples: ";
-					String[] tokensVal = line.split(boundary);
-					noCouples = tokensVal[1];
-				}
-				else if(line.contains("Num trigrams: ")) {
-					String boundary = "Num trigrams: ";
-					String[] tokensVal = line.split(boundary);
-					noTrigrams = tokensVal[1];
+					String funcDensityStr = tokensVal[1];
+					functionDensity = Float.parseFloat(funcDensityStr);
 				}
 				else if(line.contains("@")) { //wordCount
 					line = line.replace("@", "");
@@ -178,46 +198,133 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			
-			String toEmit = "Author: " + author +
-					"\nNumWords: " + numWords + 
-					"\nTotChars: " + totChars +
-					"\nFuncWords: " + funcWords +
-					"\nPunctWords: " + punctWords +
-					"\nCouples: " + noCouples +
-					"\nTrigrams: " + noTrigrams + "\n" + 
-					"\nWordCount: \n" + wordCount.toString() + "\n" +
-					"\nCouples: \n" + twoGrams.toString() + "\n" +
-					"\nTrigrams: \n"+ threeGrams.toString();;
+		    InputSplit split = context.getInputSplit();
+		    Class<? extends InputSplit> splitClass = split.getClass();
+
+		    FileSplit fileSplit = null;
+		    if (splitClass.equals(FileSplit.class)) {
+		        fileSplit = (FileSplit) split;
+		    } else if (splitClass.getName().equals(
+		            "org.apache.hadoop.mapreduce.lib.input.TaggedInputSplit")) {
+		        // begin reflection hackery...
+
+		        try {
+		            Method getInputSplitMethod = splitClass
+		                    .getDeclaredMethod("getInputSplit");
+		            getInputSplitMethod.setAccessible(true);
+		            fileSplit = (FileSplit) getInputSplitMethod.invoke(split);
+		        } catch (Exception e) {
+		            // wrap and re-throw error
+		            throw new IOException(e);
+		        }
+
+		        // end reflection hackery
+		    }
 			
-			context.write(NullWritable.get(), new Text(toEmit));
+			String filename = fileSplit.getPath().getName();
 			
+			boolean isKnown;
+			
+			if(filename.contains(",___,")) {
+				isKnown = false;
+			}
+			else {
+				isKnown = true;
+			}
+			
+			if(isKnown) { //file1, known
+
+				authorTrace.setAuthor(new Text(author));
+				
+				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
+				wordCountWritable.setArray(wordCount);
+				authorTrace.setWordsArray(wordCountWritable);
+				
+				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
+				twoGramsWritable.setTwoGrams(twoGrams);
+				authorTrace.setFinalTwoGrams(twoGramsWritable);
+				
+				ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
+				threeGramsWritable.setThreeGrams(threeGrams);
+				authorTrace.setFinalThreeGrams(threeGramsWritable);
+				
+				authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
+				authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
+				authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
+								
+				context.write(authorTrace, new IntWritable(1));
+				
+			}
+			else { //file0, unknown
+				
+				authorTrace.setAuthor(new Text("UNKNOWN"));
+				
+				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
+				wordCountWritable.setArray(wordCount);
+				authorTrace.setWordsArray(wordCountWritable);
+				
+				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
+				twoGramsWritable.setTwoGrams(twoGrams);
+				authorTrace.setFinalTwoGrams(twoGramsWritable);
+				
+				ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
+				threeGramsWritable.setThreeGrams(threeGrams);
+				authorTrace.setFinalThreeGrams(threeGramsWritable);
+				
+				authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
+				authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
+				authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
+								
+				context.write(authorTrace, new IntWritable(0));
+				
+			}			
 		}
 
-	} //end Mapper class
-
-	public static class Reduce extends Reducer<Text, BookTrace, NullWritable, AuthorTrace> {
+	} //end Map class
+	
+	/*
+	public static class authorFieldPartitioner extends Partitioner<AuthorTrace, IntWritable> {
 		
-		/*
 		@Override
-		public void setup(Context context) throws IOException, InterruptedException {
+		public int getPartition(AuthorTrace key, IntWritable value, int numPartitions) {
+			
+			return (key.getAuthor().hashCode() * 29 & Integer.MAX_VALUE) % numPartitions;
 			
 		}
-		*/
+	}
+	*/
+	
+	public static class Reduce extends Reducer<AuthorTrace, IntWritable, NullWritable, Text> {
 		
 		@Override
-		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
+		public void reduce(AuthorTrace key, Iterable<IntWritable> values, Context context) 
 				throws IOException, InterruptedException {
+		
+			String toEmit = null;
+			for (IntWritable value : values) {
+				toEmit = key.toString();
+				toEmit += "\n " + value;
+				context.write(NullWritable.get(), new Text(toEmit));
+			}
 			
+			/*
+			String toEmit = null;
+			for (IntWritable value : values) {
+				if(value.get() == 1) {
+					toEmit = key.toString();
+					toEmit += "\n " + value;
+					context.write(NullWritable.get(), new Text(toEmit));
+				}
+				else {
+					toEmit = key.toString();
+					toEmit += "\n " + value;
+					context.write(NullWritable.get(), new Text(toEmit));
+				}
+			}
+			*/
 			
 		}//end reduce
 		
-		/*
-		@Override
-		public void cleanup(Context context) throws IOException, InterruptedException {
-			
-		}	
-		*/
-		
-	} //end Reducer class	
+	} //end Reduce class
 
-}
+}//end AuthorAttributionSearch class

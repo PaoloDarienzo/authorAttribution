@@ -1,3 +1,33 @@
+	SHUFFLING PHASES
+
+
+1
+creazione impronta;
+map: generazione valori per ogni book; scrive su HDFS
+reduce: somma dei valori dei book ricevuti (ogni reducer si occupa di un autore); scrive su file (persistent)
+
+2
+M+R
+Origin: 0 from file1, 1 from file2
+Map: read inputs, emit <<key, val>, origin>
+Reduce:	generate wordCount 0/1;
+		compute similarities;
+
+Num mappers:	based on inputs
+Num reducers:	1 for each author known
+multipleInputs
+
+map1:
+	read 2 inputs from file;
+	so, it's: @, %, # from 0/1
+	authorTrace.add(@/%/#), 0/1
+	
+	
+IDEA:
+	distributed cache for file0;
+	each mapper gets file0, file1; reads them;
+	output <authorTrace, 0/1>
+
 ###################################################################################################
 
 CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
@@ -44,11 +74,14 @@ DEDUZIONE AUTORE
 	Uno o più file di testo di cui l'autore non è conosciuto.
 	Rimozione delle prime ~50 righe in cui, per conformazione del progetto Gutenberg,
 	è possibile la presenza del nome dell'autore, al fine di non falsare la ricerca dell'autore.
+	Caricamento valori estratti in distributed cache.
 	
 	Chiamata al Job di creazione impronta.
 	
+	MAP(1):
+		Caricamento impronta in strutture globali.
+		
 	MAP:
-		Caricamento impronta in HDFS condiviso.
 		Calcolo percentuale di somiglianza.
 		Ogni map confronta un'impronta nota con l'impronta sconosciuta	
 	

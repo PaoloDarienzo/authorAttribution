@@ -3,34 +3,35 @@ package support;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+//import java.util.Map.Entry;
 //import java.util.TreeMap;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
-public class AuthorTrace implements Writable {
+public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	
 	private Text author;
-	//private TreeMap<String, Integer> finalWordValOrdered;
-	private WordsArrayWritable finalWordVal;
-	private TwoGramsWritable finalTwoGrams;
-	private ThreeGramsWritable finalThreeGrams;
 	private FloatWritable avgWordLength;
 	private FloatWritable punctuationDensity;
 	private FloatWritable functionDensity;
+	//private TreeMap<String, Integer> finalWordCountOrdered;
+	private WordsArrayWritable finalWordCount;
+	private TwoGramsWritable finalTwoGrams;
+	private ThreeGramsWritable finalThreeGrams;
 	
-	public String commenti = "";
+	//public String commenti = "";
 	
 	public AuthorTrace() {
 		this.author = new Text();
-		//this.finalWordValOrdered = new TreeMap<>();
-		this.finalWordVal = new WordsArrayWritable();
-		this.setFinalTwoGrams(new TwoGramsWritable());
-		this.setFinalThreeGrams(new ThreeGramsWritable());
 		this.avgWordLength = new FloatWritable(0);
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
+		//this.finalWordCountOrdered = new TreeMap<>();
+		this.finalWordCount = new WordsArrayWritable();
+		this.setFinalTwoGrams(new TwoGramsWritable());
+		this.setFinalThreeGrams(new ThreeGramsWritable());
 	}
 	
 	public Text getAuthor() {
@@ -41,40 +42,6 @@ public class AuthorTrace implements Writable {
 		this.author = author;
 	}
 	
-	/*
-	public TreeMap<String, Integer> getTreeWordsArray() {
-		return this.finalWordValOrdered;
-	}
-	
-	public void setTreeWordsArray(TreeMap<String, Integer> finalWordValOrdered) {
-		this.finalWordValOrdered = finalWordValOrdered;
-	}
-	*/
-	
-	public WordsArrayWritable getWordsArray(){
-		return this.finalWordVal;
-	}
-	
-	public void setWordsArray(WordsArrayWritable finalWordVal) {
-		this.finalWordVal = finalWordVal;
-	}
-	
-	public TwoGramsWritable getFinalTwoGrams() {
-		return this.finalTwoGrams;
-	}
-
-	public void setFinalTwoGrams(TwoGramsWritable finalTwoGrams) {
-		this.finalTwoGrams = finalTwoGrams;
-	}
-	
-	public ThreeGramsWritable getFinalThreeGrams() {
-		return this.finalThreeGrams;
-	}
-	
-	public void setFinalThreeGrams(ThreeGramsWritable finalThreeGrams) {
-		this.finalThreeGrams = finalThreeGrams;
-	}
-
 	public FloatWritable getAvgWordLength() {
 		return this.avgWordLength;
 	}
@@ -99,13 +66,50 @@ public class AuthorTrace implements Writable {
 		this.functionDensity = FunctionDensity;
 	}
 	
+	/*
+	public TreeMap<String, Integer> getTreeWordsArray() {
+		return this.finalWordCountOrdered;
+	}
+	
+	public void setTreeWordsArray(TreeMap<String, Integer> wordValOrdered) {
+		this.finalWordCountOrdered = wordValOrdered;
+	}
+	*/
+	
+	public WordsArrayWritable getWordsArray(){
+		return this.finalWordCount;
+	}
+	
+	public void setWordsArray(WordsArrayWritable wordVal) {
+		this.finalWordCount = wordVal;
+	}
+	
+	public TwoGramsWritable getFinalTwoGrams() {
+		return this.finalTwoGrams;
+	}
+
+	public void setFinalTwoGrams(TwoGramsWritable finalTwoGrams) {
+		this.finalTwoGrams = finalTwoGrams;
+	}
+	
+	public ThreeGramsWritable getFinalThreeGrams() {
+		return this.finalThreeGrams;
+	}
+	
+	public void setFinalThreeGrams(ThreeGramsWritable finalThreeGrams) {
+		this.finalThreeGrams = finalThreeGrams;
+	}
+	
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		
 		this.author.readFields(in);
+		this.avgWordLength.readFields(in);
+		this.punctuationDensity.readFields(in);
+		this.functionDensity.readFields(in);
 		
 		/*
-		this.finalWordValOrdered.clear();
+		this.finalWordCountOrdered.clear();
 		int size = in.readInt();
 		for(int i = 0; i < size; i++) {
 			int sizeKey = in.readInt();
@@ -115,17 +119,15 @@ public class AuthorTrace implements Writable {
 			}
 			String key = new String(bytes);
 			Integer value = new Integer(in.readInt());
-			this.finalWordValOrdered.put(key, value);
+			this.finalWordCountOrdered.put(key, value);
 		}
 		*/
 		
-		this.finalWordVal.readFields(in);		
+		this.finalWordCount.readFields(in);		
 		this.finalTwoGrams.readFields(in);
 		this.finalThreeGrams.readFields(in);
-		this.avgWordLength.readFields(in);
-		this.punctuationDensity.readFields(in);
-		this.functionDensity.readFields(in);
 		
+		/*
 		//commenti
 		int sizeString = in.readInt();
 		byte[] bytes = new byte[sizeString];
@@ -133,6 +135,7 @@ public class AuthorTrace implements Writable {
 			bytes[i] = in.readByte();
 		}
 		commenti = new String(bytes);
+		*/
 		
 	}
 	
@@ -140,11 +143,13 @@ public class AuthorTrace implements Writable {
 	public void write(DataOutput out) throws IOException {
 		
 		this.author.write(out);
+		this.avgWordLength.write(out);
+		this.punctuationDensity.write(out);
+		this.functionDensity.write(out);
 		
 		/*
-		out.writeInt(this.finalWordValOrdered.size());
-		
-		for(Entry<String, Integer> entry : finalWordValOrdered.entrySet()) {
+		out.writeInt(this.finalWordCountOrdered.size());
+		for(Entry<String, Integer> entry : finalWordCountOrdered.entrySet()) {
 			String key = entry.getKey();
         	out.writeInt(key.length());
         	out.writeBytes(key);   
@@ -152,26 +157,44 @@ public class AuthorTrace implements Writable {
         }
 		*/
 		
-		this.finalWordVal.write(out);
+		this.finalWordCount.write(out);
 		this.finalTwoGrams.write(out);
 		this.finalThreeGrams.write(out);
-		this.avgWordLength.write(out);
-		this.punctuationDensity.write(out);
-		this.functionDensity.write(out);
 		
+		/*
 		//commenti
 		out.writeInt(commenti.length());
     	out.writeBytes(commenti);
+    	*/
 		
 	}
 	
 	@Override
 	public String toString() {
-		//TODO
+		
 		//Setting here the output to file for each author trace
 		//actually it is set in AuthorAttribution, reduce phase
-		return this.commenti;
-	
+		return	"Author: " + this.author.toString() + "\n" + 
+				"\n" + "Avg word length: " + this.avgWordLength +
+				"\n" + "Punctuation words density: " + this.punctuationDensity +
+				"\n" + "Function words density: " + this.functionDensity +
+				//Tree was used for WordCount ordered
+				//"\n" + "WordCount: \n" + this.finalWordCountOrdered.toString() +
+				"\n\n"+ "WordCount: \n" + this.finalWordCount.toString() +
+				"\n" + "Couples: \n" + this.finalTwoGrams.toString() +
+				"\n" + "Trigrams: \n" + this.finalThreeGrams.toString() + "\n";
+		
+	}
+
+	@Override
+	public int compareTo(AuthorTrace at) {
+		
+		//if two AuthorTrace are of the same author
+		//i.e. author field is the same string,
+		//then there are the same AuthorTrace
+		
+		return this.author.compareTo(at.author);
+		
 	}
 
 }
