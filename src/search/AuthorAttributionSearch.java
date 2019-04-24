@@ -114,7 +114,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		search.setMapperClass(Map.class);
 		search.setReducerClass(Reduce.class);
 		
-		search.setMapOutputKeyClass(AuthorTrace.class);
+		search.setMapOutputKeyClass(StatsWritable.class);
 		search.setMapOutputValueClass(IntWritable.class);
 		search.setOutputKeyClass(NullWritable.class);
 		search.setOutputValueClass(Text.class);
@@ -123,7 +123,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, AuthorTrace, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, StatsWritable, IntWritable> {
 		
 		private static AuthorTrace authorTrace;
 		//for multiple unknown file at once, implement
@@ -244,8 +244,13 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			threeGramsWritable.setThreeGrams(threeGrams);
 			authorTrace.setFinalThreeGrams(threeGramsWritable);
 			
-			context.write(authorTrace, new IntWritable(1));
-			context.write(authorTraceUnk, new IntWritable(0));
+			
+			//////////////////////////////////////////////////
+			//now authorTrace and authorTraceUnk are set
+			
+			StatsWritable stats = new StatsWritable(authorTrace, authorTraceUnk);
+			
+			context.write(stats, new IntWritable(1));
 			
 		} //end cleanup
 
@@ -296,6 +301,10 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	            } //end while (cycling over lines in file)
 	            
 	            authorTraceUnk.setAuthor(new Text("UNKNOWN"));
+	            
+	            authorTraceUnk.setFunctionDensity(new FloatWritable(functionDensity));
+				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
+				authorTraceUnk.setAvgWordLength(new FloatWritable(avgWordLength));
 				
 				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
 				wordCountWritable.setArray(wordCount);
@@ -308,21 +317,18 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
 				threeGramsWritable.setThreeGrams(threeGrams);
 				authorTraceUnk.setFinalThreeGrams(threeGramsWritable);
-				
-				authorTraceUnk.setFunctionDensity(new FloatWritable(functionDensity));
-				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
-				authorTraceUnk.setAvgWordLength(new FloatWritable(avgWordLength));
 	           
 				bufferedReader.close();
 				
 	        } catch(IOException ex) {
 	            System.err.println("Exception while reading file: " + ex.getMessage());
 	        }
+	        
 	    } //end readFile method
 
 	} //end Map class
 	
-	public static class Reduce extends Reducer<AuthorTrace, IntWritable, NullWritable, Text> {
+	public static class Reduce extends Reducer<StatsWritable, IntWritable, NullWritable, Text> {
 		
 		AuthorTrace unk;
 		ArrayList<AuthorTrace> authors;
@@ -337,15 +343,14 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		}
 		
 		@Override
-		public void reduce(AuthorTrace key, Iterable<IntWritable> values, Context context) 
+		public void reduce(StatsWritable key, Iterable<IntWritable> values, Context context) 
 				throws IOException, InterruptedException {
 				
 			String result = "START";
 			
 			for (IntWritable value : values) {
 				
-				result += 	"\nValue: " + value +
-							"\ndell'auth: " + key.getAuthor();
+				result += 	"\nvalue: " + value + "\n" + key.toString();
 			}
 			
 			context.write(NullWritable.get(), new Text(result));
