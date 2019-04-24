@@ -1,4 +1,4 @@
-package search;
+package test;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -11,11 +11,8 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -25,72 +22,33 @@ import support.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 
-public class AuthorAttributionSearch extends Configured implements Tool{
+public class AuthorAttrDistrCache extends Configured implements Tool{
 	
 	public static void main(String[] args) throws Exception {
 		
-		int res = ToolRunner.run(new AuthorAttributionSearch(), args);
+		int res = ToolRunner.run(new AuthorAttrDistrCache(), args);
 		System.exit(res);
 		
 	} //end main class
 	
 	public int run(String[] args) throws Exception {
 		
-		//arg0: path to input file to analyze
-		//arg1: path to output directory
-		//arg2: number of reducers (same as number of authors)
-		//arg3: path to author-known files to compare with
-		
-		Path inPath = new Path(args[0]);
+		//Path inPath = new Path(args[0]);
 		Path outPath = new Path(args[1]);
 		Path creationPath = new Path(outPath, "creation");
 		Path resultPath = new Path(outPath, "result");
-		//TODO
 		Path toMatchPath = new Path("/user/paolo/authorAttr/output/creation/veryshort");
-		//Path toMatchPath = new Path(args[3]);
 		
-		//JOB 1: Creation profile of unknown file
-		///////////////////////////////////////////////////////////////////////////////////////////
-
-		Job creation = Job.getInstance(getConf(), "1. Creation profile of unknown file");
-		creation.setJarByClass(this.getClass());
-		
-		FileInputFormat.addInputPath(creation, inPath);
-		FileOutputFormat.setOutputPath(creation, creationPath);
-		LazyOutputFormat.setOutputFormatClass(creation, TextOutputFormat.class);
-		
-		//Inserted as default; 1 reducer per input file to test
-		creation.setNumReduceTasks(1);
-		
-		creation.setMapperClass(creation.AuthorAttributionCreation.Map.class);
-		creation.setReducerClass(creation.AuthorAttributionCreation.Reduce.class);
-		
-		creation.setMapOutputKeyClass(Text.class);
-		creation.setMapOutputValueClass(BookTrace.class);
-		creation.setOutputKeyClass(NullWritable.class);
-		creation.setOutputValueClass(AuthorTrace.class);
-		
-		creation.setPartitionerClass(creation.AuthorAttributionCreation.authorPartitioner.class);
-		
-		if (!creation.waitForCompletion(true)) {
-		  System.exit(1);
-		}
-		
-		//JOB 2: Merging profiles and generating similarity percentage
-		///////////////////////////////////////////////////////////////////////////////////////////
-		
-		Job search = Job.getInstance(getConf(), "2. Merging and searching");
+		Job search = Job.getInstance(getConf(), "Using distributed cache");
 		search.setJarByClass(this.getClass());
 		
-		/////////////////////////////////////////
-		//Loading output of first job in distributed cache
-		FileSystem fs = FileSystem.get(getConf());
+		////////////
+	    FileSystem fs = FileSystem.get(getConf());
 	    
 	    //the unknown files don't have the author name in the file name,
 	    //so they don't have the separator neither; thus, they are renamed
@@ -105,16 +63,17 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		for(int i=0; i < fileList.length; i++){ 
             DistributedCache.addCacheFile(fileList[i].getPath().toUri(), search.getConfiguration());
 		}
-		/////////////////////////////////////////
+		//DistributedCache.addCacheFile(creationPath.toUri(), search.getConfiguration());
 		
 		FileInputFormat.addInputPath(search, toMatchPath);
 		FileOutputFormat.setOutputPath(search, resultPath);
+		
 		search.setNumReduceTasks(Integer.parseInt(args[2]));
+		search.setNumReduceTasks(0);
 		
 		search.setMapperClass(Map.class);
-		search.setReducerClass(Reduce.class);
 		
-		search.setMapOutputKeyClass(AuthorTrace.class);
+		search.setMapOutputKeyClass(Text.class);
 		search.setMapOutputValueClass(IntWritable.class);
 		search.setOutputKeyClass(NullWritable.class);
 		search.setOutputValueClass(Text.class);
@@ -123,12 +82,10 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, AuthorTrace, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 		
-		private static AuthorTrace authorTrace;
-		//for multiple unknown file at once, implement
-		//ArrayList<AuthorTrace> authorsUnk;
 		private static AuthorTrace authorTraceUnk;
+		private static AuthorTrace authorTrace;
 		
 		//AuthorTrace fields
 		private static String author;
@@ -139,13 +96,15 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		private static HashMap<TextPair, Integer> twoGrams;
 		private static HashMap<TextTrigram, Integer> threeGrams;
 		
+		private static String commenti;
+		
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 		
-			authorTrace = new AuthorTrace();
-			//for multiple unknown file at once, implement
-			//authorsUnk = new ArrayList<>();
+			commenti = "";
+			
 			authorTraceUnk = new AuthorTrace();
+			authorTrace = new AuthorTrace();
 			
 			author = "";
 			avgWordLength =	punctuationDensity = functionDensity = 0;
@@ -153,102 +112,24 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			twoGrams = new HashMap<>();
 			threeGrams = new HashMap<>();
 			
-			//Reading from distributed cache
 			try{
-	            Path[] unkFileProfiles = DistributedCache.getLocalCacheFiles(context.getConfiguration());       	            
+	            Path[] unkFileProfiles = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+	           	            
 	            if(unkFileProfiles != null && unkFileProfiles.length > 0) {
 					//if only 1 unk file is passed,
 					//the for cycle can be eliminated
-					readFile(unkFileProfiles[0]);
-	            	/*
+					//readFile(unkFileProfiles[0]);
 					 for(Path unkFileProfile : unkFileProfiles) {
 					 	readFile(unkFileProfile);
 					 	}
-					 */
-				}
+					 commenti += "at the end of reading, auth unk: " + authorTraceUnk.getAuthor().toString() + "\n";
+	            }
 	        } catch(IOException ex) {
 	            System.err.println("Exception in mapper setup: " + ex.getMessage());
 	        }
 			
 		}
 		
-		@Override
-		public void map(LongWritable offset, Text lineText, Context context) 
-				throws IOException, InterruptedException {
-			
-			//offset is all the file; the default separator is \n;
-			//lineText is a line of that file.
-			String line = lineText.toString();
-			
-			if(line.contains("Author: ")) {
-				String boundary = "Author: ";
-				String[] tokensVal = line.split(boundary);
-				author = tokensVal[1];
-			}//overwritten in cleanup if file is unknown
-			else if(line.contains("Avg word length: ")) {
-				String boundary = "Avg word length: ";
-				String[] tokensVal = line.split(boundary);
-				String avgWordLengthStr = tokensVal[1];
-				avgWordLength = Float.parseFloat(avgWordLengthStr);
-			}
-			else if(line.contains("Punctuation words density: ")) {
-				String boundary = "Punctuation words density: ";
-				String[] tokensVal = line.split(boundary);
-				String punctDensityStr = tokensVal[1];
-				punctuationDensity = Float.parseFloat(punctDensityStr);
-			}
-			else if(line.contains("Function words density: ")) {
-				String boundary = "Function words density: ";
-				String[] tokensVal = line.split(boundary);
-				String funcDensityStr = tokensVal[1];
-				functionDensity = Float.parseFloat(funcDensityStr);
-			}
-			else if(line.contains("@")) { //wordCount
-				line = line.replace("@", "");
-				String[] tokensVal = line.split("=");
-				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
-			}
-			else if(line.contains("%")) { //couple
-				line = line.replace("%", "");
-				String[] tokensVal = line.split("=");
-				String[] words = tokensVal[0].split("\\|");
-				twoGrams.put(new TextPair(words[0], words[1]), new Integer(tokensVal[1]));
-			}
-			else if(line.contains("#")) { //trigrams
-				line = line.replace("#", "");
-				String[] tokensVal = line.split("=");
-				String[] words = tokensVal[0].split("\\|");
-				threeGrams.put(new TextTrigram(words[0], words[1], words[2]), new Integer(tokensVal[1]));
-			}
-			
-		}//end map
-		
-		@Override
-		public void cleanup(Context context) throws IOException, InterruptedException {
-			
-			authorTrace.setAuthor(new Text(author));
-			
-			authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
-			authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
-			authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
-			
-			WordsArrayWritable wordCountWritable = new WordsArrayWritable();
-			wordCountWritable.setArray(wordCount);
-			authorTrace.setWordsArray(wordCountWritable);
-			
-			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
-			twoGramsWritable.setTwoGrams(twoGrams);
-			authorTrace.setFinalTwoGrams(twoGramsWritable);
-			
-			ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
-			threeGramsWritable.setThreeGrams(threeGrams);
-			authorTrace.setFinalThreeGrams(threeGramsWritable);
-			
-			context.write(authorTrace, new IntWritable(1));
-			context.write(authorTraceUnk, new IntWritable(0));
-			
-		} //end cleanup
-
 		private void readFile(Path filePath) {
 			
 	        try{
@@ -312,46 +193,95 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				authorTraceUnk.setFunctionDensity(new FloatWritable(functionDensity));
 				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
 				authorTraceUnk.setAvgWordLength(new FloatWritable(avgWordLength));
-	           
+	            
+				commenti += "unk auth at the end set: " + authorTraceUnk.getAuthor().toString() + "\n";
 				bufferedReader.close();
 				
 	        } catch(IOException ex) {
 	            System.err.println("Exception while reading file: " + ex.getMessage());
 	        }
 	    } //end readFile method
-
-	} //end Map class
-	
-	public static class Reduce extends Reducer<AuthorTrace, IntWritable, NullWritable, Text> {
-		
-		AuthorTrace unk;
-		ArrayList<AuthorTrace> authors;
 		
 		@Override
-		public void setup(Context context) throws IOException, InterruptedException {
-		
-			unk = new AuthorTrace();
-			
-			authors = new ArrayList<>();
-						
-		}
-		
-		@Override
-		public void reduce(AuthorTrace key, Iterable<IntWritable> values, Context context) 
+		public void map(LongWritable offset, Text lineText, Context context) 
 				throws IOException, InterruptedException {
-				
-			String result = "START";
 			
-			for (IntWritable value : values) {
-				
-				result += 	"\nValue: " + value +
-							"\ndell'auth: " + key.getAuthor();
+			//offset is all the file; the default separator is \n;
+			//lineText is a line of that file.
+			String line = lineText.toString();
+			
+			if(line.contains("Author: ")) {
+				String boundary = "Author: ";
+				String[] tokensVal = line.split(boundary);
+				author = tokensVal[1];
+			}//overwritten in cleanup if file is unknown
+			else if(line.contains("Avg word length: ")) {
+				String boundary = "Avg word length: ";
+				String[] tokensVal = line.split(boundary);
+				String avgWordLengthStr = tokensVal[1];
+				avgWordLength = Float.parseFloat(avgWordLengthStr);
+			}
+			else if(line.contains("Punctuation words density: ")) {
+				String boundary = "Punctuation words density: ";
+				String[] tokensVal = line.split(boundary);
+				String punctDensityStr = tokensVal[1];
+				punctuationDensity = Float.parseFloat(punctDensityStr);
+			}
+			else if(line.contains("Function words density: ")) {
+				String boundary = "Function words density: ";
+				String[] tokensVal = line.split(boundary);
+				String funcDensityStr = tokensVal[1];
+				functionDensity = Float.parseFloat(funcDensityStr);
+			}
+			else if(line.contains("@")) { //wordCount
+				line = line.replace("@", "");
+				String[] tokensVal = line.split("=");
+				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+			}
+			else if(line.contains("%")) { //couple
+				line = line.replace("%", "");
+				String[] tokensVal = line.split("=");
+				String[] words = tokensVal[0].split("\\|");
+				twoGrams.put(new TextPair(words[0], words[1]), new Integer(tokensVal[1]));
+			}
+			else if(line.contains("#")) { //trigrams
+				line = line.replace("#", "");
+				String[] tokensVal = line.split("=");
+				String[] words = tokensVal[0].split("\\|");
+				threeGrams.put(new TextTrigram(words[0], words[1], words[2]), new Integer(tokensVal[1]));
 			}
 			
-			context.write(NullWritable.get(), new Text(result));
 			
-		}//end reduce
+		}//end map
 		
-	} //end Reduce class
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {
+						
+			authorTrace.setAuthor(new Text(author));
+			
+			WordsArrayWritable wordCountWritable = new WordsArrayWritable();
+			wordCountWritable.setArray(wordCount);
+			authorTrace.setWordsArray(wordCountWritable);
+			
+			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
+			twoGramsWritable.setTwoGrams(twoGrams);
+			authorTrace.setFinalTwoGrams(twoGramsWritable);
+			
+			ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
+			threeGramsWritable.setThreeGrams(threeGrams);
+			authorTrace.setFinalThreeGrams(threeGramsWritable);
+			
+			authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
+			authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
+			authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
+			
+			String total = "";
+			total += commenti + "\n\nEnd of map phase: \n";
+			total += authorTrace.getAuthor().toString() + "\n############\n" + authorTraceUnk.toString() + "\n\n\n";
+			context.write(new Text(total), new IntWritable(1));
+			
+		}
+
+	} //end Map class
 
 }//end AuthorAttributionSearch class
