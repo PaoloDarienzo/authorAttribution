@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#This script reformat the set of function words;
+#Said set was copy-pasted from a pubblication.
+
 touch tmp.txt
 touch tmp2.txt
 

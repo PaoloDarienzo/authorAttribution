@@ -1,11 +1,15 @@
 #!/bin/bash
 
 echo "Sposto files jar su cloudera: "
-docker cp -a -L wordcounts.jar cloudera:/bigDataProgetto/
+docker cp -a -L authAttribution.jar cloudera:/bigDataProgetto/
 echo "Fatto."
 
-echo "Sposto file di input su cloudera: "
-docker cp -a -L ./SubSetTest cloudera:/bigDataProgetto/
+#echo "Sposto file di input su cloudera: "
+#docker cp -a -L ./SubSetTest cloudera:/bigDataProgetto/
+#echo "Fatto."
+
+echo "Aggiorno file script su cloudera: "
+docker cp -a -L clouderaScript.sh cloudera:/bigDataProgetto/
 echo "Fatto."
 
 ###########################################################

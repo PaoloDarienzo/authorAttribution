@@ -1,5 +1,14 @@
 #!/bin/bash
 
+#This script rename each file in the directory and in subdirectories
+#based on the author and title of the said file, indicated inside the file
+#with the field "Author: " and "Title: "; files that don't have
+#such fields, will not be renamed.
+#Then, all the files will be ordered in directories storing the books of
+#the same authors.
+#NB: authors with different names are in different directories, hence
+#it cannot differentiate between aliases such short names etc.
+
 read -p "Are you sure to launch the script (y/n)? " -n 1 -r
 echo    #move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -22,8 +31,8 @@ then
     #renaming and ordering txt files
     for filename in *.txt; do
 
-        # Grab the first 30 lines with carriage returns removed (tr -d):
-        firstlines=$(head -n 30 "$filename" | tr -d '\r')
+        # Grab the first 40 lines with carriage returns removed (tr -d):
+        firstlines=$(head -n 40 "$filename" | tr -d '\r')
 
         # Capture the title and author. Note that sed doesn't have case-insensitive
         # patterns, so use e.g. [Tt] to manually make them case-insensitive. Also, use

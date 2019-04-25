@@ -38,3 +38,4 @@ Lemmalization.
 Naive Bayes classifiers.
 
 Word count -> set<key, value1>; lemmatization(set)-> <key_lemmatized, value2>, value2 >= value1.
+
