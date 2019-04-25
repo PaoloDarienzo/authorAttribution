@@ -107,5 +107,5 @@ DEDUZIONE AUTORE
 
 Struttura repository:
 La directory "script" contiene tutti gli script utilizzati nella gestione della base di dati.
-Il file "note_sviluppo.txt" contiene le scelte progettuali e di gestione del database.
+Il file "Struttura_progetto.txt" contiene le scelte progettuali e di gestione del database.
 Il file "count.txt" contiene la lista di ogni autore e del numero di opere per ogni autore.
