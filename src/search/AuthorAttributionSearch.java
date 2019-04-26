@@ -251,6 +251,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			StatsWritable stats = new StatsWritable(authorTrace, authorTraceUnk);
 			
 			context.write(stats, new IntWritable(1));
+			//TODO
+			//context.write(authorTraceUnk, stats);
 			
 		} //end cleanup
 

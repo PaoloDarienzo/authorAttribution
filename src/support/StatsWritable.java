@@ -36,30 +36,46 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public StatsWritable(AuthorTrace authorTrace, AuthorTrace authorTraceUnk) {
 		
 		setOnAuthor(authorTrace.getAuthor());
+
+		setAvgWordLengthRatio(
+				MethodsCollection.getFloatRatio(
+						authorTraceUnk.getAvgWordLength(), authorTrace.getAvgWordLength()
+						)
+				);
 		
-		float avgWordLengthUnk = authorTraceUnk.getAvgWordLength().get();
-		float avgWordLengthKnown = authorTrace.getAvgWordLength().get();
-		setAvgWordLengthRatio(new FloatWritable((float) avgWordLengthUnk / avgWordLengthKnown));
+		setFunctionDensityRatio(
+				MethodsCollection.getFloatRatio(
+						authorTraceUnk.getFunctionDensity(), authorTrace.getFunctionDensity()
+						)
+				);
 		
-		float funcUnk = authorTraceUnk.getFunctionDensity().get();
-		float funcKnown = authorTrace.getFunctionDensity().get();
-		setFunctionDensityRatio(new FloatWritable((float) funcUnk / funcKnown));
+		setPunctuationDensityRatio(
+				MethodsCollection.getFloatRatio(
+						authorTraceUnk.getPunctuationDensity(), authorTrace.getPunctuationDensity()
+						)
+				);
 		
-		float punctUnk = authorTraceUnk.getPunctuationDensity().get();
-		float punctKnown = authorTrace.getPunctuationDensity().get();
-		setPunctuationDensityRatio(new FloatWritable((float) punctUnk / punctKnown));
+		///
+		setWordCountSizeRatio(
+				MethodsCollection.getSizeRatio(
+						authorTraceUnk.getWordsArray().getArray().size(),
+						authorTrace.getWordsArray().getArray().size()
+						)
+				);
 		
-		float wordCountUnkSize = authorTraceUnk.getWordsArray().getArray().size();
-		float wordCountKnownSize = authorTrace.getWordsArray().getArray().size();
-		setWordCountSizeRatio(new FloatWritable((float) wordCountUnkSize / wordCountKnownSize));
+		setTwoGramsSizeRatio(
+				MethodsCollection.getSizeRatio(
+						authorTraceUnk.getFinalTwoGrams().getTwoGrams().size(), 
+						authorTrace.getFinalTwoGrams().getTwoGrams().size()
+						)
+				);
 		
-		float twoGramsUnkSize = authorTraceUnk.getFinalTwoGrams().getTwoGrams().size();
-		float twoGramsKnownSize = authorTrace.getFinalTwoGrams().getTwoGrams().size();
-		setTwoGramsSizeRatio(new FloatWritable((float) twoGramsUnkSize / twoGramsKnownSize));
-		
-		float threeGramsUnkSize = authorTraceUnk.getFinalThreeGrams().getThreeGrams().size();
-		float threeGramsKnownSize = authorTrace.getFinalThreeGrams().getThreeGrams().size();
-		setThreeGramsSizeRatio(new FloatWritable((float) threeGramsUnkSize / threeGramsKnownSize));
+		setThreeGramsSizeRatio(
+				MethodsCollection.getSizeRatio(
+						authorTraceUnk.getFinalThreeGrams().getThreeGrams().size(), 
+						authorTrace.getFinalThreeGrams().getThreeGrams().size()
+						)
+				);
 		
 	}
 
@@ -70,6 +86,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void setOnAuthor(Text onAuthor) {
 		this.onAuthor = onAuthor;
 	}
+	
+	public void setOnAuthor(String onAuthor) {
+		this.onAuthor = new Text(onAuthor);
+	}
 
 	public FloatWritable getAvgWordLengthRatio() {
 		return avgWordLengthRatio;
@@ -78,6 +98,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void setAvgWordLengthRatio(FloatWritable avgWordLengthRatio) {
 		this.avgWordLengthRatio = avgWordLengthRatio;
 	}
+	
+	public void setAvgWordLengthRatio(float avgWordLengthRatio) {
+		this.avgWordLengthRatio = new FloatWritable(avgWordLengthRatio);
+	}
 
 	public FloatWritable getFunctionDensityRatio() {
 		return functionDensityRatio;
@@ -85,6 +109,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 
 	public void setFunctionDensityRatio(FloatWritable functionDensityRatio) {
 		this.functionDensityRatio = functionDensityRatio;
+	}
+	
+	public void setFunctionDensityRatio(float functionDensityRatio) {
+		this.functionDensityRatio = new FloatWritable(functionDensityRatio);
 	}
 
 	public FloatWritable getPunctuationDensityRatio() {
@@ -95,12 +123,20 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		this.punctuationDensityRatio = punctuationDensityRatio;
 	}
 
+	public void setPunctuationDensityRatio(float punctuationDensityRatio) {
+		this.punctuationDensityRatio = new FloatWritable(punctuationDensityRatio);
+	}
+	
 	public FloatWritable getWordCountSizeRatio() {
 		return wordCountSizeRatio;
 	}
 
 	public void setWordCountSizeRatio(FloatWritable wordCountSizeRatio) {
 		this.wordCountSizeRatio = wordCountSizeRatio;
+	}
+	
+	public void setWordCountSizeRatio(float wordCountSizeRatio) {
+		this.wordCountSizeRatio = new FloatWritable(wordCountSizeRatio);
 	}
 
 	public FloatWritable getTwoGramsSizeRatio() {
@@ -110,6 +146,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void setTwoGramsSizeRatio(FloatWritable twoGramsSizeRatio) {
 		this.twoGramsSizeRatio = twoGramsSizeRatio;
 	}
+	
+	public void setTwoGramsSizeRatio(float twoGramsSizeRatio) {
+		this.twoGramsSizeRatio = new FloatWritable(twoGramsSizeRatio);
+	}
 
 	public FloatWritable getThreeGramsSizeRatio() {
 		return threeGramsSizeRatio;
@@ -117,6 +157,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 
 	public void setThreeGramsSizeRatio(FloatWritable threeGramsSizeRatio) {
 		this.threeGramsSizeRatio = threeGramsSizeRatio;
+	}
+	
+	public void setThreeGramsSizeRatio(float threeGramsSizeRatio) {
+		this.threeGramsSizeRatio = new FloatWritable(threeGramsSizeRatio);
 	}
 
 	@Override
@@ -148,6 +192,15 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	@Override
 	public int compareTo(StatsWritable at) {
 		
+		//StatsWritable gets 2 arguments: 
+		//the known profile, the unknown profile.
+		//there is only 1 profile for known author, so
+		//it should suffice doing the compare on the name of the author
+		//which the unknown profile is compared to.
+		
+		return onAuthor.compareTo(at.onAuthor);
+		
+		/*
 		int cmp = onAuthor.compareTo(at.onAuthor);
 		if (cmp != 0)
 			return cmp;
@@ -167,6 +220,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		if (cmp != 0)
 			return cmp;
 		return threeGramsSizeRatio.compareTo(at.threeGramsSizeRatio);
+		*/
 		
 	}
 	

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.hadoop.io.FloatWritable;
+
 public class MethodsCollection {
 
 	public static boolean punctuationChecker(String word) {
@@ -81,6 +83,64 @@ public class MethodsCollection {
 		
 		return totalWords;
 		
+	}
+	
+	public static float getFloatRatio(FloatWritable unkFirst, FloatWritable knownSecond) {
+		return getFloatRatio(unkFirst.get(), knownSecond.get());
+	}
+	
+	//TODO
+	/*
+	 * Ricordarsi:
+	 * i valori che arrivano sono in percentuale ma da 0 a 1;
+	 * sistemare i valori per le size delle strutture;
+	 * controllare che func e punt chiamino valori corretti
+	 */
+	public static float getFloatRatio(float a, float b) {
+		/*
+		It returns how much two numbers a, b are different, in percentage 
+		(0 are the same, 99.99999% very different).
+		If a or b are 0, they are substituted to the epsilon value 0.0001.
+		If they are both 0, they are equal, so it returns 0.
+		*/
+		float maxVal, ratioToCalc, x;
+		
+		if(a == b) { //covers 0 case
+			return 0;
+		}
+		
+		else { //a and b are always positive
+			assert a >= 0;
+			assert b >= 0;
+			
+			if (a > b) {
+				if (b == 0) {
+					//0 becomes epsilon
+					b = (float) 0.0001;
+				}
+				maxVal = a;
+				ratioToCalc = b;
+				//ratioToCalc : maxVal = x : 100
+				x = ratioToCalc * 100 / maxVal;
+				return 100 - x;
+			}
+			else {
+				if (a == 0) {	
+					//0 becomes epsilon
+					a = (float) 0.0001;
+				}
+				maxVal = b;
+				ratioToCalc = a;
+				//ratioToCalc : maxVal = x : 100
+				x = ratioToCalc * 100 / maxVal;
+				return 100 - x;
+			}
+		}
+		
+	}
+	
+	public static float getSizeRatio(int unkFirst, int knownSecond) {
+		return getFloatRatio((float) unkFirst, (float) knownSecond);
 	}
 
 }
