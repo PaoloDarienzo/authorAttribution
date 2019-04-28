@@ -126,6 +126,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 	public static class Map extends Mapper<LongWritable, Text, Text, BookTrace> {
 		
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
+		private final static Pattern WORD_BOUNDARY_FOR_PUNCT = Pattern.compile("\\s*\\s*");
 		private final static String AUTHOR_DELIMITER = ",___,";
 		//. , : ; ? ! ( ) - "
 		public static final String[] SET_PUNCT_VALUES = new String[] {	".", ",", ":", ";",
@@ -158,10 +159,74 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			//twoGrams/threeGrams
 			List<String> words = new ArrayList<String>();
 			
-			for (String word : WORD_BOUNDARY.split(line)) {
+			for(String word : WORD_BOUNDARY.split(line)) {
+				//now the line is splitted in words;
+				//punctuation symbols that are in block, e. g. "!?", are not divided yet.
+				
+				if (word.isEmpty()) {
+					//skip if word is empty
+					continue;
+				}
+				else if ((!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNCTUATION.contains(word)))) {
+					//will skip if word is not a digit or a char
+					//and is not a punctuation symbol
+					//NB: set of punctuation are not checked yet
+					
+					//Dividing block of punctuation symbols and analyzing
+					for(String wordSymb : WORD_BOUNDARY_FOR_PUNCT.split(word)) {
+						//now the word is splitted in singular punctuation symbols;
+						//only punctuation will be accepted, else continue.
+						if (wordSymb.isEmpty()
+								||
+								!(PUNCTUATION.contains(wordSymb))
+							){
+							continue; //skipping to next block to analyze
+						}
+						else {
+							//always true, but better check
+							if(MethodsCollection.punctuationChecker(wordSymb)) {
+								punctNo++;
+							}
+							//wordCount
+							currentBookTrace.addWord(wordSymb);
+						}
+					  } //end cycle over block of punctuation symbols
+					
+				}	//end if over not words or not numbers or not singular punctuation symbols
+					//or block of singular punctuation symbols
+				
+				else {
+					//only words with digit or chars get here, or single punctuation symbols;
+					//not other symbols, nor punctuation blocks
+					isWord = true;
+					if(MethodsCollection.punctuationChecker(word)) {
+						punctNo++;
+						isWord = false;
+					}
+					else if(MethodsCollection.functionWordChecker(word)) {
+						funcNo++;
+					}
+					String lowCaseWord = word.toLowerCase();
+					//wordCount
+					currentBookTrace.addWord(lowCaseWord);
+					if(isWord) {
+						//twoGrams/threeGrams with only words
+						words.add(lowCaseWord);
+					}
+				}
+			} //end for
+			
+			//SAFE MODE
+			//WORKS, BUT EXCLUDE BLOCKS OF PUNCTUATION SYMBOLS, 
+			//e.g.:
+			//!?
+			//...
+			//. "
+			/*
+			for(String word : WORD_BOUNDARY.split(line)) {
 				//skip if word is empty
 				//or if is not a digit or a char
-				//and is not a conjuction symbol
+				//and is not a punctuation symbol
 				if (word.isEmpty() 
 						|| (
 							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNCTUATION.contains(word))
@@ -188,9 +253,10 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				}
 								
 			} //end for
+			*/
 			
-			//new
 			//twoGrams and threeGrams creating and counting
+			//(n-grams over a single line)
 			int indexTerm = -1;
 			for(String term : words) {
 				post = ""; postPost = "";
@@ -224,9 +290,11 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				//So the string field's a pass by reference and not pass by value
 			}//end twoGrams and threeGrams for cycle
 
+			/*
 			//wordCount support phase
 			currentBookTrace.setPunctNo(new IntWritable(punctNo));
 			currentBookTrace.setFuncNo(new IntWritable(funcNo));		
+			*/
 			
 		}//end map
 		
@@ -238,6 +306,10 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			String filename = fileSplit.getPath().getName();
 			String[] tokensVal = filename.split(AUTHOR_DELIMITER);
 			author.set(tokensVal[0]);
+			
+			//wordCount support phase
+			currentBookTrace.setPunctNo(new IntWritable(punctNo));
+			currentBookTrace.setFuncNo(new IntWritable(funcNo));
 			
 			context.write(author, currentBookTrace);
 		}
@@ -253,7 +325,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		
 		private AuthorTrace authTrace;
 		
-		//private int nBooks;
+		private int nBooks;
 		private int totalPunct, totalFunc;
 		private long totalChars, numWords;
 		
@@ -269,7 +341,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			
 			authTrace = new AuthorTrace();
 			
-			//nBooks = 0;
+			nBooks = 0;
 			totalPunct = 0;
 			totalFunc = 0;
 			totalChars = 0;
@@ -292,7 +364,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    
 			for (BookTrace book : values) {
 				
-				//nBooks++;
+				nBooks++;
 				
 				//summing array of words of each analyzed book
 				HFinal.sum(book.getWordsArray());
@@ -310,7 +382,8 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				totalFunc += book.getFuncNo().get();
 				
 				//Summing characters of every words contained in the book (passed as value)
-				totalChars += MethodsCollection.getTotalChars(book.getWordsArray().getArray());
+				//the method excludes punctuation words
+				totalChars += MethodsCollection.getTotalCharsOnWords(book.getWordsArray().getArray());
 				
 				//Taking total number of words
 				//i.e. single words multiplied for the times they appear
@@ -318,6 +391,9 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				
 				//authTrace.commenti += book.commenti;
 			}
+			
+			//Setting the number of books used for generate that author profile
+			authTrace.setNBooks(new IntWritable(nBooks));
 					    
 			//Ordering HashMap by key; used
 		    //authTrace.setTreeWordsArray(orderArray(HFinal.getArray()));

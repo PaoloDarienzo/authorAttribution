@@ -7,14 +7,18 @@ import java.io.IOException;
 //import java.util.TreeMap;
 
 import org.apache.hadoop.io.FloatWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	
 	private Text author;
+	private IntWritable nBooks;
 	private FloatWritable avgWordLength;
+	//range 0-1, so percentage
 	private FloatWritable punctuationDensity;
+	//range 0-1, so percentage
 	private FloatWritable functionDensity;
 	//private TreeMap<String, Integer> finalWordCountOrdered;
 	private WordsArrayWritable finalWordCount;
@@ -25,6 +29,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	
 	public AuthorTrace() {
 		this.author = new Text();
+		this.nBooks = new IntWritable(0);
 		this.avgWordLength = new FloatWritable(0);
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
@@ -40,6 +45,14 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	
 	public void setAuthor(Text author) {
 		this.author = author;
+	}
+	
+	public IntWritable getNBooks() {
+		return this.nBooks;
+	}
+	
+	public void setNBooks(IntWritable nBooks) {
+		this.nBooks = nBooks;
 	}
 	
 	public FloatWritable getAvgWordLength() {
@@ -104,6 +117,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	public void readFields(DataInput in) throws IOException {
 		
 		this.author.readFields(in);
+		this.nBooks.readFields(in);
 		this.avgWordLength.readFields(in);
 		this.punctuationDensity.readFields(in);
 		this.functionDensity.readFields(in);
@@ -143,6 +157,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	public void write(DataOutput out) throws IOException {
 		
 		this.author.write(out);
+		this.nBooks.write(out);
 		this.avgWordLength.write(out);
 		this.punctuationDensity.write(out);
 		this.functionDensity.write(out);
@@ -174,7 +189,8 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		
 		//Setting here the output to file for each author trace
 		//actually it is set in AuthorAttribution, reduce phase
-		return	"Author: " + this.author.toString() + "\n" + 
+		return	"Author profile: " + this.author.toString() + "\n" +
+				"(gen. from " + this.nBooks + " books)\n" + 
 				"\n" + "Avg word length: " + this.avgWordLength +
 				"\n" + "Punctuation words density: " + this.punctuationDensity +
 				"\n" + "Function words density: " + this.functionDensity +

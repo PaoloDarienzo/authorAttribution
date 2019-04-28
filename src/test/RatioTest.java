@@ -79,6 +79,10 @@ public class RatioTest {
 		a = 100;
 		b = (float) 99.9;
 		System.out.println("Punteggio differenza metodo Elisa (" + a + ", " + b + "): " + metodoElisa(a, b) + "%");
+		System.out.print("Punteggio differenza metodo Elisa (" + a + ", " + b + "): ");
+        float res = metodoElisa(a, b);
+		System.out.printf("%.6f", res);
+        System.out.println();
 		/*
 		0.001
 		Punteggio differenza metodo Elisa (0.0, 10.0): 99.99%
@@ -105,10 +109,12 @@ public class RatioTest {
 		se b > a, b è il max val.
 		*/
 		
+		//dovrebbe ritornare quanto simili sono i due valori
+		
 		float maxVal, ratioToCalc, x;
 		
 		if(a == b) { //copre lo 0
-			return 0;
+			return 1000;
 		}
 		
 		else { //a e b sono sempre positivi
@@ -124,7 +130,7 @@ public class RatioTest {
 				ratioToCalc = b;
 				//ratioToCalc : maxVal = x : 100
 				x = ratioToCalc * 100 / maxVal;
-				return 100 - x;
+				return x;
 			}
 			else {
 				if (a == 0) {	
@@ -135,7 +141,7 @@ public class RatioTest {
 				ratioToCalc = a;
 				//ratioToCalc : maxVal = x : 100
 				x = ratioToCalc * 100 / maxVal;
-				return 100 - x;
+				return x;
 			}
 		}
 	}

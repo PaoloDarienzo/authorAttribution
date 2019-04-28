@@ -58,14 +58,17 @@ public class MethodsCollection {
 		
 	}
 	
-	public static long getTotalChars(HashMap<String, Integer> wordVal) {
+	public static long getTotalCharsOnWords(HashMap<String, Integer> wordVal) {
 		
 		long totalChars = 0;
 				
 		for (Entry<String, Integer> entry : wordVal.entrySet()) {
 		    String key = entry.getKey();
 		    Integer value = entry.getValue();
-		    totalChars += key.length() * value.intValue();
+		    //excludes punctuation
+		    if(!MethodsCollection.punctuationChecker(key)) {
+		    	totalChars += key.length() * value.intValue();	
+		    }
 		}
 		
 		return totalChars;
@@ -73,7 +76,7 @@ public class MethodsCollection {
 	}
 
 	public static long getTotalWords(HashMap<String, Integer> wordVal) {
-		
+		//counts punctuation too
 		long totalWords = 0;
 		
 		for (Entry<String, Integer> entry : wordVal.entrySet()) {
@@ -89,24 +92,17 @@ public class MethodsCollection {
 		return getFloatRatio(unkFirst.get(), knownSecond.get());
 	}
 	
-	//TODO
-	/*
-	 * Ricordarsi:
-	 * i valori che arrivano sono in percentuale ma da 0 a 1;
-	 * sistemare i valori per le size delle strutture;
-	 * controllare che func e punt chiamino valori corretti
-	 */
 	public static float getFloatRatio(float a, float b) {
 		/*
-		It returns how much two numbers a, b are different, in percentage 
-		(0 are the same, 99.99999% very different).
+		It returns how much two numbers a, b are similar, in percentage
+		(0 are completely different, 100 are the same).
 		If a or b are 0, they are substituted to the epsilon value 0.0001.
 		If they are both 0, they are equal, so it returns 0.
 		*/
 		float maxVal, ratioToCalc, x;
 		
 		if(a == b) { //covers 0 case
-			return 0;
+			return 100;
 		}
 		
 		else { //a and b are always positive
@@ -122,7 +118,7 @@ public class MethodsCollection {
 				ratioToCalc = b;
 				//ratioToCalc : maxVal = x : 100
 				x = ratioToCalc * 100 / maxVal;
-				return 100 - x;
+				return x;
 			}
 			else {
 				if (a == 0) {	
@@ -133,7 +129,7 @@ public class MethodsCollection {
 				ratioToCalc = a;
 				//ratioToCalc : maxVal = x : 100
 				x = ratioToCalc * 100 / maxVal;
-				return 100 - x;
+				return x;
 			}
 		}
 		
@@ -141,6 +137,29 @@ public class MethodsCollection {
 	
 	public static float getSizeRatio(int unkFirst, int knownSecond) {
 		return getFloatRatio((float) unkFirst, (float) knownSecond);
+	}
+	
+	/**
+	 * 
+	 * @param wordCount HashMap containing the wordCount
+	 * @return the number of keys of wordCount without punctuation symbols, i.e. the number of different words
+	 */
+	public static int getWordsOnlySize(HashMap<String, Integer> wordCount) {
+		
+		int size = wordCount.size();
+		
+		String[] set_punct_values = new String[] {	".", ",", ":", ";",
+													"?", "!", "(", ")",
+													"-", "\""};
+		Set<String> punctuation = new HashSet<>(Arrays.asList(set_punct_values));
+		
+		for (String punct : punctuation) {
+			if (wordCount.containsKey(punct)) {
+				size--;
+			}
+		}
+		
+		return size;
 	}
 
 }

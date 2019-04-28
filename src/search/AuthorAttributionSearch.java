@@ -180,8 +180,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			//lineText is a line of that file.
 			String line = lineText.toString();
 			
-			if(line.contains("Author: ")) {
-				String boundary = "Author: ";
+			if(line.contains("Author profile: ")) {
+				String boundary = "Author profile: ";
 				String[] tokensVal = line.split(boundary);
 				author = tokensVal[1];
 			}//overwritten in cleanup if file is unknown
@@ -250,6 +250,17 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			StatsWritable stats = new StatsWritable(authorTrace, authorTraceUnk);
 			
+			//commenti
+			stats.commenti += "\nwordCountSize(known e unk): " + 
+					authorTrace.getWordsArray().getArray().size() + ", " +
+					authorTraceUnk.getWordsArray().getArray().size();
+			stats.commenti += "\ntwoGramsSize(known e unk): " +
+					authorTrace.getFinalTwoGrams().getTwoGrams().size() + ", " +
+					authorTraceUnk.getFinalTwoGrams().getTwoGrams().size();
+			stats.commenti += "\nthreeGramsSize(known e unk): " +
+					authorTrace.getFinalThreeGrams().getThreeGrams().size() + ", " +
+					authorTraceUnk.getFinalThreeGrams().getThreeGrams().size();
+			
 			context.write(stats, new IntWritable(1));
 			//TODO
 			//context.write(authorTraceUnk, stats);
@@ -257,6 +268,13 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		} //end cleanup
 
 		private void readFile(Path filePath) {
+			
+			//AuthorTrace fields
+			float avgWordLength, punctuationDensity, functionDensity;
+			avgWordLength = punctuationDensity = functionDensity = 0;
+			HashMap<String, Integer> wordCount = new HashMap<String, Integer>();
+			HashMap<TextPair, Integer> twoGrams = new HashMap<TextPair, Integer>();
+			HashMap<TextTrigram, Integer> threeGrams = new HashMap<TextTrigram, Integer>();
 			
 	        try{
 	            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath.toString()));

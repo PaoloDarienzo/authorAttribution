@@ -1,6 +1,8 @@
 	SHUFFLING PHASES
 
 
+test su cluster:
+almeno 6 reducer su es short input
 
 ###################################################################################################
 
@@ -141,7 +143,7 @@ ho preso in considerazione:
 Ognuno dei 9 valori è stato moltiplicato per un peso prima di generare un punteggio di somiglianza.
 
 Weight parameters ipotizzati:
-1. line_length, 0.35;
+1. line_length, 0.35 (non utilizzato);
 2. word_length, 0.35;
 3. 1_word, 0.2;
 4. 2_word, 0.25;

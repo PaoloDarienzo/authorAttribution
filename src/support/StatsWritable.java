@@ -20,7 +20,12 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	private FloatWritable twoGramsSizeRatio;
 	private FloatWritable threeGramsSizeRatio;
 	
+	private FloatWritable vocabularyRichnessRatio;
+	
+	public String commenti = "";
+	
 	public StatsWritable() {
+		
 		onAuthor = new Text();
 		
 		avgWordLengthRatio = new FloatWritable(0);
@@ -30,6 +35,8 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		wordCountSizeRatio = new FloatWritable(0);	
 		twoGramsSizeRatio = new FloatWritable(0);
 		threeGramsSizeRatio = new FloatWritable(0);
+		
+		vocabularyRichnessRatio = new FloatWritable(0);
 		
 	}
 	
@@ -43,16 +50,18 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 						)
 				);
 		
+		//AuthorTrace.functionDensity has a value in range 0-1;
+		float unkFuncValue = authorTraceUnk.getFunctionDensity().get();
+		float knownFuncValue = authorTrace.getFunctionDensity().get();
 		setFunctionDensityRatio(
-				MethodsCollection.getFloatRatio(
-						authorTraceUnk.getFunctionDensity(), authorTrace.getFunctionDensity()
-						)
+				MethodsCollection.getFloatRatio(unkFuncValue, knownFuncValue)
 				);
 		
+		//AuthorTrace.punctuationDensity has a value in range 0-1;
+		float unkPunctValue = authorTraceUnk.getPunctuationDensity().get();
+		float knownPunctValue = authorTrace.getPunctuationDensity().get();
 		setPunctuationDensityRatio(
-				MethodsCollection.getFloatRatio(
-						authorTraceUnk.getPunctuationDensity(), authorTrace.getPunctuationDensity()
-						)
+				MethodsCollection.getFloatRatio(unkPunctValue, knownPunctValue)
 				);
 		
 		///
@@ -75,6 +84,12 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 						authorTraceUnk.getFinalThreeGrams().getThreeGrams().size(), 
 						authorTrace.getFinalThreeGrams().getThreeGrams().size()
 						)
+				);
+		
+		int authKnownWords = MethodsCollection.getWordsOnlySize(authorTrace.getWordsArray().getArray());
+		int authUnkWords = MethodsCollection.getWordsOnlySize(authorTraceUnk.getWordsArray().getArray());
+		setVocabularyRichnessRatio(
+				MethodsCollection.getSizeRatio(authUnkWords, authKnownWords)
 				);
 		
 	}
@@ -162,6 +177,18 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void setThreeGramsSizeRatio(float threeGramsSizeRatio) {
 		this.threeGramsSizeRatio = new FloatWritable(threeGramsSizeRatio);
 	}
+	
+	public void setVocabularyRichnessRatio(FloatWritable vocabularyRichnessRatio) {
+		this.vocabularyRichnessRatio = 	vocabularyRichnessRatio;
+	}
+	
+	public void setVocabularyRichnessRatio(float vocabularyRichnessRatio) {
+		this.vocabularyRichnessRatio = new FloatWritable(vocabularyRichnessRatio);
+	}
+	
+	public FloatWritable getVocabularyRichnessRatio() {
+		return this.vocabularyRichnessRatio;
+	}
 
 	@Override
 	public void readFields(DataInput in) throws IOException {
@@ -173,7 +200,15 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		this.wordCountSizeRatio.readFields(in);
 		this.twoGramsSizeRatio.readFields(in);
 		this.threeGramsSizeRatio.readFields(in);
-				
+		
+		//commenti
+		int sizeString = in.readInt();
+		byte[] bytes = new byte[sizeString];
+		for(int i = 0; i < sizeString; i++) {
+			bytes[i] = in.readByte();
+		}
+		commenti = new String(bytes);
+		
 	}
 
 	@Override
@@ -186,6 +221,10 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		wordCountSizeRatio.write(out);
 		twoGramsSizeRatio.write(out);
 		threeGramsSizeRatio.write(out);
+		
+		//commenti
+		out.writeInt(commenti.length());
+    	out.writeBytes(commenti);
 		
 	}
 
@@ -227,13 +266,22 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	@Override
 	public String toString() {
 		
+		//String values of float with 6 values
+		String avgWordLenToString = String.format("%6f", avgWordLengthRatio.get());
+		String funcDensToString = String.format("%6f", functionDensityRatio.get());
+		String punctDensToString = String.format("%6f", punctuationDensityRatio.get());
+		String wordCountSizeToString = String.format("%6f", wordCountSizeRatio.get());
+		String twoGramsSizeToString = String.format("%6f", twoGramsSizeRatio.get());
+		String threeGramsSizeToString = String.format("%6f", threeGramsSizeRatio.get());
+		
 		String statsToString = "Author: " + onAuthor.toString() + "\n";
-		statsToString += "Average word length ratio: " + avgWordLengthRatio.toString() + "\n";
-		statsToString += "function density ratio: " + functionDensityRatio.toString() + "\n";
-		statsToString += "punctuation density ratio: " + punctuationDensityRatio.toString() + "\n";
-		statsToString += "word count size ratio: " + wordCountSizeRatio.toString() + "\n";
-		statsToString += "twoGrams size ratio: " + twoGramsSizeRatio.toString() + "\n";
-		statsToString += "threeGrams size ratio: " + threeGramsSizeRatio.toString() + "\n";
+		statsToString += "Average word length ratio: " + avgWordLenToString + "\n";
+		statsToString += "function density ratio: " + funcDensToString + "\n";
+		statsToString += "punctuation density ratio: " + punctDensToString + "\n";
+		statsToString += "word count size ratio: " + wordCountSizeToString + "\n";
+		statsToString += "twoGrams size ratio: " + twoGramsSizeToString + "\n";
+		statsToString += "threeGrams size ratio: " + threeGramsSizeToString + "\n";
+		statsToString += "Commenti: " + this.commenti + "\n";
 		return statsToString;
 		
 	}

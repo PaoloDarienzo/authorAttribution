@@ -11,7 +11,7 @@ public class BookTrace implements Writable {
 	
 	private IntWritable punctNo; //number of punctuation words
 	private IntWritable funcNo; //number of function words
-	private WordsArrayWritable wordcount;
+	private WordsArrayWritable wordCount;
 	private TwoGramsWritable twoGrams;
 	private ThreeGramsWritable threeGrams;
 	
@@ -20,7 +20,7 @@ public class BookTrace implements Writable {
 	public BookTrace() {
 		this.punctNo = new IntWritable(0);
 		this.funcNo = new IntWritable(0);
-		this.wordcount = new WordsArrayWritable();
+		this.wordCount = new WordsArrayWritable();
 		this.twoGrams = new TwoGramsWritable();
 		this.threeGrams = new ThreeGramsWritable();
 	}
@@ -52,15 +52,15 @@ public class BookTrace implements Writable {
 	}
 	
 	public WordsArrayWritable getWordsArray() {
-		return this.wordcount;
+		return this.wordCount;
 	}
 	
 	public void setWordsArray(WordsArrayWritable wordVal) {
-		this.wordcount = wordVal;
+		this.wordCount = wordVal;
 	}
 	
 	public void addWord(String word) {
-		this.wordcount.increment(word);
+		this.wordCount.increment(word);
 	}
 	
 	public TwoGramsWritable getTwoGramsWritable() {
@@ -91,7 +91,7 @@ public class BookTrace implements Writable {
 	public void readFields(DataInput in) throws IOException {
 		this.punctNo.readFields(in);
 		this.funcNo.readFields(in);
-		this.wordcount.readFields(in);
+		this.wordCount.readFields(in);
 		this.twoGrams.readFields(in);
 		this.threeGrams.readFields(in);
 		
@@ -111,7 +111,7 @@ public class BookTrace implements Writable {
 	public void write(DataOutput out) throws IOException {
 		this.punctNo.write(out);
 		this.funcNo.write(out);
-		this.wordcount.write(out);
+		this.wordCount.write(out);
 		this.twoGrams.write(out);
 		this.threeGrams.write(out);
 		
@@ -125,7 +125,7 @@ public class BookTrace implements Writable {
 	
 	@Override
 	public String toString() {
-		return 	"\n" + 	this.wordcount.toString() +"\n" +
+		return 	"\n" + 	this.wordCount.toString() +"\n" +
 						this.twoGrams.toString() + "\n" +
 						this.threeGrams.toString() + "\n";
 	}
