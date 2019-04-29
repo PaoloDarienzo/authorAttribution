@@ -20,6 +20,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	private FloatWritable punctuationDensity;
 	//range 0-1, so percentage
 	private FloatWritable functionDensity;
+	private FloatWritable TTR;
 	//private TreeMap<String, Integer> finalWordCountOrdered;
 	private WordsArrayWritable finalWordCount;
 	private TwoGramsWritable finalTwoGrams;
@@ -33,6 +34,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.avgWordLength = new FloatWritable(0);
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
+		this.setTTR(new FloatWritable(0));
 		//this.finalWordCountOrdered = new TreeMap<>();
 		this.finalWordCount = new WordsArrayWritable();
 		this.setFinalTwoGrams(new TwoGramsWritable());
@@ -79,6 +81,14 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity = FunctionDensity;
 	}
 	
+	public FloatWritable getTTR() {
+		return this.TTR;
+	}
+
+	public void setTTR(FloatWritable TTR) {
+		this.TTR = TTR;
+	}
+	
 	/*
 	public TreeMap<String, Integer> getTreeWordsArray() {
 		return this.finalWordCountOrdered;
@@ -88,7 +98,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.finalWordCountOrdered = wordValOrdered;
 	}
 	*/
-	
+
 	public WordsArrayWritable getWordsArray(){
 		return this.finalWordCount;
 	}
@@ -121,6 +131,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.avgWordLength.readFields(in);
 		this.punctuationDensity.readFields(in);
 		this.functionDensity.readFields(in);
+		this.TTR.readFields(in);
 		
 		/*
 		this.finalWordCountOrdered.clear();
@@ -161,6 +172,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.avgWordLength.write(out);
 		this.punctuationDensity.write(out);
 		this.functionDensity.write(out);
+		this.TTR.write(out);
 		
 		/*
 		out.writeInt(this.finalWordCountOrdered.size());
@@ -194,6 +206,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 				"\n" + "Avg word length: " + this.avgWordLength +
 				"\n" + "Punctuation words density: " + this.punctuationDensity +
 				"\n" + "Function words density: " + this.functionDensity +
+				"\n" + "TTR: " + this.TTR + 
 				//Tree was used for WordCount ordered
 				//"\n" + "WordCount: \n" + this.finalWordCountOrdered.toString() +
 				"\n\n"+ "WordCount: \n" + this.finalWordCount.toString() +

@@ -328,6 +328,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		private int nBooks;
 		private int totalPunct, totalFunc;
 		private long totalChars, numWords;
+		private float TTR;
 		
 		private WordsArrayWritable HFinal; //for counting words
 		private TwoGramsWritable finalTwoGrams; //for twoGrams
@@ -346,6 +347,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			totalFunc = 0;
 			totalChars = 0;
 			numWords = 0;
+			TTR = 0;
 			
 			HFinal = new WordsArrayWritable(); //for counting words
 			finalTwoGrams = new TwoGramsWritable();
@@ -415,6 +417,9 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    
 		    functionDensity = new FloatWritable((float) totalFunc / (float) numWords);
 		    authTrace.setFunctionDensity(functionDensity);
+		    
+		    TTR = MethodsCollection.getTTR(HFinal.getArray());
+		    authTrace.setTTR(new FloatWritable(TTR));
 		    
 		    //context.write(key, TraceFinal);
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());

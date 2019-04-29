@@ -135,6 +135,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		private static float avgWordLength;
 		private static float punctuationDensity;
 		private static float functionDensity;
+		private static float TTR;
 		private static HashMap<String, Integer> wordCount;
 		private static HashMap<TextPair, Integer> twoGrams;
 		private static HashMap<TextTrigram, Integer> threeGrams;
@@ -148,7 +149,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			authorTraceUnk = new AuthorTrace();
 			
 			author = "";
-			avgWordLength =	punctuationDensity = functionDensity = 0;
+			avgWordLength =	punctuationDensity = functionDensity = TTR = 0;
 			wordCount = new HashMap<>();
 			twoGrams = new HashMap<>();
 			threeGrams = new HashMap<>();
@@ -203,6 +204,12 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				String funcDensityStr = tokensVal[1];
 				functionDensity = Float.parseFloat(funcDensityStr);
 			}
+			else if(line.contains("TTR: ")) {
+				String boundary = "TTR: ";
+				String[] tokensVal = line.split(boundary);
+				String TTRStr = tokensVal[1];
+				TTR = Float.parseFloat(TTRStr);
+			}
 			else if(line.contains("@")) { //wordCount
 				line = line.replace("@", "");
 				String[] tokensVal = line.split("=");
@@ -228,9 +235,11 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			authorTrace.setAuthor(new Text(author));
 			
+			authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
+			
 			authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
 			authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
-			authorTrace.setAvgWordLength(new FloatWritable(avgWordLength));
+			authorTrace.setTTR(new FloatWritable(TTR));
 			
 			WordsArrayWritable wordCountWritable = new WordsArrayWritable();
 			wordCountWritable.setArray(wordCount);
@@ -270,8 +279,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		private void readFile(Path filePath) {
 			
 			//AuthorTrace fields
-			float avgWordLength, punctuationDensity, functionDensity;
-			avgWordLength = punctuationDensity = functionDensity = 0;
+			float avgWordLength, punctuationDensity, functionDensity, TTR;
+			avgWordLength = punctuationDensity = functionDensity = TTR = 0;
 			HashMap<String, Integer> wordCount = new HashMap<String, Integer>();
 			HashMap<TextPair, Integer> twoGrams = new HashMap<TextPair, Integer>();
 			HashMap<TextTrigram, Integer> threeGrams = new HashMap<TextTrigram, Integer>();
@@ -300,6 +309,12 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	    				String funcDensityStr = tokensVal[1];
 	    				functionDensity = Float.parseFloat(funcDensityStr);
 	    			}
+	    			else if(line.contains("TTR: ")) {
+	    				String boundary = "TTR: ";
+	    				String[] tokensVal = line.split(boundary);
+	    				String TTRStr = tokensVal[1];
+	    				TTR = Float.parseFloat(TTRStr);
+	    			}
 	    			else if(line.contains("@")) { //wordCount
 	    				line = line.replace("@", "");
 	    				String[] tokensVal = line.split("=");
@@ -322,9 +337,11 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	            
 	            authorTraceUnk.setAuthor(new Text("UNKNOWN"));
 	            
+	            authorTraceUnk.setAvgWordLength(new FloatWritable(avgWordLength));
+	            
 	            authorTraceUnk.setFunctionDensity(new FloatWritable(functionDensity));
 				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
-				authorTraceUnk.setAvgWordLength(new FloatWritable(avgWordLength));
+				authorTraceUnk.setTTR(new FloatWritable(TTR));
 				
 				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
 				wordCountWritable.setArray(wordCount);

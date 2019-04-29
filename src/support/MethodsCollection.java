@@ -88,6 +88,21 @@ public class MethodsCollection {
 		
 	}
 	
+	public static long getTotalWordsWOPunct(HashMap<String, Integer> wordVal) {
+		//excludes punctuation
+		long totalWords = 0;
+		
+		for (Entry<String, Integer> entry : wordVal.entrySet()) {
+			if(!MethodsCollection.punctuationChecker(entry.getKey())) {
+				Integer value = entry.getValue();
+			    totalWords += value.intValue();
+			}
+		}
+		
+		return totalWords;
+		
+	}
+	
 	public static float getFloatRatio(FloatWritable unkFirst, FloatWritable knownSecond) {
 		return getFloatRatio(unkFirst.get(), knownSecond.get());
 	}
@@ -135,8 +150,17 @@ public class MethodsCollection {
 		
 	}
 	
-	public static float getSizeRatio(int unkFirst, int knownSecond) {
-		return getFloatRatio((float) unkFirst, (float) knownSecond);
+	/**
+	 * 
+	 * @param wordCount HashMap containing the wordCount
+	 * @return the TTR, i.e. type token ratio
+	 */
+	public static float getTTR(HashMap<String, Integer> wordCount) {
+		
+		float numDiffWords = (float) getWordsOnlySize(wordCount);
+		double numTotalWords = (double) getTotalWordsWOPunct(wordCount);
+		
+		return (float) numDiffWords / (float) numTotalWords;
 	}
 	
 	/**
