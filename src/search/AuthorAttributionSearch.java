@@ -5,7 +5,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -25,7 +24,6 @@ import support.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configured;
@@ -114,8 +112,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		search.setMapperClass(Map.class);
 		search.setReducerClass(Reduce.class);
 		
-		search.setMapOutputKeyClass(StatsWritable.class);
-		search.setMapOutputValueClass(IntWritable.class);
+		search.setMapOutputKeyClass(AuthorTrace.class);
+		search.setMapOutputValueClass(StatsWritable.class);
 		search.setOutputKeyClass(NullWritable.class);
 		search.setOutputValueClass(Text.class);
 				
@@ -123,7 +121,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, StatsWritable, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, AuthorTrace, StatsWritable> {
 		
 		private static AuthorTrace authorTrace;
 		//for multiple unknown file at once, implement
@@ -270,9 +268,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 					authorTrace.getFinalThreeGrams().getThreeGrams().size() + ", " +
 					authorTraceUnk.getFinalThreeGrams().getThreeGrams().size();
 			
-			context.write(stats, new IntWritable(1));
-			//TODO
-			//context.write(authorTraceUnk, stats);
+			context.write(authorTraceUnk, stats);
 			
 		} //end cleanup
 
@@ -365,31 +361,45 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 
 	} //end Map class
 	
-	public static class Reduce extends Reducer<StatsWritable, IntWritable, NullWritable, Text> {
-		
-		AuthorTrace unk;
-		ArrayList<AuthorTrace> authors;
-		
+	public static class Reduce extends Reducer<AuthorTrace, StatsWritable, NullWritable, Text> {
+			
+		/*
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
-		
-			unk = new AuthorTrace();
-			
-			authors = new ArrayList<>();
 						
 		}
+		*/
 		
 		@Override
-		public void reduce(StatsWritable key, Iterable<IntWritable> values, Context context) 
+		public void reduce(AuthorTrace unk, Iterable<StatsWritable> statsSet, Context context) 
 				throws IOException, InterruptedException {
 				
-			String result = "START";
+			HashMap<String, Float> results = new HashMap<String, Float>();
 			
-			for (IntWritable value : values) {
+			//TODO
+			//unk has in author "UNKNOWN"; could be replaced with the name of the file
+			String result = "START\n";
+			
+			String varieStats = "";
+			
+			for (StatsWritable stats : statsSet) {
 				
-				result += 	"\nvalue: " + value + "\n" + key.toString();
+				float punteggioComplessivo = stats.getAvgWordLengthRatio().get();
+				punteggioComplessivo += stats.getFunctionDensityRatio().get();
+				punteggioComplessivo += stats.getPunctuationDensityRatio().get();
+				punteggioComplessivo += stats.getTypeTokenRatio().get();
+				
+				//<referring to author, similarity score>
+				results.put(stats.getOnAuthor().toString(), new Float(punteggioComplessivo / 4));
+				
+				varieStats += "\n" + stats.toString();
+				
 			}
 			
+		
+			String resultsOrdered = MethodsCollection.orderHashMapByValueToString(results);
+			
+			result += resultsOrdered + "\n" + varieStats;
 			context.write(NullWritable.get(), new Text(result));
 			
 		}//end reduce

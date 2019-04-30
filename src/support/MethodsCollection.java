@@ -1,8 +1,13 @@
 package support;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -185,5 +190,45 @@ public class MethodsCollection {
 		
 		return size;
 	}
+	
+	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
+		
+		List<String> mapKeys = new ArrayList<>(results.keySet());
+	    List<Float> mapValues = new ArrayList<>(results.values());
+	    Collections.sort(mapValues, Collections.reverseOrder());
+	    Collections.sort(mapKeys, Collections.reverseOrder());
+	    //for ascending order
+	    //Collections.sort(mapValues);
+	    //Collections.sort(mapKeys);
 
-}
+	    LinkedHashMap<String, Float> sortedMap = new LinkedHashMap<>();
+
+	    Iterator<Float> valueIt = mapValues.iterator();
+	    while (valueIt.hasNext()) {
+	    	Float val = valueIt.next();
+	        Iterator<String> keyIt = mapKeys.iterator();
+
+	        while (keyIt.hasNext()) {
+	        	String key = keyIt.next();
+	        	Float comp1 = results.get(key);
+	        	Float comp2 = val;
+
+	            if (comp1.equals(comp2)) {
+	                keyIt.remove();
+	                sortedMap.put(key, val);
+	                break;
+	            }
+	        }
+	    }
+	    //building the string result
+	    //return sortedMap.toString();
+	    
+	    String result = "";
+	    for(Entry<String, Float> entry : sortedMap.entrySet()) {
+	    	result += entry.getKey() + ", " + entry.getValue() + "\n";
+	    }
+	    return result;
+	    
+	}
+
+} //end class
