@@ -92,7 +92,7 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 		private static float avgWordLength;
 		private static float punctuationDensity;
 		private static float functionDensity;
-		private static HashMap<String, Integer> wordCount;
+		private static HashMap<String, Float> wordFreq;
 		private static HashMap<TextPair, Integer> twoGrams;
 		private static HashMap<TextTrigram, Integer> threeGrams;
 		
@@ -108,7 +108,7 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 			
 			author = "";
 			avgWordLength =	punctuationDensity = functionDensity = 0;
-			wordCount = new HashMap<>();
+			wordFreq = new HashMap<>();
 			twoGrams = new HashMap<>();
 			threeGrams = new HashMap<>();
 			
@@ -159,7 +159,8 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 	    			else if(line.contains("@")) { //wordCount
 	    				line = line.replace("@", "");
 	    				String[] tokensVal = line.split("=");
-	    				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+	    				String wordFreqStr = tokensVal[1];
+	    				wordFreq.put(tokensVal[0], Float.parseFloat(wordFreqStr));
 	    			}
 	    			else if(line.contains("%")) { //couple
 	    				line = line.replace("%", "");
@@ -178,9 +179,9 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 	            
 	            authorTraceUnk.setAuthor(new Text("UNKNOWN"));
 				
-				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
-				wordCountWritable.setArray(wordCount);
-				authorTraceUnk.setWordsArray(wordCountWritable);
+				WordsFreqWritable wordFreqWritable = new WordsFreqWritable();
+				wordFreqWritable.setArray(wordFreq);
+				authorTraceUnk.setWordsFreqArray(wordFreqWritable);
 				
 				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 				twoGramsWritable.setTwoGrams(twoGrams);
@@ -236,7 +237,8 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 			else if(line.contains("@")) { //wordCount
 				line = line.replace("@", "");
 				String[] tokensVal = line.split("=");
-				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+				String wordFreqStr = tokensVal[1];
+				wordFreq.put(tokensVal[0], Float.parseFloat(wordFreqStr));
 			}
 			else if(line.contains("%")) { //couple
 				line = line.replace("%", "");
@@ -259,9 +261,9 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 						
 			authorTrace.setAuthor(new Text(author));
 			
-			WordsArrayWritable wordCountWritable = new WordsArrayWritable();
-			wordCountWritable.setArray(wordCount);
-			authorTrace.setWordsArray(wordCountWritable);
+			WordsFreqWritable wordFreqWritable = new WordsFreqWritable();
+			wordFreqWritable.setArray(wordFreq);
+			authorTrace.setWordsFreqArray(wordFreqWritable);
 			
 			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 			twoGramsWritable.setTwoGrams(twoGrams);

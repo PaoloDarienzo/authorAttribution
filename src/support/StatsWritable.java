@@ -3,6 +3,7 @@ package support;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
@@ -19,6 +20,11 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	
 	private FloatWritable typeTokenRatio; //vocabulary richness
 	
+	private FloatWritable wordFreqRatio;
+	
+	private FloatWritable twoGramsRatio;
+	private FloatWritable threeGramsRatio;
+	
 	public String commenti = "";
 	
 	public StatsWritable() {
@@ -31,6 +37,11 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		punctuationDensityRatio = new FloatWritable(0);
 				
 		typeTokenRatio = new FloatWritable(0);
+		
+		wordFreqRatio = new FloatWritable(0);
+		
+		twoGramsRatio = new FloatWritable(0);
+		threeGramsRatio = new FloatWritable(0);
 		
 	}
 	
@@ -64,6 +75,21 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		setTypeTokenRatio(
 				MethodsCollection.getFloatRatio(authUnkTTR, authKnownTTR)
 				);
+		
+		//wordFreqRatio
+		HashMap<String, Float> knownWordFreq = authorTrace.getWordsFreqArray().getArray();
+		HashMap<String, Float> unkWordFreq = authorTraceUnk.getWordsFreqArray().getArray();
+		setWordFreqRatioRatio(MethodsCollection.getWordFreqRatioFromAll(knownWordFreq, unkWordFreq));
+		
+		//twoGramsRatio
+		HashMap<TextPair, Integer> unkTwoGrams = authorTraceUnk.getFinalTwoGrams().getTwoGrams();
+		HashMap<TextPair, Integer> knownTwoGrams = authorTrace.getFinalTwoGrams().getTwoGrams();
+		setTwoGramsRatio(MethodsCollection.getTwoGramsRatio(knownTwoGrams, unkTwoGrams));
+		
+		//threeGramsRatio
+		HashMap<TextTrigram, Integer> unkThreeGrams = authorTraceUnk.getFinalThreeGrams().getThreeGrams();
+		HashMap<TextTrigram, Integer> knownThreeGrams = authorTrace.getFinalThreeGrams().getThreeGrams();
+		setThreeGramsRatio(MethodsCollection.getThreeGramsRatio(knownThreeGrams, unkThreeGrams));
 		
 	}
 
@@ -116,7 +142,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	}
 	
 	public void setTypeTokenRatio(FloatWritable typeTokenRatio) {
-		this.typeTokenRatio = 	typeTokenRatio;
+		this.typeTokenRatio = typeTokenRatio;
 	}
 	
 	public void setTypeTokenRatio(float typeTokenRatio) {
@@ -125,6 +151,42 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	
 	public FloatWritable getTypeTokenRatio() {
 		return this.typeTokenRatio;
+	}
+	
+	public void setWordFreqRatioRatio(FloatWritable wordFreqRatio) {
+		this.wordFreqRatio = wordFreqRatio;
+	}
+	
+	public void setWordFreqRatioRatio(float wordFreqRatio) {
+		this.wordFreqRatio = new FloatWritable(wordFreqRatio);
+	}
+	
+	public FloatWritable getWordFreqRatioRatio() {
+		return this.wordFreqRatio;
+	}
+	
+	public void setTwoGramsRatio(FloatWritable twoGramsRatio) {
+		this.twoGramsRatio = twoGramsRatio;
+	}
+	
+	public void setTwoGramsRatio(float twoGramsRatio) {
+		this.twoGramsRatio = new FloatWritable(twoGramsRatio);
+	}
+	
+	public FloatWritable getTwoGramsRatio() {
+		return this.twoGramsRatio;
+	}
+	
+	public void setThreeGramsRatio(FloatWritable threeGramsRatio) {
+		this.threeGramsRatio = threeGramsRatio;
+	}
+	
+	public void setThreeGramsRatio(float threeGramsRatio) {
+		this.threeGramsRatio = new FloatWritable(threeGramsRatio);
+	}
+	
+	public FloatWritable getThreeGramsRatio() {
+		return this.threeGramsRatio;
 	}
 
 	@Override
@@ -137,6 +199,11 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		this.punctuationDensityRatio.readFields(in);
 		
 		this.typeTokenRatio.readFields(in);
+		
+		this.wordFreqRatio.readFields(in);
+		
+		this.twoGramsRatio.readFields(in);
+		this.threeGramsRatio.readFields(in);
 		
 		//commenti
 		int sizeString = in.readInt();
@@ -159,6 +226,11 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		
 		typeTokenRatio.write(out);
 		
+		wordFreqRatio.write(out);
+		
+		twoGramsRatio.write(out);
+		threeGramsRatio.write(out);
+		
 		//commenti
 		out.writeInt(commenti.length());
     	out.writeBytes(commenti);
@@ -176,28 +248,6 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		
 		return onAuthor.compareTo(at.onAuthor);
 		
-		/*
-		int cmp = onAuthor.compareTo(at.onAuthor);
-		if (cmp != 0)
-			return cmp;
-		cmp = avgWordLengthRatio.compareTo(at.avgWordLengthRatio);
-		if (cmp != 0)
-			return cmp;
-		cmp = functionDensityRatio.compareTo(functionDensityRatio);
-		if (cmp != 0)
-			return cmp;
-		cmp = punctuationDensityRatio.compareTo(at.punctuationDensityRatio);
-		if (cmp != 0)
-			return cmp;
-		cmp = wordCountSizeRatio.compareTo(at.wordCountSizeRatio);
-		if (cmp != 0)
-			return cmp;
-		cmp = twoGramsSizeRatio.compareTo(at.twoGramsSizeRatio);
-		if (cmp != 0)
-			return cmp;
-		return threeGramsSizeRatio.compareTo(at.threeGramsSizeRatio);
-		*/
-		
 	}
 	
 	@Override
@@ -208,13 +258,20 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		String funcDensToString = String.format("%6f", functionDensityRatio.get());
 		String punctDensToString = String.format("%6f", punctuationDensityRatio.get());
 		String typeTokenRatioToString = String.format("%6f", typeTokenRatio.get());
+		String wordFreqRatioToString = String.format("%6f", wordFreqRatio.get());
+		String twoGramsRatioToString = String.format("%6f", twoGramsRatio.get());
+		String threeGramsRatioToString = String.format("%6f", threeGramsRatio.get());
 		
 		String statsToString = "Author: " + onAuthor.toString() + "\n";
 		statsToString += "Average word length ratio: " + avgWordLenToString + "\n";
-		statsToString += "function density ratio: " + funcDensToString + "\n";
-		statsToString += "punctuation density ratio: " + punctDensToString + "\n";
+		statsToString += "Function density ratio: " + funcDensToString + "\n";
+		statsToString += "Punctuation density ratio: " + punctDensToString + "\n";
 		statsToString += "TTR: " + typeTokenRatioToString + "\n";
+		statsToString += "Word frequencies ratio (20-60): " + wordFreqRatioToString + "\n";
+		statsToString += "TwoGrams ratio: " + twoGramsRatioToString + "\n";
+		statsToString += "ThreeGrams ratio: " + threeGramsRatioToString + "\n";
 		statsToString += "Commenti: " + this.commenti + "\n";
+		
 		return statsToString;
 		
 	}

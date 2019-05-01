@@ -50,7 +50,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		Path creationPath = new Path(outPath, "creation");
 		Path resultPath = new Path(outPath, "result");
 		//TODO
-		Path toMatchPath = new Path("/user/paolo/authorAttr/output/creation/veryshort");
+		//Path toMatchPath = new Path("/user/paolo/authorAttr/output/creation/veryshort");
+		Path toMatchPath = new Path("/user/paolo/authorAttr/output/testShort/creation");
 		//Path toMatchPath = new Path(args[3]);
 		
 		//JOB 1: Creation profile of unknown file
@@ -134,7 +135,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		private static float punctuationDensity;
 		private static float functionDensity;
 		private static float TTR;
-		private static HashMap<String, Integer> wordCount;
+		private static HashMap<String, Float> wordFreq;
 		private static HashMap<TextPair, Integer> twoGrams;
 		private static HashMap<TextTrigram, Integer> threeGrams;
 		
@@ -148,7 +149,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			author = "";
 			avgWordLength =	punctuationDensity = functionDensity = TTR = 0;
-			wordCount = new HashMap<>();
+			wordFreq = new HashMap<>();
 			twoGrams = new HashMap<>();
 			threeGrams = new HashMap<>();
 			
@@ -211,7 +212,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			else if(line.contains("@")) { //wordCount
 				line = line.replace("@", "");
 				String[] tokensVal = line.split("=");
-				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+				String wordFreqStr = tokensVal[1];
+				wordFreq.put(tokensVal[0], Float.parseFloat(wordFreqStr));
 			}
 			else if(line.contains("%")) { //couple
 				line = line.replace("%", "");
@@ -239,9 +241,9 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));
 			authorTrace.setTTR(new FloatWritable(TTR));
 			
-			WordsArrayWritable wordCountWritable = new WordsArrayWritable();
-			wordCountWritable.setArray(wordCount);
-			authorTrace.setWordsArray(wordCountWritable);
+			WordsFreqWritable wordFreqWritable = new WordsFreqWritable();
+			wordFreqWritable.setArray(wordFreq);
+			authorTrace.setWordsFreqArray(wordFreqWritable);
 			
 			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 			twoGramsWritable.setTwoGrams(twoGrams);
@@ -257,17 +259,6 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			StatsWritable stats = new StatsWritable(authorTrace, authorTraceUnk);
 			
-			//commenti
-			stats.commenti += "\nwordCountSize(known e unk): " + 
-					authorTrace.getWordsArray().getArray().size() + ", " +
-					authorTraceUnk.getWordsArray().getArray().size();
-			stats.commenti += "\ntwoGramsSize(known e unk): " +
-					authorTrace.getFinalTwoGrams().getTwoGrams().size() + ", " +
-					authorTraceUnk.getFinalTwoGrams().getTwoGrams().size();
-			stats.commenti += "\nthreeGramsSize(known e unk): " +
-					authorTrace.getFinalThreeGrams().getThreeGrams().size() + ", " +
-					authorTraceUnk.getFinalThreeGrams().getThreeGrams().size();
-			
 			context.write(authorTraceUnk, stats);
 			
 		} //end cleanup
@@ -277,7 +268,7 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			//AuthorTrace fields
 			float avgWordLength, punctuationDensity, functionDensity, TTR;
 			avgWordLength = punctuationDensity = functionDensity = TTR = 0;
-			HashMap<String, Integer> wordCount = new HashMap<String, Integer>();
+			HashMap<String, Float> wordFreq = new HashMap<String, Float>();
 			HashMap<TextPair, Integer> twoGrams = new HashMap<TextPair, Integer>();
 			HashMap<TextTrigram, Integer> threeGrams = new HashMap<TextTrigram, Integer>();
 			
@@ -314,7 +305,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	    			else if(line.contains("@")) { //wordCount
 	    				line = line.replace("@", "");
 	    				String[] tokensVal = line.split("=");
-	    				wordCount.put(tokensVal[0], new Integer(tokensVal[1]));
+	    				String wordFreqStr = tokensVal[1];
+	    				wordFreq.put(tokensVal[0], Float.parseFloat(wordFreqStr));
 	    			}
 	    			else if(line.contains("%")) { //couple
 	    				line = line.replace("%", "");
@@ -339,9 +331,9 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
 				authorTraceUnk.setTTR(new FloatWritable(TTR));
 				
-				WordsArrayWritable wordCountWritable = new WordsArrayWritable();
-				wordCountWritable.setArray(wordCount);
-				authorTraceUnk.setWordsArray(wordCountWritable);
+				WordsFreqWritable wordFreqWritable = new WordsFreqWritable();
+				wordFreqWritable.setArray(wordFreq);
+				authorTraceUnk.setWordsFreqArray(wordFreqWritable);
 				
 				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 				twoGramsWritable.setTwoGrams(twoGrams);
@@ -362,13 +354,15 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	} //end Map class
 	
 	public static class Reduce extends Reducer<AuthorTrace, StatsWritable, NullWritable, Text> {
-			
-		/*
-		@Override
-		public void setup(Context context) throws IOException, InterruptedException {
-						
-		}
-		*/
+		
+		private static float numFact = 7;
+		private static float avgWordLenFact = 1;
+		private static float funDensFact = 1;
+		private static float punctDensFact = 1;
+		private static float ttrFact = 1;
+		private static float wordFreqFact = 1;
+		private static float twoGramsFact = 1;
+		private static float threeGramsFact = 1;
 		
 		@Override
 		public void reduce(AuthorTrace unk, Iterable<StatsWritable> statsSet, Context context) 
@@ -384,13 +378,16 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			for (StatsWritable stats : statsSet) {
 				
-				float punteggioComplessivo = stats.getAvgWordLengthRatio().get();
-				punteggioComplessivo += stats.getFunctionDensityRatio().get();
-				punteggioComplessivo += stats.getPunctuationDensityRatio().get();
-				punteggioComplessivo += stats.getTypeTokenRatio().get();
+				float punteggioComplessivo = stats.getAvgWordLengthRatio().get() * avgWordLenFact;
+				punteggioComplessivo += stats.getFunctionDensityRatio().get() * funDensFact;
+				punteggioComplessivo += stats.getPunctuationDensityRatio().get() * punctDensFact;
+				punteggioComplessivo += stats.getTypeTokenRatio().get() * ttrFact;
+				punteggioComplessivo += stats.getWordFreqRatioRatio().get() * wordFreqFact;
+				punteggioComplessivo += stats.getTwoGramsRatio().get() * twoGramsFact;
+				punteggioComplessivo += stats.getThreeGramsRatio().get() * threeGramsFact;
 				
 				//<referring to author, similarity score>
-				results.put(stats.getOnAuthor().toString(), new Float(punteggioComplessivo / 4));
+				results.put(stats.getOnAuthor().toString(), new Float(punteggioComplessivo / numFact));
 				
 				varieStats += "\n" + stats.toString();
 				

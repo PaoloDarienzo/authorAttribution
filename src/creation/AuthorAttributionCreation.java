@@ -28,6 +28,7 @@ import support.ThreeGramsWritable;
 import support.TwoGramsWritable;
 import support.Unused;
 import support.WordsArrayWritable;
+import support.WordsFreqWritable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -216,45 +217,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				}
 			} //end for
 			
-			//SAFE MODE
-			//WORKS, BUT EXCLUDE BLOCKS OF PUNCTUATION SYMBOLS, 
-			//e.g.:
-			//!?
-			//...
-			//. "
-			/*
-			for(String word : WORD_BOUNDARY.split(line)) {
-				//skip if word is empty
-				//or if is not a digit or a char
-				//and is not a punctuation symbol
-				if (word.isEmpty() 
-						|| (
-							!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNCTUATION.contains(word))
-							) 
-					) {
-					continue; //skipping to next legitimate word
-				}
-				else {
-					isWord = true;
-					if(MethodsCollection.punctuationChecker(word)) {
-						punctNo++;
-						isWord = false;
-					}
-					else if(MethodsCollection.functionWordChecker(word)) {
-						funcNo++;
-					}
-				}
-				String lowCaseWord = word.toLowerCase();
-				//wordCount
-				currentBookTrace.addWord(lowCaseWord);
-				if(isWord) {
-					//twoGrams/threeGrams with only words
-					words.add(lowCaseWord);
-				}
-								
-			} //end for
-			*/
-			
 			//twoGrams and threeGrams creating and counting
 			//(n-grams over a single line)
 			int indexTerm = -1;
@@ -289,12 +251,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 				//with the same string in first and second field.
 				//So the string field's a pass by reference and not pass by value
 			}//end twoGrams and threeGrams for cycle
-
-			/*
-			//wordCount support phase
-			currentBookTrace.setPunctNo(new IntWritable(punctNo));
-			currentBookTrace.setFuncNo(new IntWritable(funcNo));		
-			*/
 			
 		}//end map
 		
@@ -399,8 +355,11 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 					    
 			//Ordering HashMap by key; used
 		    //authTrace.setTreeWordsArray(orderArray(HFinal.getArray()));
-			authTrace.setWordsArray(HFinal);
-		    
+			//HFinal has the count of each word used by that author in every book analyzed
+			//numWords contains the number of total words used
+			HashMap<String, Float> wordFreq = MethodsCollection.getWordFrequencies(HFinal.getArray(), numWords);
+			authTrace.setWordsFreqArray(new WordsFreqWritable(wordFreq));
+			
 		    //Setting twoGram of author
 		    authTrace.setFinalTwoGrams(finalTwoGrams);
 		    

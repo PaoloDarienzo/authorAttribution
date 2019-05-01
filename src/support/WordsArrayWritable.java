@@ -39,6 +39,7 @@ public class WordsArrayWritable implements Writable {
 	}
 	
 	public void sum(WordsArrayWritable wordVal) {
+		
 		HashMap<String, Integer> wordValTemp = wordVal.getArray();
 		
 		for(Entry<String, Integer> entry : wordValTemp.entrySet()) {

@@ -191,7 +191,7 @@ public class MethodsCollection {
 		return size;
 	}
 	
-	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
+	public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
 		
 		List<String> mapKeys = new ArrayList<>(results.keySet());
 	    List<Float> mapValues = new ArrayList<>(results.values());
@@ -220,8 +220,14 @@ public class MethodsCollection {
 	            }
 	        }
 	    }
-	    //building the string result
-	    //return sortedMap.toString();
+	    
+	    return sortedMap;
+	    
+	}
+	
+	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
+	    
+	    LinkedHashMap<String, Float> sortedMap = orderHashMapByValue(results);
 	    
 	    String result = "";
 	    for(Entry<String, Float> entry : sortedMap.entrySet()) {
@@ -229,6 +235,122 @@ public class MethodsCollection {
 	    }
 	    return result;
 	    
+	}
+	
+	public static HashMap<String, Float> getWordFrequencies(HashMap<String, Integer> wordCount, long numWords){
+		
+		HashMap<String, Float> wordFreq = new HashMap<String, Float>();
+		
+		for(Entry<String, Integer> entry : wordCount.entrySet()) {
+			wordFreq.put(entry.getKey(), (float) ((double)entry.getValue() / (double)numWords));
+		}
+		
+		return wordFreq;
+		
+	}
+
+	public static float getTwoGramsRatio(HashMap<TextPair, Integer> knownTwoGrams,
+			HashMap<TextPair, Integer> unkTwoGrams) {
+		
+		float result = (float) 0.0;
+		
+		for(Entry<TextPair, Integer> entry : knownTwoGrams.entrySet()) {
+			if(unkTwoGrams.containsKey(entry.getKey())) {
+				result += getFloatRatio(unkTwoGrams.get(entry.getKey()), knownTwoGrams.get(entry.getKey()));
+			}
+			/*
+			else {
+				add 0;
+			}
+			*/
+		}
+		
+		return (result / knownTwoGrams.size());
+	}
+
+	public static float getThreeGramsRatio(HashMap<TextTrigram, Integer> knownThreeGrams,
+			HashMap<TextTrigram, Integer> unkThreeGrams) {
+		
+		float result = (float) 0.0;
+		
+		for(Entry<TextTrigram, Integer> entry : knownThreeGrams.entrySet()) {
+			if(unkThreeGrams.containsKey(entry.getKey())) {
+				result += getFloatRatio(unkThreeGrams.get(entry.getKey()), knownThreeGrams.get(entry.getKey()));
+			}
+			/*
+			else {
+				add 0;
+			}
+			*/
+		}
+		
+		return (result / knownThreeGrams.size());
+		
+	}
+	
+	public static float getWordFreqRatio(HashMap<String, Float> knownWordFreq, 
+			HashMap<String, Float> unkWordFreq) {
+		
+		float result = (float) 0.0;
+		
+		for(Entry<String, Float> entry : knownWordFreq.entrySet()) {
+			if(unkWordFreq.containsKey(entry.getKey())) {
+				result += getFloatRatio(unkWordFreq.get(entry.getKey()), knownWordFreq.get(entry.getKey()));
+			}
+			/*
+			else {
+				add 0;
+			}
+			*/
+		}
+		
+		return (result / knownWordFreq.size());
+		
+	}
+
+	public static float getWordFreqRatioFromAll(HashMap<String, Float> knownWordFreq, 
+			HashMap<String, Float> unkWordFreq) {
+		//estraggo tra le 20 e le 60 parole più usate dell'autore noto,
+		//e le confronto con le 20-60 parole più usate dell'autore ignoto.
+		//Se l'authKnown/authUnk ha meno di 100 entries, le uso tutte.
+		
+		if(knownWordFreq.size() >= 100 && unkWordFreq.size() >= 100) {
+			int from = 20;
+			int to = 60;
+			return getWordFreqRatio(
+					extractSubSetOrdered(knownWordFreq, from, to), extractSubSetOrdered(unkWordFreq, from, to));
+			
+		}
+		else {
+			return getWordFreqRatio(knownWordFreq, unkWordFreq);
+		}
+		
+	}
+	
+	public static LinkedHashMap<String, Float> extractSubSetOrdered(HashMap<String, Float> hashMap, 
+			int from, int to){
+		//extracting 20th-60th entries from ordered set
+		if(hashMap.size() < 100) {
+			return null;
+		}
+		else {
+			LinkedHashMap<String, Float> orderedMap = orderHashMapByValue(hashMap);
+			LinkedHashMap<String, Float> subSetOdered = new LinkedHashMap<String, Float>();
+			int counter = 0;
+			for(Entry<String, Float> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < from) {
+					continue;
+				}
+				else if(counter > to) {
+					break;
+				}
+				else {
+					subSetOdered.put(entry.getKey(), entry.getValue());
+				}
+			}
+			return subSetOdered;
+		}
 	}
 
 } //end class

@@ -4,7 +4,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 //import java.util.Map.Entry;
-//import java.util.TreeMap;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -22,7 +21,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	private FloatWritable functionDensity;
 	private FloatWritable TTR;
 	//private TreeMap<String, Integer> finalWordCountOrdered;
-	private WordsArrayWritable finalWordCount;
+	private WordsFreqWritable wordFreq;
 	private TwoGramsWritable finalTwoGrams;
 	private ThreeGramsWritable finalThreeGrams;
 	
@@ -36,7 +35,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity = new FloatWritable(0);
 		this.setTTR(new FloatWritable(0));
 		//this.finalWordCountOrdered = new TreeMap<>();
-		this.finalWordCount = new WordsArrayWritable();
+		this.wordFreq = new WordsFreqWritable();
 		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.setFinalThreeGrams(new ThreeGramsWritable());
 	}
@@ -99,12 +98,12 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	}
 	*/
 
-	public WordsArrayWritable getWordsArray(){
-		return this.finalWordCount;
+	public WordsFreqWritable getWordsFreqArray(){
+		return this.wordFreq;
 	}
 	
-	public void setWordsArray(WordsArrayWritable wordVal) {
-		this.finalWordCount = wordVal;
+	public void setWordsFreqArray(WordsFreqWritable wordVal) {
+		this.wordFreq = wordVal;
 	}
 	
 	public TwoGramsWritable getFinalTwoGrams() {
@@ -148,7 +147,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		}
 		*/
 		
-		this.finalWordCount.readFields(in);		
+		this.wordFreq.readFields(in);		
 		this.finalTwoGrams.readFields(in);
 		this.finalThreeGrams.readFields(in);
 		
@@ -184,7 +183,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
         }
 		*/
 		
-		this.finalWordCount.write(out);
+		this.wordFreq.write(out);
 		this.finalTwoGrams.write(out);
 		this.finalThreeGrams.write(out);
 		
@@ -209,7 +208,7 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 				"\n" + "TTR: " + this.TTR + 
 				//Tree was used for WordCount ordered
 				//"\n" + "WordCount: \n" + this.finalWordCountOrdered.toString() +
-				"\n\n"+ "WordCount: \n" + this.finalWordCount.toString() +
+				"\n\n"+ "WordFreq: \n" + this.wordFreq.toString() +
 				"\n" + "Couples: \n" + this.finalTwoGrams.toString() +
 				"\n" + "Trigrams: \n" + this.finalThreeGrams.toString() + "\n";
 		
