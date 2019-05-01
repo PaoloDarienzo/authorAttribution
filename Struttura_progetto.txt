@@ -1,20 +1,4 @@
-		SHUFFLING PHASES
 
-calcolo del valore di rapporto wordFreq:
-***
-prendo, per autore, le parole più usate tra la 20esima e 60esima posizione 
-(order hashmap -> estraz. 20-60)
-Autori X, Y; per ogni parola di X vedo se Y ce l'ha; 
-se non c'è, segno 0;
-se c'è, segno la distanza tra i valori dei due autori su quella parola.
-Faccio la media dei valori totali.
-
-Per bigram e trigram, uguale -> per ogni valore, non per 20esimo e 60esimo;
-quello fisso è l'autore noto
-
-
-
-DEVO ANCORA PRENDERE:
 numero di bigrammi, trigrammi, monogrammi  (ovvero, fissato un ngramma, vedere se l'altro ce l'ha) ***
 (come con function words: Style based Authorship Attribution on English Editorial Documents, V. et Al.)
 
@@ -135,36 +119,6 @@ DA AGGIORNARE CON TTR
 8. function_word_density;
 9. word_frequency (tra le 20 - 60 più utilizzate);
 
-Ognuno dei 9 valori è stato moltiplicato per un peso prima di generare un punteggio di somiglianza.
-
-Weigth parameters ipotizzati:
-DA AGGIORNARE CON TTR
-1. line_length, 0.35 (non utilizzato);
-2. word_length, 0.35;
-5. 2_gram, 0.35;
-6. 3_gram, 0.3;
-7. punctuation_density, 0.45;
-8. function_word_density, 0.5;
-9. word_frequency (tra le 20 - 60 più utilizzate), 0.4;
-I valori grezzi andranno parametrizzati e poi pesati; dopodichè sommati per andare a generare il punteggio di somiglianza.
-Per lo stesso testo, i punteggi dovrebbero essere:
-1. 1 * 0.35
-2. 1 * 0.35
-3. 1 * 0.30
-4. 1 * 0.45
-5. 1 * 0.50
-6. 1 * 0.40
-___________________
-		
-		1. avgWordLenFact;
-		2. funDensFact;		0.35
-		3. punctDensFact;	0.3
-		4. ttrFact;			0.35
-		5. wordFreqFact;
-		6. twoGramsFact;
-		7. threeGramsFact;
-		
-		functDens >= ttr >punctDens > wordFreqFact > threeGrams > twoGrams >= avgWordLen
 
 ###################################################################################################
 

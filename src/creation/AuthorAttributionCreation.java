@@ -45,7 +45,9 @@ import org.apache.hadoop.conf.Configured;
 public class AuthorAttributionCreation extends Configured implements Tool {
 
 	/**
-	 * @param args input path, output path, number of reducers
+	 * 
+	 * @param args
+	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
 		

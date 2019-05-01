@@ -355,14 +355,19 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	
 	public static class Reduce extends Reducer<AuthorTrace, StatsWritable, NullWritable, Text> {
 		
-		private static float numFact = 7;
+		//weight factors
 		private static float avgWordLenFact = 1;
-		private static float funDensFact = 1;
-		private static float punctDensFact = 1;
-		private static float ttrFact = 1;
+		private static float funDensFact = 3;
+		private static float punctDensFact = 2;
+		private static float ttrFact = (float) 1.5;
 		private static float wordFreqFact = 1;
 		private static float twoGramsFact = 1;
 		private static float threeGramsFact = 1;
+		
+		//for weighted sum
+		private static float sum = avgWordLenFact + funDensFact + punctDensFact +
+					ttrFact + wordFreqFact + twoGramsFact + threeGramsFact;
+		private static float numFact = (float) sum;
 		
 		@Override
 		public void reduce(AuthorTrace unk, Iterable<StatsWritable> statsSet, Context context) 
@@ -378,16 +383,16 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			for (StatsWritable stats : statsSet) {
 				
-				float punteggioComplessivo = stats.getAvgWordLengthRatio().get() * avgWordLenFact;
-				punteggioComplessivo += stats.getFunctionDensityRatio().get() * funDensFact;
-				punteggioComplessivo += stats.getPunctuationDensityRatio().get() * punctDensFact;
-				punteggioComplessivo += stats.getTypeTokenRatio().get() * ttrFact;
-				punteggioComplessivo += stats.getWordFreqRatioRatio().get() * wordFreqFact;
-				punteggioComplessivo += stats.getTwoGramsRatio().get() * twoGramsFact;
-				punteggioComplessivo += stats.getThreeGramsRatio().get() * threeGramsFact;
+				float overrallScore = stats.getAvgWordLengthRatio().get() * avgWordLenFact;
+				overrallScore += stats.getFunctionDensityRatio().get() * funDensFact;
+				overrallScore += stats.getPunctuationDensityRatio().get() * punctDensFact;
+				overrallScore += stats.getTypeTokenRatio().get() * ttrFact;
+				overrallScore += stats.getWordFreqRatioRatio().get() * wordFreqFact;
+				overrallScore += stats.getTwoGramsRatio().get() * twoGramsFact;
+				overrallScore += stats.getThreeGramsRatio().get() * threeGramsFact;
 				
 				//<referring to author, similarity score>
-				results.put(stats.getOnAuthor().toString(), new Float(punteggioComplessivo / numFact));
+				results.put(stats.getOnAuthor().toString(), new Float(overrallScore / numFact));
 				
 				varieStats += "\n" + stats.toString();
 				

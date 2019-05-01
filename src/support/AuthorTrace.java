@@ -3,7 +3,6 @@ package support;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-//import java.util.Map.Entry;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -20,7 +19,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	//range 0-1, so percentage
 	private FloatWritable functionDensity;
 	private FloatWritable TTR;
-	//private TreeMap<String, Integer> finalWordCountOrdered;
 	private WordsFreqWritable wordFreq;
 	private TwoGramsWritable finalTwoGrams;
 	private ThreeGramsWritable finalThreeGrams;
@@ -34,7 +32,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
 		this.setTTR(new FloatWritable(0));
-		//this.finalWordCountOrdered = new TreeMap<>();
 		this.wordFreq = new WordsFreqWritable();
 		this.setFinalTwoGrams(new TwoGramsWritable());
 		this.setFinalThreeGrams(new ThreeGramsWritable());
@@ -87,16 +84,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	public void setTTR(FloatWritable TTR) {
 		this.TTR = TTR;
 	}
-	
-	/*
-	public TreeMap<String, Integer> getTreeWordsArray() {
-		return this.finalWordCountOrdered;
-	}
-	
-	public void setTreeWordsArray(TreeMap<String, Integer> wordValOrdered) {
-		this.finalWordCountOrdered = wordValOrdered;
-	}
-	*/
 
 	public WordsFreqWritable getWordsFreqArray(){
 		return this.wordFreq;
@@ -132,21 +119,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity.readFields(in);
 		this.TTR.readFields(in);
 		
-		/*
-		this.finalWordCountOrdered.clear();
-		int size = in.readInt();
-		for(int i = 0; i < size; i++) {
-			int sizeKey = in.readInt();
-			byte[] bytes = new byte[sizeKey];
-			for(int j = 0; j < sizeKey; j++) {
-				bytes[j] = in.readByte();
-			}
-			String key = new String(bytes);
-			Integer value = new Integer(in.readInt());
-			this.finalWordCountOrdered.put(key, value);
-		}
-		*/
-		
 		this.wordFreq.readFields(in);		
 		this.finalTwoGrams.readFields(in);
 		this.finalThreeGrams.readFields(in);
@@ -173,16 +145,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity.write(out);
 		this.TTR.write(out);
 		
-		/*
-		out.writeInt(this.finalWordCountOrdered.size());
-		for(Entry<String, Integer> entry : finalWordCountOrdered.entrySet()) {
-			String key = entry.getKey();
-        	out.writeInt(key.length());
-        	out.writeBytes(key);   
-        	out.writeInt(entry.getValue());
-        }
-		*/
-		
 		this.wordFreq.write(out);
 		this.finalTwoGrams.write(out);
 		this.finalThreeGrams.write(out);
@@ -206,8 +168,6 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 				"\n" + "Punctuation words density: " + this.punctuationDensity +
 				"\n" + "Function words density: " + this.functionDensity +
 				"\n" + "TTR: " + this.TTR + 
-				//Tree was used for WordCount ordered
-				//"\n" + "WordCount: \n" + this.finalWordCountOrdered.toString() +
 				"\n\n"+ "WordFreq: \n" + this.wordFreq.toString() +
 				"\n" + "Couples: \n" + this.finalTwoGrams.toString() +
 				"\n" + "Trigrams: \n" + this.finalThreeGrams.toString() + "\n";

@@ -122,7 +122,7 @@ public class TextTrigram implements WritableComparable<TextTrigram> {
 	*	 1: this.object  >  tp
 	*/
 	/**
-	 * Mi appoggio al compare dei singoli componenti del Pair
+	 * Using compare of each component of TextTrigram
 	 * @return
 	 * a negative integer, zero, or a positive integer as 
 	 * this object is less than, equal to, or greater than the specified object.

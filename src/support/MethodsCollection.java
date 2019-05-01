@@ -13,8 +13,18 @@ import java.util.Map.Entry;
 
 import org.apache.hadoop.io.FloatWritable;
 
+/**
+ * Collection of methods used for Author Attribution
+ * @author Paolo D'Arienzo
+ *
+ */
 public class MethodsCollection {
 
+	/**
+	 * 
+	 * @param word
+	 * @return true if word is a punctuation symbol, false otherwise
+	 */
 	public static boolean punctuationChecker(String word) {
 		
 		String[] set_punct_values = new String[] {	".", ",", ":", ";",
@@ -30,6 +40,11 @@ public class MethodsCollection {
 		}
 	}
 
+	/**
+	 * 
+	 * @param word
+	 * @return true if word is a fuction word, false otherwise
+	 */
 	public static boolean functionWordChecker(String word) {
 		
 		String[] set_function_words = new String[] 
@@ -63,6 +78,11 @@ public class MethodsCollection {
 		
 	}
 	
+	/**
+	 * 
+	 * @param wordVal HashMap containing word as key, number of time the word is used as value
+	 * @return the total number of chars inside the HashMap, excluding punctuation
+	 */
 	public static long getTotalCharsOnWords(HashMap<String, Integer> wordVal) {
 		
 		long totalChars = 0;
@@ -80,6 +100,11 @@ public class MethodsCollection {
 		
 	}
 
+	/**
+	 * 
+	 * @param wordVal HashMap containing word as key, number of time the word is used as value
+	 * @return the number of total entries, multiplied for their value, including punctuation
+	 */
 	public static long getTotalWords(HashMap<String, Integer> wordVal) {
 		//counts punctuation too
 		long totalWords = 0;
@@ -93,6 +118,11 @@ public class MethodsCollection {
 		
 	}
 	
+	/**
+	 * 
+	 * @param wordVal HashMap containing word as key, number of time the word is used as value
+	 * @return the number of total entries, multiplied for their value, excluding punctuation
+	 */
 	public static long getTotalWordsWOPunct(HashMap<String, Integer> wordVal) {
 		//excludes punctuation
 		long totalWords = 0;
@@ -108,10 +138,22 @@ public class MethodsCollection {
 		
 	}
 	
+	/**
+	 * 
+	 * @param unkFirst
+	 * @param knownSecond
+	 * @return the distance between the two float in percentage
+	 */
 	public static float getFloatRatio(FloatWritable unkFirst, FloatWritable knownSecond) {
 		return getFloatRatio(unkFirst.get(), knownSecond.get());
 	}
 	
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 * @return the distance between the two float in percentage
+	 */
 	public static float getFloatRatio(float a, float b) {
 		/*
 		It returns how much two numbers a, b are similar, in percentage
@@ -191,6 +233,11 @@ public class MethodsCollection {
 		return size;
 	}
 	
+	/**
+	 * 
+	 * @param results
+	 * @return the HashMap ordered by descending value
+	 */
 	public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
 		
 		List<String> mapKeys = new ArrayList<>(results.keySet());
@@ -225,6 +272,11 @@ public class MethodsCollection {
 	    
 	}
 	
+	/**
+	 * 
+	 * @param results
+	 * @return the string of the HashMap ordered by value
+	 */
 	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
 	    
 	    LinkedHashMap<String, Float> sortedMap = orderHashMapByValue(results);
@@ -237,6 +289,12 @@ public class MethodsCollection {
 	    
 	}
 	
+	/**
+	 * 
+	 * @param wordCount HashMap containing the word count, (word, number of times used)
+	 * @param numWords number of total words used
+	 * @return HashMap(String, Float) as (word, frequency of that word)
+	 */
 	public static HashMap<String, Float> getWordFrequencies(HashMap<String, Integer> wordCount, long numWords){
 		
 		HashMap<String, Float> wordFreq = new HashMap<String, Float>();
@@ -249,6 +307,12 @@ public class MethodsCollection {
 		
 	}
 
+	/**
+	 * 
+	 * @param knownTwoGrams
+	 * @param unkTwoGrams
+	 * @return how much the two HashMap have similar entries, in percentage
+	 */
 	public static float getTwoGramsRatio(HashMap<TextPair, Integer> knownTwoGrams,
 			HashMap<TextPair, Integer> unkTwoGrams) {
 		
@@ -268,6 +332,12 @@ public class MethodsCollection {
 		return (result / knownTwoGrams.size());
 	}
 
+	/**
+	 * 
+	 * @param knownThreeGrams
+	 * @param unkThreeGrams
+	 * @return how much the two HashMap have similar entries, in percentage
+	 */
 	public static float getThreeGramsRatio(HashMap<TextTrigram, Integer> knownThreeGrams,
 			HashMap<TextTrigram, Integer> unkThreeGrams) {
 		
@@ -288,6 +358,12 @@ public class MethodsCollection {
 		
 	}
 	
+	/**
+	 * 
+	 * @param knownWordFreq
+	 * @param unkWordFreq
+	 * @return how much the two HashMap have similar entries, in percentage
+	 */
 	public static float getWordFreqRatio(HashMap<String, Float> knownWordFreq, 
 			HashMap<String, Float> unkWordFreq) {
 		
@@ -308,6 +384,12 @@ public class MethodsCollection {
 		
 	}
 
+	/**
+	 * 
+	 * @param knownWordFreq
+	 * @param unkWordFreq
+	 * @return how much subset of the two HashMap have similar entries, in percentage
+	 */
 	public static float getWordFreqRatioFromAll(HashMap<String, Float> knownWordFreq, 
 			HashMap<String, Float> unkWordFreq) {
 		//estraggo tra le 20 e le 60 parole più usate dell'autore noto,
@@ -327,6 +409,13 @@ public class MethodsCollection {
 		
 	}
 	
+	/**
+	 * 
+	 * @param hashMap
+	 * @param from
+	 * @param to
+	 * @return return a subset of that HashMap
+	 */
 	public static LinkedHashMap<String, Float> extractSubSetOrdered(HashMap<String, Float> hashMap, 
 			int from, int to){
 		//extracting 20th-60th entries from ordered set
