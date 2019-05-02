@@ -26,7 +26,6 @@ import support.TextPair;
 import support.TextTrigram;
 import support.ThreeGramsWritable;
 import support.TwoGramsWritable;
-import support.Unused;
 import support.WordsArrayWritable;
 import support.WordsFreqWritable;
 
@@ -37,7 +36,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
@@ -298,6 +296,12 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			
 			multipleOutputs = new MultipleOutputs<NullWritable, AuthorTrace>(context);
 			
+		}
+		
+		@Override
+		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
+				throws IOException, InterruptedException {
+			
 			authTrace = new AuthorTrace();
 			
 			nBooks = 0;
@@ -313,12 +317,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			avgWordLength = new FloatWritable(0);
 			punctuationDensity = new FloatWritable(0);
 			functionDensity = new FloatWritable(0);
-			
-		}
-		
-		@Override
-		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
-				throws IOException, InterruptedException {
 			
 			authTrace.setAuthor(key);
 		    
@@ -391,21 +389,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			multipleOutputs.close();
 		}	
-		
-		/*
-		 * Used for debugging of WordCount
-		 */
-		@Unused
-		public TreeMap<String, Integer> orderArray(HashMap<String, Integer> toOrderByKey) {
-			//Ordering HashMap by key:
-		    //TreeMap to store values of HashMap 
-		    TreeMap<String, Integer> finalWordValOrdered = new TreeMap<>();
-		    // Copy all data from hashMap into TreeMap (that is naturally ordered)
-		    finalWordValOrdered.putAll(toOrderByKey);
-		    
-		    return finalWordValOrdered;
-			
-		}
 		
 	} //end Reducer class	
 	

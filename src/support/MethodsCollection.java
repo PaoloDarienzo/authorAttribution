@@ -207,7 +207,7 @@ public class MethodsCollection {
 		float numDiffWords = (float) getWordsOnlySize(wordCount);
 		double numTotalWords = (double) getTotalWordsWOPunct(wordCount);
 		
-		return (float) numDiffWords / (float) numTotalWords;
+		return ((float) numDiffWords / (float) numTotalWords);
 	}
 	
 	/**
@@ -329,7 +329,7 @@ public class MethodsCollection {
 			*/
 		}
 		
-		return (result / knownTwoGrams.size());
+		return (result / (float) knownTwoGrams.size());
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class MethodsCollection {
 			*/
 		}
 		
-		return (result / knownThreeGrams.size());
+		return (result / (float) knownThreeGrams.size());
 		
 	}
 	

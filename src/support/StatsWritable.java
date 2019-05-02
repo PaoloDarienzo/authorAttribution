@@ -12,6 +12,7 @@ import org.apache.hadoop.io.WritableComparable;
 public class StatsWritable implements WritableComparable<StatsWritable> {
 	
 	private Text onAuthor;
+	private Text fromFile;
 	
 	private FloatWritable avgWordLengthRatio;
 	
@@ -25,11 +26,12 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	private FloatWritable twoGramsRatio;
 	private FloatWritable threeGramsRatio;
 	
-	public String commenti = "";
+	//public String commenti = "";
 	
 	public StatsWritable() {
 		
 		onAuthor = new Text();
+		fromFile = new Text();
 		
 		avgWordLengthRatio = new FloatWritable(0);
 		
@@ -48,6 +50,8 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public StatsWritable(AuthorTrace authorTrace, AuthorTrace authorTraceUnk) {
 		
 		setOnAuthor(authorTrace.getAuthor());
+		
+		setFromFile(authorTraceUnk.getAuthor());
 
 		setAvgWordLengthRatio(
 				MethodsCollection.getFloatRatio(
@@ -103,6 +107,18 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	
 	public void setOnAuthor(String onAuthor) {
 		this.onAuthor = new Text(onAuthor);
+	}
+	
+	public Text getFromFile() {
+		return fromFile;
+	}
+
+	public void setFromFile(Text fromFile) {
+		this.fromFile = fromFile;
+	}
+	
+	public void setFromFile(String fromFile) {
+		this.fromFile = new Text(fromFile);
 	}
 
 	public FloatWritable getAvgWordLengthRatio() {
@@ -193,6 +209,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void readFields(DataInput in) throws IOException {
 		
 		this.onAuthor.readFields(in);
+		this.fromFile.readFields(in);
 		
 		this.avgWordLengthRatio.readFields(in);
 		this.functionDensityRatio.readFields(in);
@@ -205,6 +222,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		this.twoGramsRatio.readFields(in);
 		this.threeGramsRatio.readFields(in);
 		
+		/*
 		//commenti
 		int sizeString = in.readInt();
 		byte[] bytes = new byte[sizeString];
@@ -212,6 +230,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 			bytes[i] = in.readByte();
 		}
 		commenti = new String(bytes);
+		*/
 		
 	}
 
@@ -219,6 +238,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public void write(DataOutput out) throws IOException {
 		
 		onAuthor.write(out);
+		fromFile.write(out);
 		
 		avgWordLengthRatio.write(out);
 		functionDensityRatio.write(out);
@@ -231,9 +251,11 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		twoGramsRatio.write(out);
 		threeGramsRatio.write(out);
 		
+		/*
 		//commenti
 		out.writeInt(commenti.length());
     	out.writeBytes(commenti);
+    	*/
 		
 	}
 
@@ -254,15 +276,16 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 	public String toString() {
 		
 		//String values of float with 6 values
-		String avgWordLenToString = String.format("%6f", avgWordLengthRatio.get());
-		String funcDensToString = String.format("%6f", functionDensityRatio.get());
-		String punctDensToString = String.format("%6f", punctuationDensityRatio.get());
-		String typeTokenRatioToString = String.format("%6f", typeTokenRatio.get());
-		String wordFreqRatioToString = String.format("%6f", wordFreqRatio.get());
-		String twoGramsRatioToString = String.format("%6f", twoGramsRatio.get());
-		String threeGramsRatioToString = String.format("%6f", threeGramsRatio.get());
+		String avgWordLenToString = String.format("%8f", avgWordLengthRatio.get());
+		String funcDensToString = String.format("%8f", functionDensityRatio.get());
+		String punctDensToString = String.format("%8f", punctuationDensityRatio.get());
+		String typeTokenRatioToString = String.format("%8f", typeTokenRatio.get());
+		String wordFreqRatioToString = String.format("%8f", wordFreqRatio.get());
+		String twoGramsRatioToString = String.format("%8f", twoGramsRatio.get());
+		String threeGramsRatioToString = String.format("%8f", threeGramsRatio.get());
 		
 		String statsToString = "Author: " + onAuthor.toString() + "\n";
+		statsToString += "From file: " + fromFile.toString() + "\n";
 		statsToString += "Average word length ratio: " + avgWordLenToString + "\n";
 		statsToString += "Function density ratio: " + funcDensToString + "\n";
 		statsToString += "Punctuation density ratio: " + punctDensToString + "\n";
@@ -270,7 +293,7 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		statsToString += "Word frequencies ratio (20-60): " + wordFreqRatioToString + "\n";
 		statsToString += "TwoGrams ratio: " + twoGramsRatioToString + "\n";
 		statsToString += "ThreeGrams ratio: " + threeGramsRatioToString + "\n";
-		statsToString += "Commenti: " + this.commenti + "\n";
+		//statsToString += "Commenti: " + this.commenti + "\n";
 		
 		return statsToString;
 		

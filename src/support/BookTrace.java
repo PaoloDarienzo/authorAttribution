@@ -33,22 +33,12 @@ public class BookTrace implements Writable {
 		this.punctNo = punctNo;
 	}
 	
-	@Unused
-	public void incrementPunctNo() {
-		this.punctNo = new IntWritable(this.punctNo.get() + 1);
-	}
-	
 	public IntWritable getFuncNo() {
 		return this.funcNo;
 	}
 	
 	public void setFuncNo(IntWritable funcNo) {
 		this.funcNo = funcNo;
-	}
-	
-	@Unused
-	public void incrementFuncNo() {
-		this.funcNo = new IntWritable(this.funcNo.get() + 1);
 	}
 	
 	public WordsArrayWritable getWordsArray() {
