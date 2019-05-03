@@ -3,8 +3,8 @@
 #Launch this script inside a directory where there are a set of files
 #to be renamed with the same author.
 #Authors identified to have different alias:
-#E. A. Poe, A. C. Doyle, Arthur Quiller-Couch, Lev Tolstoj, Alexandre Dumas (pere and fils), Charlotte Bronte,
-#Thomas De Quincey, A. F. Mockler Ferryman, Gordon Stables, Charles Egbert Craddock.
+#E. A. Poe, A. C. Doyle, Fedor Dostoevskij, Arthur Quiller-Couch, Lev Tolstoj, Alexandre Dumas (pere and fils), Charlotte Bronte,
+#Thomas De Quincey, Gordon Stables, Charles Egbert Craddock.
 
 new_author="Alexandre Dumas"
 

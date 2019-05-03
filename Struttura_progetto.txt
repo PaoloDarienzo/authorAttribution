@@ -1,13 +1,9 @@
+https://issues.apache.org/jira/browse/HDFS-13
 
-numero di bigrammi, trigrammi, monogrammi  (ovvero, fissato un ngramma, vedere se l'altro ce l'ha) ***
-(come con function words: Style based Authorship Attribution on English Editorial Documents, V. et Al.)
-
--> We filtered out the least frequent n-grams and used the rest as features 
-(A Straightforward Author Profiling Approach in MapReduce, Maharjan et Al.)
+nella copia da FS locale a HDFS, non possono essere usati i : nel filename
 
 
-test su cluster:
-almeno 6 reducer su es short input
+Maximum (default) of distributed cache: 10GB
 
 ###################################################################################################
 
@@ -84,41 +80,7 @@ FATTO
 
 CREAZIONE IMPRONTA
 
-Nella creazione dell'impronta di un autore, ovvero del profiling di un autore in esame,
-ho preso in considerazione:
-- la lunghezza media delle frasi nelle opere dell'autore in esame (line length) (non utilizzato);
-- la lunghezza media delle parole utilizzate dall'autore (word length);
-- la ricchezza del vocabolario (vocabulary richness), andando a guardare:
-	- hapaxlegomena, ovvero parole che compaiono una volta soltanto in ogni testo;
-	- hapaxdislegomena, ovvero parole che compaiono due volte soltanto in ogni testo;
-	- il numero di parole uniche utilizzate e loro frequenza;
-- 2-grams, ovvero la vicinanza(*) di due parole;
-- 3-grams;
-- densità(*) delle "function words", ovvero 150 parole uniche (preposizioni, articolazioni, etc.);
-- densità della punteggiatura, ovvero { . , ? ! " ( ) - : ; } ;
-
-(*)
-- Il concetto di vicinanza può essere:
-	- parole a sinistra e a destra di ogni parola (contigue);
-	- parole che in generale compaiono nella stessa frase;
-	Ho scelto come concetto di vicinanza le parole contigue alla parola in esame, ovvero la parola in esame
-	e la sua successiva.
-- Con densità si intende il rapporto tra la data parola o simbolo e il numero totale di parole o simboli analizzati 
-	(ovvero, sia x la parola da analizzare, x/token_total.size)
-
-(Da word_count: word_length, 1_word, 2_word, punctuation_density, function_word_density, word_frequency)
-(Da analisi vicinanza: 2_gram, 3_gram)
-DA AGGIORNARE CON TTR
-1. line_length (non utilizzato);
-2. word_length_avg;
-3. 1_word;
-4. 2_word;
-5. 2_gram;
-6. 3_gram;
-7. punctuation_density;
-8. function_word_density;
-9. word_frequency (tra le 20 - 60 più utilizzate);
-
+FATTO
 
 ###################################################################################################
 

@@ -1,6 +1,7 @@
+_
+_
   100 files in directory ./W.H.G. Kingston
   102 files in directory ./John Lothrop Motley
-  106 files in directory ./00001_NAMING_ERROR
   106 files in directory ./George Meredith
    10 files in directory ./Alan Douglas
    10 files in directory ./Alfred Henry Lewis
@@ -109,6 +110,7 @@
    11 files in directory ./Meredith Nicholson
    11 files in directory ./Milton Lesser
    11 files in directory ./M. M. Mangasarian
+   11 files in directory ./Mrs. Oliphant
    11 files in directory ./Myrtle Reed
    11 files in directory ./Norman Duncan
    11 files in directory ./Oliver Herford
@@ -203,7 +205,7 @@
    13 files in directory ./Thomas Tapper
    13 files in directory ./W. D. Howells
    13 files in directory ./William E. Duellman
-14558 files in directory .
+14521 files in directory .
   148 files in directory ./Unknown
    14 files in directory ./'Abdu'l-Baha
    14 files in directory ./Annie Besant
@@ -222,8 +224,8 @@
    14 files in directory ./Louisa M. Alcott
    14 files in directory ./Louis Antoine Fauvelet de Bourrienne
    14 files in directory ./Louis Joseph Vance
+   14 files in directory ./L.T. Meade
    14 files in directory ./Marie Corelli
-   14 files in directory ./Marie Lebert
    14 files in directory ./Max Brand
    14 files in directory ./M. E. Braddon
    14 files in directory ./Ralph Connor
@@ -250,7 +252,7 @@
    15 files in directory ./Johanna Spyri
    15 files in directory ./Joseph C. Lincoln
    15 files in directory ./Lewis Carroll
-   15 files in directory ./L.T. Meade
+   15 files in directory ./Marie Lebert
    15 files in directory ./Mary J. Holmes
    15 files in directory ./O. Henry
    15 files in directory ./Rabindranath Tagore
@@ -259,6 +261,7 @@
    15 files in directory ./Richard Dowling
    15 files in directory ./Stephen Leacock
    15 files in directory ./Talbot Baines Reed
+   15 files in directory ./Thomas De Quincey
    15 files in directory ./W. H. G. Kingston
    15 files in directory ./William H. G. Kingston
   162 files in directory ./Georg Ebers
@@ -273,7 +276,6 @@
    16 files in directory ./Jean Jacques Rousseau
    16 files in directory ./John Addington Symonds
    16 files in directory ./John Fiske
-   16 files in directory ./Joseph Sheridan Le Fanu
    16 files in directory ./Lester Chadwick
    16 files in directory ./Lillian Elizabeth Roy
    16 files in directory ./Maria Edgeworth
@@ -281,8 +283,8 @@
    16 files in directory ./Ridgwell Cullum
    16 files in directory ./Sara Ware Bassett
    16 files in directory ./Theodore Roosevelt
-   16 files in directory ./Thomas De Quincey
    16 files in directory ./Thomas Henry Huxley
+   16 files in directory ./Walter Crane
    17 files in directory ./Ambrose Bierce
    17 files in directory ./Amelia Edith Huddleston Barr
    17 files in directory ./Charles Morris
@@ -310,7 +312,6 @@
    17 files in directory ./Sax Rohmer
    17 files in directory ./Shoghi Effendi
    17 files in directory ./Susan Warner
-   17 files in directory ./Walter Crane
    17 files in directory ./Xenophon
   185 files in directory ./Edward Bulwer-Lytton
    18 files in directory ./Abraham Lincoln
@@ -329,7 +330,9 @@
    19 files in directory ./Frank V. Webster
    19 files in directory ./Irvin S. Cobb
    19 files in directory ./John Lord
+   19 files in directory ./Joseph Sheridan Le Fanu
    19 files in directory ./Mary Hazelton Wade
+   19 files in directory ./May Sinclair
    19 files in directory ./Oliver Wendell Holmes, Sr.
    19 files in directory ./Ralph Henry Barbour
    19 files in directory ./Raphael Holinshed
@@ -341,6 +344,48 @@
    19 files in directory ./Washington Irving
    19 files in directory ./William Black
    19 files in directory ./William Morris
+    1 files in directory ./00002_WRONG_ENCODE/Alexis de Ch\E2teauneuf and Sir Charles Lock Eastlake
+    1 files in directory ./00002_WRONG_ENCODE/Anatole Cerfberr and Jules Fran\E7ois Christophe
+    1 files in directory ./00002_WRONG_ENCODE/Andr\E9 Godefroy Lionel Hanguillart
+    1 files in directory ./00002_WRONG_ENCODE/Armando Palacio Vald\E9s
+    1 files in directory ./00002_WRONG_ENCODE/Charlotte-Elisabeth, duchesse d\92 Orl\E9ans; Marie Adelaide, of
+    1 files in directory ./00002_WRONG_ENCODE/Claude Prosper Jolyot de Cr\E9billon
+    1 files in directory ./00002_WRONG_ENCODE/Elias L\F6nnrot
+    1 files in directory ./00002_WRONG_ENCODE/Emilia Pardo Baz\E1n
+    1 files in directory ./00002_WRONG_ENCODE/Ernst F\F6rstemann
+    1 files in directory ./00002_WRONG_ENCODE/Eug\E8ne Sue
+    1 files in directory ./00002_WRONG_ENCODE/Fr. (Fran\E7ois) Crastre
+    1 files in directory ./00002_WRONG_ENCODE/George M\FCller
+    1 files in directory ./00002_WRONG_ENCODE/Honor\E9 Willsie
+    1 files in directory ./00002_WRONG_ENCODE/Honor\E9 Willsie Morrow
+    1 files in directory ./00002_WRONG_ENCODE/Jean de Bossch\E8re
+    1 files in directory ./00002_WRONG_ENCODE/Jeanne Marie Bouvi\E8res de la Mot Guyon
+    1 files in directory ./00002_WRONG_ENCODE/J\F3hann Sigurj\F3nsson
+    1 files in directory ./00002_WRONG_ENCODE/J. H. Merle d'Aubign\E9
+    1 files in directory ./00002_WRONG_ENCODE/John Holladay Latan\E9
+    1 files in directory ./00002_WRONG_ENCODE/K\E1lm\E1n Miksz\E1th
+    1 files in directory ./00002_WRONG_ENCODE/\C6lfric
+    1 files in directory ./00002_WRONG_ENCODE/L. M\FChlbach
+    1 files in directory ./00002_WRONG_ENCODE/L\E9on Gautier
+    1 files in directory ./00002_WRONG_ENCODE/Louis A. Barb\E9
+    1 files in directory ./00002_WRONG_ENCODE/Louise de la Ram\E9e, a.k.a. Ouida
+    1 files in directory ./00002_WRONG_ENCODE/Louis Eug\E8ne du Moulin
+    1 files in directory ./00002_WRONG_ENCODE/Lyda Farrington Kraus\E9
+    1 files in directory ./00002_WRONG_ENCODE/\C9mile Gigault de La B\E9dolli\E8re
+    1 files in directory ./00002_WRONG_ENCODE/Moli\E8re
+    1 files in directory ./00002_WRONG_ENCODE/M\F3r J\F3kai
+    1 files in directory ./00002_WRONG_ENCODE/Paul K\F6nig
+    1 files in directory ./00002_WRONG_ENCODE/Peter Christen Asbj\F6rnsen
+    1 files in directory ./00002_WRONG_ENCODE/Ren\E9 Bazin
+    1 files in directory ./00002_WRONG_ENCODE/Ren\E9 de Pont-Jest
+    1 files in directory ./00002_WRONG_ENCODE/Ren\E9 Descartes
+    1 files in directory ./00002_WRONG_ENCODE/Selma Lagerl\F6f
+    1 files in directory ./00002_WRONG_ENCODE/Sturla \DEoretharson
+    1 files in directory ./00002_WRONG_ENCODE/Th\E9ophile Gautier
+    1 files in directory ./00002_WRONG_ENCODE/Vicente Blasco Ib\E1\F1ez
+    1 files in directory ./00002_WRONG_ENCODE/Victor Wilfred Pag\E9
+    1 files in directory ./00002_WRONG_ENCODE/Vincente Blasco Ib\E1\F1ez
+    1 files in directory ./00002_WRONG_ENCODE/Z\E9na\EFde A. Ragozin
     1 files in directory ./A. A. Crozier
     1 files in directory ./A. A. Hayes
     1 files in directory ./A. Alpheus
@@ -446,6 +491,8 @@
     1 files in directory ./A. E. Winship
     1 files in directory ./A.F. Calvert
     1 files in directory ./A. F. Kendrick
+    1 files in directory ./A. F. Mockler Ferryman
+    1 files in directory ./A.F. Mockler-Ferryman
     1 files in directory ./A. Frances Friebe
     1 files in directory ./A. Fraser Robertson
     1 files in directory ./A. F. Schauffler
@@ -658,7 +705,6 @@
     1 files in directory ./Alexandra G. Lockwine
     1 files in directory ./Alexandra Kuprin
     1 files in directory ./Alexandre Kuprin
-    1 files in directory ./Alexis de Châteauneuf and Sir Charles Lock Eastlake
     1 files in directory ./Alexis de Tocqueville
     1 files in directory ./Alexis De Tocqueville
     1 files in directory ./Alexis de Tocqueville et al.
@@ -811,7 +857,7 @@
     1 files in directory ./A. Maude Royden
     1 files in directory ./A. M. Beatson
     1 files in directory ./Amber
-    1 files in directory ./Ambrose Bierce (AKA: Dod Grile)
+    1 files in directory ./Ambrose Bierce (AKA- Dod Grile)
     1 files in directory ./Ambrose Blacklock
     1 files in directory ./Ambrose Coleman
     1 files in directory ./Ambrose Pratt
@@ -857,7 +903,6 @@
     1 files in directory ./An American Lady
     1 files in directory ./An Anonymous Young Girl
     1 files in directory ./An Anti-Slavery Convention of American Women
-    1 files in directory ./Anatole Cerfberr and Jules François Christophe
     1 files in directory ./Anatole  France
     1 files in directory ./Anderson Horne
     1 files in directory ./Andreas Latzko
@@ -905,11 +950,10 @@
     1 files in directory ./Andrew Woods Williamson
     1 files in directory ./Andrew Wynter
     1 files in directory ./Andrew W. Young
-    1 files in directory ./André Godefroy Lionel Hanguillart
     1 files in directory ./Andy Offut
     1 files in directory ./A. Neil Lyons
     1 files in directory ./An Elector
-    1 files in directory ./An Englishman: Davy
+    1 files in directory ./An Englishman- Davy
     1 files in directory ./Aneurin
     1 files in directory ./Angelina Emily Grimke
     1 files in directory ./Angelo Hall
@@ -957,6 +1001,7 @@
     1 files in directory ./Anne Collins
     1 files in directory ./Anne E. Keeling
     1 files in directory ./Anne Elizabeth Caldwell (MacClanahan) Grenfell and Katie Spalding
+    1 files in directory ./Anne Hollingsworth Wharton
     1 files in directory ./Anne Killigrew
     1 files in directory ./Anne Louise Germaine Necker, Baronne (Baroness) de Stael-Holstein
     1 files in directory ./Anne March
@@ -1072,7 +1117,6 @@
     1 files in directory ./Argyll Saxby
     1 files in directory ./A. R. Harding
     1 files in directory ./A.R. Hope Moncrieff
-    1 files in directory ./Armando Palacio Valdés
     1 files in directory ./Armstrong Livingston
     1 files in directory ./Arno Gaebelein
     1 files in directory ./Arnold E. Bennett
@@ -1589,7 +1633,6 @@
     1 files in directory ./Calvin Cutter
     1 files in directory ./Calvin Elliott
     1 files in directory ./Calvin Olin Davis
-    1 files in directory ./Camden Pelham
     1 files in directory ./Camilla Kenyon
     1 files in directory ./Camilla Toulmin
     1 files in directory ./Camille Buffin
@@ -1692,6 +1735,7 @@
     1 files in directory ./Catherine Cotton
     1 files in directory ./Catherine Crowe
     1 files in directory ./Catherine Dorset
+    1 files in directory ./Catherine E. Beecher and Harriet Beecher Stowe
     1 files in directory ./Catherine Esther Beecher
     1 files in directory ./Catherine H. Birney
     1 files in directory ./Catherine II, Empress of Russia
@@ -1741,7 +1785,7 @@
     1 files in directory ./C. E. Orr
     1 files in directory ./Cerinda W. Evans
     1 files in directory ./C. E. Sanborn
-    1 files in directory ./Cesar Lecat de Bazancourt/Catherine E. Beecher and Harriet Beecher Stowe
+    1 files in directory ./Cesar Lecat de Bazancourt
     1 files in directory ./C. E. Smith
     1 files in directory ./C. E. W. Bean
     1 files in directory ./C. F. [Constantin Francois de] Volney
@@ -1994,7 +2038,6 @@
     1 files in directory ./Charles R. Mabey
     1 files in directory ./Charles Robert Mowbray Fraser Cruttwell
     1 files in directory ./Charles Robert Newman
-    1 files in directory ./Charles Rochfort Scott
     1 files in directory ./Charles Roger
     1 files in directory ./Charles Rollin
     1 files in directory ./Charles Ross Jackson
@@ -2064,7 +2107,6 @@
     1 files in directory ./Charlotte Campbell Bury
     1 files in directory ./Charlotte Despard
     1 files in directory ./Charlotte E. Chittenden
-    1 files in directory ./Charlotte-Elisabeth, duchesse d’ Orléans; Marie Adelaide, of
     1 files in directory ./Charlotte Elizabeth
     1 files in directory ./Charlotte Fuhrer
     1 files in directory ./Charlotte Hapai
@@ -2206,7 +2248,6 @@
     1 files in directory ./Claude Grahame-White
     1 files in directory ./Claude Grahame-White and Harry Harper
     1 files in directory ./Claude H. Miller
-    1 files in directory ./Claude Prosper Jolyot de Crébillon
     1 files in directory ./Claude Reignier Conder
     1 files in directory ./Claud Field
     1 files in directory ./Claudia B. Kidwell
@@ -2523,9 +2564,9 @@
     1 files in directory ./Dietlof Van Warmelo
     1 files in directory ./Digital Equipment Corporation
     1 files in directory ./Dikken Zwilgmeyer
-    1 files in directory ./Dinah Craik (aka: Miss Mulock)
+    1 files in directory ./Dinah Craik (aka- Miss Mulock)
     1 files in directory ./Dinah Maria Craik
-    1 files in directory ./Dinah Maria Craik (AKA: Dinah Maria Mulock)
+    1 files in directory ./Dinah Maria Craik (AKA- Dinah Maria Mulock)
     1 files in directory ./Dinah Maria Craik, (AKA Dinah Maria Mulock)
     1 files in directory ./Dinah Maria Mulock (AKA Miss Mulock)
     1 files in directory ./Dinks, Mayhew, and Hutchinson
@@ -2742,11 +2783,11 @@
     1 files in directory ./Edith S. Clements
     1 files in directory ./Edith van Dyne
     1 files in directory ./Edith Van Dyne (AKA L. Frank Baum)
-    1 files in directory ./Editor: A.H. Bullen
-    1 files in directory ./Editor-in-Chief: Rossiter Johnson
-    1 files in directory ./Editor: James D. Richardson
-    1 files in directory ./Editor: R. Brimley Johnson
-    1 files in directory ./Editors: Arthur Mee and J.A. Hammerton
+    1 files in directory ./Editor- A.H. Bullen
+    1 files in directory ./Editor-in-Chief- Rossiter Johnson
+    1 files in directory ./Editor- James D. Richardson
+    1 files in directory ./Editor- R. Brimley Johnson
+    1 files in directory ./Editors- Arthur Mee and J.A. Hammerton
     1 files in directory ./E. Dixon
     1 files in directory ./Ed Krol
     1 files in directory ./Ed. L. Wheeler
@@ -3082,7 +3123,6 @@
     1 files in directory ./Elias Avery Lowe and Edward Kennard Rand
     1 files in directory ./Elias Cornelius
     1 files in directory ./Elias Johnson
-    1 files in directory ./Elias Lönnrot
     1 files in directory ./Elias Owen
     1 files in directory ./Elia Wilkinson Peattie
     1 files in directory ./Elihu G. Holland
@@ -3264,7 +3304,6 @@
     1 files in directory ./Emile Erckmann and Alexandre Chatrian
     1 files in directory ./Emile Jaques-Dalcroze
     1 files in directory ./Emilia Elliott
-    1 files in directory ./Emilia Pardo Bazán
     1 files in directory ./Emilie Baker Loring
     1 files in directory ./Emilie F. Carlen
     1 files in directory ./Emilie Searchfield
@@ -3381,7 +3420,6 @@
     1 files in directory ./Ernest W. Hamilton
     1 files in directory ./Ernest Whitney
     1 files in directory ./Ernest William Hawkes
-    1 files in directory ./Ernst Förstemann
     1 files in directory ./Ernst Hengstenberg
     1 files in directory ./Ernst Leitz
     1 files in directory ./Ernst Theodor Amadeus Hoffmann
@@ -3459,7 +3497,6 @@
     1 files in directory ./Eugene Walter and Arthur Hornblow
     1 files in directory ./Eugene Wood
     1 files in directory ./Eugenie Foa
-    1 files in directory ./Eugène Sue
     1 files in directory ./E. Uhlrich
     1 files in directory ./Eunice Tietjens
     1 files in directory ./European Union
@@ -4003,7 +4040,6 @@
     1 files in directory ./Freeman E. (Freeman Edwin) Miller
     1 files in directory ./Freeman E. Miller
     1 files in directory ./Freeman Wills Crofts
-    1 files in directory ./Fr. (François) Crastre
     1 files in directory ./F. R. Goulding
     1 files in directory ./Friedrich de La Motte-Fouque
     1 files in directory ./Friedrich de la Motte Fouquee
@@ -4273,7 +4309,6 @@
     1 files in directory ./George Middleton
     1 files in directory ./George Milligan, J. G. Greenhough, Alfred Rowland, Walter F.
     1 files in directory ./George Mitchel
-    1 files in directory ./George Müller
     1 files in directory ./George Mogridge
     1 files in directory ./George Morant
     1 files in directory ./George M. Schweig
@@ -5202,8 +5237,6 @@
     1 files in directory ./Honore Bourguignon
     1 files in directory ./Honore de Balzac and Alexander Amphiteatrof
     1 files in directory ./Honore Willsie Morrow
-    1 files in directory ./Honoré Willsie
-    1 files in directory ./Honoré Willsie Morrow
     1 files in directory ./Hope, Anthony
     1 files in directory ./Horace Barnett Samuel
     1 files in directory ./Horace C. Dale
@@ -5346,7 +5379,6 @@
     1 files in directory ./Ida Glenwood
     1 files in directory ./Ida Hamilton Munsell
     1 files in directory ./Ida Lee
-    1 files in directory ./Ida May Hill Starr
     1 files in directory ./I. E. M.
     1 files in directory ./Ike Matthews
     1 files in directory ./(Illustrated by Blanche Fisher Wright)
@@ -5845,7 +5877,6 @@
     1 files in directory ./Jean Blewett
     1 files in directory ./Jean Christie Root
     1 files in directory ./Jean de Bosschere
-    1 files in directory ./Jean de Bosschère
     1 files in directory ./Jeanette Augustus Marks and Julia Moody
     1 files in directory ./Jean-Eugene Robert-Houdin
     1 files in directory ./Jean Finot
@@ -5872,7 +5903,6 @@
     1 files in directory ./Jean M. Snyder
     1 files in directory ./Jeanne Johnson Rust
     1 files in directory ./Jeanne Marie Bouvier de La Motte Guyon
-    1 files in directory ./Jeanne Marie Bouvières de la Mot Guyon
     1 files in directory ./Jeannette Augustus Marks
     1 files in directory ./Jean-Pierre Claris de Florian
     1 files in directory ./Jean Rudolph Wyss
@@ -5962,7 +5992,6 @@
     1 files in directory ./J. Gresham (John Gresham) Machen
     1 files in directory ./J. Gresham Machen
     1 files in directory ./J. Hamilton Fyfe
-    1 files in directory ./Jóhann Sigurjónsson
     1 files in directory ./J. Harold Putman
     1 files in directory ./J. Harris Knowles
     1 files in directory ./J. Hartley Manners
@@ -5979,6 +6008,8 @@
     1 files in directory ./J. H. (John Henry) Patterson
     1 files in directory ./J.H. Kellogg
     1 files in directory ./J. H. McKenzie
+    1 files in directory ./J. H. Merle  D'Aubigne
+    1 files in directory ./J. H. Merle D'Aubigne
     1 files in directory ./J. Horace McFarland
     1 files in directory ./J. Howard Cromwell
     1 files in directory ./J. H. Patterson
@@ -6314,7 +6345,6 @@
     1 files in directory ./John H. Ingram
     1 files in directory ./John H. (John Harvey) Williams
     1 files in directory ./John Holbrook Vance
-    1 files in directory ./John Holladay Latané
     1 files in directory ./John Holladay Latane
     1 files in directory ./John Hossack
     1 files in directory ./John Howie
@@ -6753,7 +6783,7 @@
     1 files in directory ./Joshua Reynolds
     1 files in directory ./Joshua R. Giddings
     1 files in directory ./Joshua Slocum
-    1 files in directory ./Josiah Allen's Wife: Marietta Holley
+    1 files in directory ./Josiah Allen's Wife- Marietta Holley
     1 files in directory ./Josiah Edward Spurr
     1 files in directory ./Josiah Parsons Cooke
     1 files in directory ./Josiah Quincy
@@ -6978,7 +7008,6 @@
     1 files in directory ./K. Kay Shearin
     1 files in directory ./Klahowya
     1 files in directory ./Klaxon
-    1 files in directory ./Kálmán Mikszáth
     1 files in directory ./Knaresbrough Rail-way Committee
     1 files in directory ./kniaz' Petr Alekseevich Kropotkin
     1 files in directory ./Knibbs, Henry Herbert
@@ -7086,6 +7115,8 @@
     1 files in directory ./Leonard Cresswell Ingleby
     1 files in directory ./Leonard Haseman
     1 files in directory ./Leonard J. Olund
+    1 files in directory ./Leonardo da Vinci
+    1 files in directory ./Leonardo Da Vinci
     1 files in directory ./Leonard P. Ayres and May Ayres
     1 files in directory ./Leonard Raven-Hill
     1 files in directory ./Leonard Rubin
@@ -7157,7 +7188,6 @@
     1 files in directory ./L. Frank  Baum
     1 files in directory ./L. Frank Baum.
     1 files in directory ./L. Frank Baum (AKA Edith Van Dyne)
-    1 files in directory ./Ælfric
     1 files in directory ./L. G. Moberly
     1 files in directory ./L.H. Bailey
     1 files in directory ./L. H. Branson
@@ -7217,7 +7247,6 @@
     1 files in directory ./L. March Phillipps
     1 files in directory ./L. Maria Child
     1 files in directory ./L. M. Gilbreth
-    1 files in directory ./L. Mühlbach
     1 files in directory ./L.M. Tolman
     1 files in directory ./L Muehlbach
     1 files in directory ./L. Muehlbach,
@@ -7226,7 +7255,6 @@
     1 files in directory ./Lodovico Ariosto
     1 files in directory ./Logan Mitchell
     1 files in directory ./L. O. Howard and F. C. Bishopp
-    1 files in directory ./Léon Gautier
     1 files in directory ./Longinus
     1 files in directory ./Loraine Daly
     1 files in directory ./(Lord Byron) George Gordon Byron
@@ -7247,7 +7275,6 @@
     1 files in directory ./Loudon Douglas
     1 files in directory ./Louey Chisholm
     1 files in directory ./Louis A Banks
-    1 files in directory ./Louis A. Barbé
     1 files in directory ./Louis A. Boettiger
     1 files in directory ./Louisa Clayton
     1 files in directory ./Louisa C. Tuthill
@@ -7273,7 +7300,6 @@
     1 files in directory ./Louise Bennett Weaver
     1 files in directory ./Louise B. Krause
     1 files in directory ./Louise Creighton
-    1 files in directory ./Louise de la Ramée, a.k.a. Ouida
     1 files in directory ./Louise de la Ramee
     1 files in directory ./Louise de la Ramee (AKA Ouida)
     1 files in directory ./Louise Elizabeth Dutton
@@ -7287,7 +7313,6 @@
     1 files in directory ./Louise Seymour Houghton
     1 files in directory ./Louise Shelton
     1 files in directory ./Louise Stevens Bryant
-    1 files in directory ./Louis Eugène du Moulin
     1 files in directory ./Louis F. Salzmann
     1 files in directory ./Louis-Georges Desjardins
     1 files in directory ./Louis Ginzberg
@@ -7392,7 +7417,6 @@
     1 files in directory ./L. Whitehead
     1 files in directory ./L.W. King and H.R. Hall
     1 files in directory ./L. W. Yaggy
-    1 files in directory ./Lyda Farrington Krausé
     1 files in directory ./Lydia E. Pinkham
     1 files in directory ./Lydia L. Rouse
     1 files in directory ./Lydia L. Very
@@ -7405,7 +7429,6 @@
     1 files in directory ./Lyman Carrier
     1 files in directory ./Lyman Horace Weeks
     1 files in directory ./Lyndon B. Johnson
-    1 files in directory ./Lyof N. Tolstoi
     1 files in directory ./Lyon Gardiner Tyler
     1 files in directory ./Lysias
     1 files in directory ./Lyster H. Dewey and Jason L. Merrill
@@ -7565,7 +7588,6 @@
     1 files in directory ./Marianne L. B. Ker
     1 files in directory ./Mariano Azuela
     1 files in directory ./Marian Storm
-    1 files in directory ./Marian T. MacIntosh
     1 files in directory ./Marian Wharton
     1 files in directory ./Maria S. Cummins
     1 files in directory ./Marie Adelaide Belloc Lowndes
@@ -7888,6 +7910,7 @@
     1 files in directory ./May Leonard
     1 files in directory ./Maynard Barbour
     1 files in directory ./Mayn Clew Garnett
+    1 files in directory ./May Sinclair
     1 files in directory ./Mazo de la Roche
     1 files in directory ./M. B. Cox
     1 files in directory ./M. Beer
@@ -7930,7 +7953,6 @@
     1 files in directory ./M. E. Waller
     1 files in directory ./M. E. W. Sherwood
     1 files in directory ./Meyer Moldeven
-    1 files in directory ./M.F and B. McM. Mansfield
     1 files in directory ./M. Florian
     1 files in directory ./M. F. (Milburg Francisco) Mansfield
     1 files in directory ./M. Frere
@@ -7969,7 +7991,6 @@
     1 files in directory ./Milburg Francisco Mansfield
     1 files in directory ./Mildred Maddocks
     1 files in directory ./Mildred Stapley
-    1 files in directory ./Émile Gigault de La Bédollière
     1 files in directory ./Miles John Breuer
     1 files in directory ./Millais Culpin
     1 files in directory ./Millard Fillmore
@@ -8034,7 +8055,6 @@
     1 files in directory ./Mohammed Ali
     1 files in directory ./Moira O'Neill
     1 files in directory ./Moliere (Poquelin)
-    1 files in directory ./Molière
     1 files in directory ./Molly K. Bellew
     1 files in directory ./Mona Caird
     1 files in directory ./Mona Gould
@@ -8071,7 +8091,6 @@
     1 files in directory ./M. Quinby
     1 files in directory ./Mr. and Mrs. Haldeman-Julius
     1 files in directory ./Mr and Mrs William Platt
-    1 files in directory ./Mór Jókai
     1 files in directory ./M. R. (Montague Rhodes) James
     1 files in directory ./Mr. Roscoe
     1 files in directory ./Mrs. A. Burnett Smith
@@ -8192,7 +8211,7 @@
     1 files in directory ./Mrs. S. C.  Hall
     1 files in directory ./Mrs. Schuyler Crowninshield
     1 files in directory ./Mrs. Sherwood
-    1 files in directory ./Mrs. Sherwood [AKA: Mrs. Mary Martha Sherwood]
+    1 files in directory ./Mrs. Sherwood [AKA- Mrs. Mary Martha Sherwood]
     1 files in directory ./Mrs. S. S. Robbins
     1 files in directory ./Mrs. S. T. Rorer
     1 files in directory ./Mrs. S.T. Rorer
@@ -8482,7 +8501,6 @@
     1 files in directory ./Paul Janet
     1 files in directory ./Paul Jones
     1 files in directory ./Paul Klapper
-    1 files in directory ./Paul König
     1 files in directory ./Paul Lacroix
     1 files in directory ./Paul Leland Haworth
     1 files in directory ./Paull Franklin Baum
@@ -8544,7 +8562,6 @@
     1 files in directory ./Peter Berlyn
     1 files in directory ./Peter Charles Remondino
     1 files in directory ./Peter Christen Asbjornsen
-    1 files in directory ./Peter Christen Asbjörnsen
     1 files in directory ./Peter Clark Macfarlane
     1 files in directory ./Peter Coffey
     1 files in directory ./Peter C. Welsh
@@ -8673,6 +8690,7 @@
     1 files in directory ./Putnam Weale
     1 files in directory ./P. V. Smith
     1 files in directory ./Pye Henry Chavasse
+    1 files in directory ./Q
     1 files in directory ./QK Philander Doesticks
     1 files in directory ./Queen of Great Britain Victoria
     1 files in directory ./Rabindranath Tagore (trans.)
@@ -8761,9 +8779,6 @@
     1 files in directory ./R. Eivind
     1 files in directory ./R. E. Mathot
     1 files in directory ./R. E. McBride
-    1 files in directory ./René Bazin
-    1 files in directory ./René de Pont-Jest
-    1 files in directory ./René Descartes
     1 files in directory ./Rene Descartes
     1 files in directory ./Rene Doumic
     1 files in directory ./Rene Juta
@@ -9064,7 +9079,6 @@
     1 files in directory ./Robert Scott Fittis
     1 files in directory ./Robert Seaton
     1 files in directory ./Robert Service
-    1 files in directory ./Robert Shackleton
     1 files in directory ./Robert S. Hawker
     1 files in directory ./Robert Shirley Richardson
     1 files in directory ./Robert Sidney Bowen
@@ -9427,7 +9441,6 @@
     1 files in directory ./Selina A. Bower
     1 files in directory ./Selina Bunbury
     1 files in directory ./S. Elizabeth Hall
-    1 files in directory ./Selma Lagerlöf
     1 files in directory ./S. Emma E. Edmonds
     1 files in directory ./Seneca
     1 files in directory ./Sengcan
@@ -9683,7 +9696,6 @@
     1 files in directory ./Stuart Henry
     1 files in directory ./Stuart J. Reid
     1 files in directory ./Stuart Walker
-    1 files in directory ./Sturla Þoretharson
     1 files in directory ./Sue Ainslie Clark and Edith Wyatt
     1 files in directory ./Suelette Dreyfus
     1 files in directory ./Sue Petigru Bowen
@@ -10030,7 +10042,6 @@
     1 files in directory ./Thomas W. (Thomas William) Allies
     1 files in directory ./Thompson Buchanan
     1 files in directory ./Thomson Willing
-    1 files in directory ./Théophile Gautier
     1 files in directory ./Thornton Burgess
     1 files in directory ./Thornton DeKy
     1 files in directory ./Thorvald Weitemeyer
@@ -10095,7 +10106,6 @@
     1 files in directory ./Trumbull White
     1 files in directory ./Trustees of the Punahou School and Oahu College
     1 files in directory ./T. S. Ackland
-    1 files in directory ./T.S. Arthur
     1 files in directory ./T. S. Arthur and F. C. Woodworth
     1 files in directory ./T. S. Childs
     1 files in directory ./T.S. Eliot
@@ -10180,7 +10190,6 @@
     1 files in directory ./Vernon L. McCain
     1 files in directory ./V. E. Thiessen
     1 files in directory ./V. G. Chertkov
-    1 files in directory ./Vicente Blasco Ibáñez
     1 files in directory ./Victor Bridges
     1 files in directory ./Victor Cherbuliez
     1 files in directory ./Victor Cousin
@@ -10196,11 +10205,9 @@
     1 files in directory ./Victor Robinson
     1 files in directory ./Victor Rousseau
     1 files in directory ./Victor St. Clair
-    1 files in directory ./Victor Wilfred Pagé
     1 files in directory ./Vielle Moustache
     1 files in directory ./Viktor Rydberg
     1 files in directory ./Viktor Rydberg, Ph.D.
-    1 files in directory ./Vincente Blasco Ibáñez
     1 files in directory ./Vincent Hughes
     1 files in directory ./Vincent Scully
     1 files in directory ./Vincent Starrett
@@ -10919,6 +10926,7 @@
     1 files in directory ./William Scoresby
     1 files in directory ./William Senior
     1 files in directory ./William S. Gilbert
+    1 files in directory ./William Shakespeare [Apocrypha]
     1 files in directory ./William Shakespeare [Craig, Oxford edition]
     1 files in directory ./William Shakspeare
     1 files in directory ./William Sharp
@@ -11123,13 +11131,13 @@
     1 files in directory ./Zena A. Maher
     1 files in directory ./Zenith Radio Corporation
     1 files in directory ./Zitkala-Sa
-    1 files in directory ./Zénaïde A. Ragozin
     1 files in directory ./Zoe Anderson Norris
     1 files in directory ./Zoe Meyer
     1 files in directory ./Zoeth S. Eldredge and E. J. Molera
     1 files in directory ./Zora Hurston
     1 files in directory ./Zora Hurston and Langston Hughes
     1 files in directory ./Z. S. Hastings
+   20 files in directory ./00002_WRONG_ENCODE/Various
    20 files in directory ./Alan Edward Nourse
    20 files in directory ./Algernon Blackwood
    20 files in directory ./Algernon Charles Swinburne
@@ -11138,7 +11146,6 @@
    20 files in directory ./Flora Annie Steel
    20 files in directory ./Harry Castlemon
    20 files in directory ./Margaret Vandercook
-   20 files in directory ./May Sinclair
    20 files in directory ./Michel de Montaigne
    20 files in directory ./Oscar Wilde
    20 files in directory ./Richard Marsh
@@ -11207,6 +11214,8 @@
    28 files in directory ./R. F. Weymouth
    28 files in directory ./Robert G. Ingersoll
    29 files in directory ./Jean de La Fontaine
+    2 files in directory ./00002_WRONG_ENCODE/Carl von Linn\E9
+    2 files in directory ./00002_WRONG_ENCODE/Gustav Kobb\E9
     2 files in directory ./Aaron A. Warford
     2 files in directory ./Abbie Phillips Walker
     2 files in directory ./Abby Morton Diaz
@@ -11226,7 +11235,6 @@
     2 files in directory ./Aeschylus
     2 files in directory ./AEschylus
     2 files in directory ./AEsop
-    2 files in directory ./A. F. Mockler Ferryman
     2 files in directory ./A. F. Murison
     2 files in directory ./A. Frederick Collins
     2 files in directory ./A. Heaton Cooper
@@ -11249,7 +11257,7 @@
     2 files in directory ./Alexander Irvine
     2 files in directory ./Alexander Smith
     2 files in directory ./Alexander Van Millingen
-    2 files in directory ./Alexandre Dumas, fils
+    2 files in directory ./Alexandre Dumas (fils)
     2 files in directory ./Alexis de Toqueville
     2 files in directory ./Alexis Soyer
     2 files in directory ./Alfred Binet
@@ -11301,7 +11309,6 @@
     2 files in directory ./Anna Sewell
     2 files in directory ./Anne Austin
     2 files in directory ./Anne Bronte
-    2 files in directory ./Anne Hollingsworth Wharton
     2 files in directory ./Annette Marie Maillard
     2 files in directory ./Annie F. Johnston
     2 files in directory ./Annie Heloise Abel
@@ -11386,6 +11393,7 @@
     2 files in directory ./Byron A. Dunn
     2 files in directory ./Cadwallader Colden
     2 files in directory ./Calvin Coolidge
+    2 files in directory ./Camden Pelham
     2 files in directory ./Camille Saint-Saens
     2 files in directory ./Canadian Kodak Company
     2 files in directory ./Cao Xueqin
@@ -11394,7 +11402,6 @@
     2 files in directory ./Carleton Noyes
     2 files in directory ./Carl Richard Jacobi
     2 files in directory ./Carl Van Vechten
-    2 files in directory ./Carl von Linné
     2 files in directory ./Carmen Sylva
     2 files in directory ./Caroline E. Jacobs
     2 files in directory ./Carolyn Judson Burnett
@@ -11408,7 +11415,6 @@
     2 files in directory ./Catherine Owen
     2 files in directory ./Catherine Sinclair
     2 files in directory ./Cecil B. Hartley
-    2 files in directory ./Cesar Lecat de Bazancourt
     2 files in directory ./Charles Asbury Stephens
     2 files in directory ./Charles Baudelaire
     2 files in directory ./Charles Beard
@@ -11446,6 +11452,7 @@
     2 files in directory ./Charles M. Stevens
     2 files in directory ./Charles Oman
     2 files in directory ./Charles Reginald Haines
+    2 files in directory ./Charles Rochfort Scott
     2 files in directory ./Charles Southwell
     2 files in directory ./Charles Turley
     2 files in directory ./Charles Waddell Chesnutt
@@ -11848,7 +11855,6 @@
     2 files in directory ./G. R. Gleig
     2 files in directory ./Guglielmo Ferrero
     2 files in directory ./Gulielma Zollinger
-    2 files in directory ./Gustav Kobbé
     2 files in directory ./Gustav Kobbe
     2 files in directory ./Guy Thorne
     2 files in directory ./G. V. Hudson
@@ -11868,6 +11874,7 @@
     2 files in directory ./Harry de Windt
     2 files in directory ./Harry Emerson Fosdick
     2 files in directory ./Harry Harrison (AKA Henry Maxwell Dempsey)
+    2 files in directory ./Harry Houdini
     2 files in directory ./Harry Stillwell Edwards
     2 files in directory ./Harry Warner
     2 files in directory ./Harvey Newcomb
@@ -11982,6 +11989,7 @@
     2 files in directory ./Ian Hamilton
     2 files in directory ./Ian MacLaren
     2 files in directory ./Ida Husted Harper
+    2 files in directory ./Ida May Hill Starr
     2 files in directory ./Ida M. Tarbell
     2 files in directory ./I. Lilias Trotter
     2 files in directory ./Imbert de Saint-Amand
@@ -12030,9 +12038,7 @@
     2 files in directory ./James M. Barrie
     2 files in directory ./James Milne
     2 files in directory ./James M. Ludlow
-    2 files in directory ./James Mooney
     2 files in directory ./James Norman Hall
-    2 files in directory ./James Payn
     2 files in directory ./James S. De Benneville
     2 files in directory ./James S. Findley
     2 files in directory ./James Sheridan Knowles
@@ -12222,7 +12228,6 @@
     2 files in directory ./Lebbeus Mitchell
     2 files in directory ./Legh Richmond
     2 files in directory ./Leigh Richmond
-    2 files in directory ./Leonardo Da Vinci
     2 files in directory ./Leonora Blanche Lang
     2 files in directory ./Leroy Yerxa
     2 files in directory ./Letitia M. Burwell
@@ -12324,6 +12329,7 @@
     2 files in directory ./Meriwether Lewis and William Clark
     2 files in directory ./Methuen & Co.
     2 files in directory ./Metta Victoria Fuller Victor
+    2 files in directory ./M.F and B. McM. Mansfield
     2 files in directory ./Michael Arlen
     2 files in directory ./Michael Barrett
     2 files in directory ./Michael Drayton
@@ -12498,6 +12504,7 @@
     2 files in directory ./Robert McReynolds
     2 files in directory ./Robert P. Multhauf
     2 files in directory ./Robert Ross
+    2 files in directory ./Robert Shackleton
     2 files in directory ./Robert S. Rait
     2 files in directory ./Robert Stead
     2 files in directory ./Robert Wallace
@@ -12649,6 +12656,7 @@
     2 files in directory ./T.P. Wilson
     2 files in directory ./Traditional Text
     2 files in directory ./T. R. Glover
+    2 files in directory ./T.S. Arthur
     2 files in directory ./T. S. Eliot
     2 files in directory ./Tyrone Power
     2 files in directory ./Uncle Philip
@@ -12665,6 +12673,7 @@
     2 files in directory ./Violet Paget (AKA Vernon Lee)
     2 files in directory ./Vitruvius
     2 files in directory ./Waldron Baily
+    2 files in directory ./Wallace Irwin
     2 files in directory ./Walter Adeney
     2 files in directory ./Walter Camp
     2 files in directory ./Walter De La Mare
@@ -12761,6 +12770,7 @@
     2 files in directory ./William Powell Frith
     2 files in directory ./William Roscher
     2 files in directory ./William Rounseville Alger
+    2 files in directory ./William Shakespeare (Apocrypha)
     2 files in directory ./William Sleeman
     2 files in directory ./William S. Lyon
     2 files in directory ./William Smith
@@ -12797,8 +12807,8 @@
    30 files in directory ./Charles Dudley Warner
    30 files in directory ./Edward Stratemeyer
    30 files in directory ./George Barr McCutcheon
-   30 files in directory ./Lev Tolstoj
    30 files in directory ./Martha Finley
+   30 files in directory ./T. S. Arthur
    30 files in directory ./William Makepeace Thackeray
    30 files in directory ./Work Projects Administration
    31 files in directory ./Arnold Bennett
@@ -12806,11 +12816,11 @@
    31 files in directory ./H. G. Wells
    31 files in directory ./Laura E. Richards
    31 files in directory ./Mrs. Humphry Ward
-   31 files in directory ./T. S. Arthur
- 3256 files in directory ./Various
+ 3259 files in directory ./Various
    32 files in directory ./Annie Fellows Johnston
    32 files in directory ./Frederich Schiller
    32 files in directory ./Herbert Strang
+   32 files in directory ./Lev Tolstoj
    32 files in directory ./Wilkie Collins
    33 files in directory ./Edith Wharton
    33 files in directory ./F. Marion Crawford
@@ -12825,15 +12835,15 @@
    36 files in directory ./Emile Zola
    36 files in directory ./Eugene Sue
    36 files in directory ./P. G. Wodehouse
-   36 files in directory ./Samuel Pepys
    36 files in directory ./Thornton W. Burgess
+   37 files in directory ./Arthur Quiller-Couch
    37 files in directory ./H. Irving Hancock
    37 files in directory ./Jacques Casanova de Seingalt
    37 files in directory ./Roy J. Snell
    37 files in directory ./Thomas Carlyle
-   38 files in directory ./Arthur Quiller-Couch
    38 files in directory ./Frances Hodgson Burnett
    38 files in directory ./Robert W. Chambers
+   39 files in directory ./Alexandre Dumas (pere)
    39 files in directory ./Arthur Scott Bailey
    39 files in directory ./Jules Verne
    39 files in directory ./Louis Becke
@@ -13085,7 +13095,6 @@
     3 files in directory ./Harriet Myrtle
     3 files in directory ./Harriette Brower
     3 files in directory ./Harry Furniss
-    3 files in directory ./Harry Houdini
     3 files in directory ./Hartley Withers
     3 files in directory ./H. Bedford-Jones
     3 files in directory ./H. C. (Herman Cyril) McNeile
@@ -13141,6 +13150,7 @@
     3 files in directory ./James Freeman Clarke
     3 files in directory ./James Madison
     3 files in directory ./James M. Beck
+    3 files in directory ./James Mooney
     3 files in directory ./James Stalker
     3 files in directory ./James Stevenson
     3 files in directory ./James Weir
@@ -13154,7 +13164,6 @@
     3 files in directory ./Jessie L. Weston
     3 files in directory ./J.F. Bone
     3 files in directory ./J. G. Holland
-    3 files in directory ./J. H. Merle D'Aubigne
     3 files in directory ./J. Hudson Taylor
     3 files in directory ./J.M. Barrie
     3 files in directory ./Joan Conquest
@@ -13420,7 +13429,6 @@
     3 files in directory ./Virginia Hughes
     3 files in directory ./W. A. Clouston
     3 files in directory ./Wadsworth Camp
-    3 files in directory ./Wallace Irwin
     3 files in directory ./Walter Bagehot
     3 files in directory ./Walter Jerrold
     3 files in directory ./Walter M. Miller
@@ -13459,7 +13467,6 @@
     3 files in directory ./William Ralph Inge
     3 files in directory ./William Seymour Edwards
     3 files in directory ./William S. Furneaux
-    3 files in directory ./William Shakespeare (Apocrypha)
     3 files in directory ./William Tenn
     3 files in directory ./William T. Hornaday
     3 files in directory ./W. L. George
@@ -13468,7 +13475,6 @@
     3 files in directory ./Woods Hutchinson
     3 files in directory ./W. S. Gilbert
     3 files in directory ./Yei Theodora Ozaki
-   40 files in directory ./Alexandre Dumas, Pere
    40 files in directory ./Charles James Lever
    41 files in directory ./Carolyn Wells
    41 files in directory ./Daniel Defoe
@@ -13479,6 +13485,7 @@
    44 files in directory ./George Bernard Shaw
    44 files in directory ./Harold Bindloss
    44 files in directory ./John Greenleaf Whittier
+   45 files in directory ./00002_WRONG_ENCODE
    45 files in directory ./Charlotte M. Yonge
    45 files in directory ./Jack London
    45 files in directory ./James Otis
@@ -13509,7 +13516,6 @@
     4 files in directory ./Archibald Henry Sayce
     4 files in directory ./Archibald Williams
     4 files in directory ./Arthur Dekker Savage
-    4 files in directory ./Arthur Griffiths
     4 files in directory ./Augustus Hopkins Strong
     4 files in directory ./A.W. Drayson
     4 files in directory ./Baha'i International Community
@@ -13560,7 +13566,7 @@
     4 files in directory ./E. Alexander Powell
     4 files in directory ./Edison Marshall
     4 files in directory ./Edited by James D. Richardson
-    4 files in directory ./Editor-in-Chief: Kuno Francke
+    4 files in directory ./Editor-in-Chief- Kuno Francke
     4 files in directory ./Edmund Lester Pearson
     4 files in directory ./Edmund Spenser
     4 files in directory ./Edward A. Steiner
@@ -13615,7 +13621,6 @@
     4 files in directory ./Gerald Stanley Lee
     4 files in directory ./Gertrude Stein
     4 files in directory ./Giovanni Boccaccio
-    4 files in directory ./G. P. R. James
     4 files in directory ./Grace Miller White
     4 files in directory ./Grover Cleveland
     4 files in directory ./Gustave Droz
@@ -13666,6 +13671,7 @@
     4 files in directory ./James Cook
     4 files in directory ./James Elroy Flecker
     4 files in directory ./James H. Foster
+    4 files in directory ./James Payn
     4 files in directory ./James R. Driscoll
     4 files in directory ./James R. Mears
     4 files in directory ./James Stamers
@@ -13838,7 +13844,6 @@
     4 files in directory ./William Blake
     4 files in directory ./William D. Howells
     4 files in directory ./William Edward Hartpole Lecky
-    4 files in directory ./William Henry Holmes
     4 files in directory ./William H. Holmes
     4 files in directory ./William Howitt
     4 files in directory ./William McFee
@@ -13858,8 +13863,8 @@
    51 files in directory ./H. Rider Haggard
    51 files in directory ./Oliver Optic
    51 files in directory ./Sir Walter Scott
-   56 files in directory ./Anthony Trollope
-  577 files in directory ./Anonymous
+   55 files in directory ./Anthony Trollope
+  581 files in directory ./Anonymous
    58 files in directory ./Bret Harte
    59 files in directory ./Henry James
     5 files in directory ./Adeline Sergeant
@@ -14077,6 +14082,7 @@
     5 files in directory ./William Allen White
     5 files in directory ./William Cullen Bryant
     5 files in directory ./William Hamilton Gibson
+    5 files in directory ./William Henry Holmes
     5 files in directory ./William Hope Hodgson
     5 files in directory ./William J. Long
     5 files in directory ./William Kirby
@@ -14109,6 +14115,7 @@
     6 files in directory ./Archibald H. Grimke
     6 files in directory ./Aristophanes
     6 files in directory ./Armando Palacio Valdes
+    6 files in directory ./Arthur Griffiths
     6 files in directory ./Arthur W. Marchmont
     6 files in directory ./A. T. Mahan
     6 files in directory ./Augusta Huiell Seaman
@@ -14236,7 +14243,6 @@
     6 files in directory ./Mrs. A. D. T. Whitney
     6 files in directory ./Mrs. Alex. McVeigh Miller
     6 files in directory ./Mrs. Georgie Sheldon
-    6 files in directory ./Mrs. Oliphant
     6 files in directory ./Nat Gould
     6 files in directory ./Nellie L. McClung
     6 files in directory ./Octave Feuillet
@@ -14272,7 +14278,6 @@
     6 files in directory ./Thomas Bulfinch
     6 files in directory ./Thomas Chandler Haliburton
     6 files in directory ./Thomas Paine
-    6 files in directory ./United States
     6 files in directory ./Virgil
     6 files in directory ./W. A. Fraser
     6 files in directory ./Walt Whitman
@@ -14339,6 +14344,7 @@
     7 files in directory ./G. J. Whyte-Melville
     7 files in directory ./Gouverneur Morris
     7 files in directory ./G. P. R. (George Payne Rainsford) James
+    7 files in directory ./G. P. R. James
     7 files in directory ./Grenville Kleiser
     7 files in directory ./Hector Malot
     7 files in directory ./Heman White Chaplin
@@ -14390,6 +14396,7 @@
     7 files in directory ./Sinclair Lewis
     7 files in directory ./Theodore Dreiser
     7 files in directory ./Thomas Wentworth Higginson
+    7 files in directory ./United States
     7 files in directory ./Victor G. Durham
     7 files in directory ./Voltaire
     7 files in directory ./Walter de la Mare
@@ -14401,8 +14408,10 @@
     7 files in directory ./William Holmes McGuffey
     7 files in directory ./William T. Sherman
    82 files in directory ./G. A. Henty
+   85 files in directory ./Samuel Pepys
    86 files in directory ./R.M. Ballantyne
    89 files in directory ./Mark Twain (Samuel Clemens)
+    8 files in directory ./00001_NAMING_ERROR
     8 files in directory ./Agnes C. Laut
     8 files in directory ./Alfred Noyes
     8 files in directory ./Alice Brown
@@ -14556,13 +14565,5 @@
     9 files in directory ./William James
     9 files in directory ./William Wordsworth
 Andrew E. Durham. Compiled by J. Frank Durham, Edited by
-Anne Maynard Kidder
-Clara Warren Vail
-Cora Armistead Hardy
-Edith Campbell Crane.
-Ellen Rose Giles
-Elva Lee
-Georgiana Goddard King
-Harriet Jean Crawford
+John Theodore Mueller
 Lord Dunsany
-L. S. B. S. & G. E. T.

@@ -44,6 +44,11 @@ then
             mv --backup=numbered -i -f "$filename" "00000_AUTHOR_NOT_FOUND"/"$filename"
             continue
         fi
+        
+        #Replacing all : with -
+        title=${title//:/-}
+        #Replacing all / with -
+        title=${title////-}
 
         author=$(echo "$firstlines" | sed -n 's/^.*[Aa][Uu][Tt][Hh][Oo][Rr]:[[:blank:]]*//p')
         if [ -z "$author" ]; then
@@ -51,7 +56,12 @@ then
             mv --backup=numbered -i -f "$filename" "00000_AUTHOR_NOT_FOUND"/"$filename"
             continue
         fi
-
+        
+        #Replacing all : with -
+        author=${author//:/-}
+        #Replacing all / with -
+        author=${author////-}
+        
         #creating new name convention
         new_name="$author,___,$title.txt"
 
@@ -76,6 +86,6 @@ then
 	for filename in *.txt; do
 		mv --backup=numbered -i -f "$filename" "00001_NAMING_ERROR"/"$filename"
 	done
+	
     #end dangerous stuff
-    
 fi
