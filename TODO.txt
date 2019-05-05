@@ -1,0 +1,16 @@
+//test piccolo su HDFS
+
+archivio di "da_impronta" > HDFS
+archivio di "da_test" > HDFS
+
+Autori che verranno identificati:
+5 autori; estratti il 10%:
+Charles Dickens
+Edgar Allan Poe
+Arthur Conan Doyle
+Lev Tolstoj
+Emile Zola
+
+lancio del jar
+
+scarico risultati
