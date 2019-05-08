@@ -185,11 +185,11 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 				
 				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 				twoGramsWritable.setTwoGrams(twoGrams);
-				authorTraceUnk.setFinalTwoGrams(twoGramsWritable);
+				authorTraceUnk.setTwoGramsKey(twoGramsWritable);
 				
 				ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
 				threeGramsWritable.setThreeGrams(threeGrams);
-				authorTraceUnk.setFinalThreeGrams(threeGramsWritable);
+				authorTraceUnk.setThreeGramsKey(threeGramsWritable);
 				
 				authorTraceUnk.setFunctionDensity(new FloatWritable(functionDensity));
 				authorTraceUnk.setPunctuationDensity(new FloatWritable(punctuationDensity));
@@ -267,11 +267,11 @@ public class AuthorAttrDistrCache extends Configured implements Tool{
 			
 			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 			twoGramsWritable.setTwoGrams(twoGrams);
-			authorTrace.setFinalTwoGrams(twoGramsWritable);
+			authorTrace.setTwoGramsKey(twoGramsWritable);
 			
 			ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
 			threeGramsWritable.setThreeGrams(threeGrams);
-			authorTrace.setFinalThreeGrams(threeGramsWritable);
+			authorTrace.setThreeGramsKey(threeGramsWritable);
 			
 			authorTrace.setFunctionDensity(new FloatWritable(functionDensity));
 			authorTrace.setPunctuationDensity(new FloatWritable(punctuationDensity));

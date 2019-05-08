@@ -16,6 +16,10 @@ public class TwoGramsWritable implements Writable {
 		this.twoGrams = new HashMap<TextPair, Integer>();				
 	}
 
+	public TwoGramsWritable(HashMap<TextPair, Integer> twoGrams) {
+		this.twoGrams = twoGrams;				
+	}
+
 	public HashMap<TextPair, Integer> getTwoGrams() {
 		return this.twoGrams;
 	}

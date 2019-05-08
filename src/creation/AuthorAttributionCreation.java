@@ -358,13 +358,32 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			//HFinal has the count of each word used by that author in every book analyzed
 			//numWords contains the number of total words used
 			HashMap<String, Float> wordFreq = MethodsCollection.getWordFrequencies(HFinal.getArray(), numWords);
-			authTrace.setWordsFreqArray(new WordsFreqWritable(wordFreq));
+			//wordFreq;
+			//finalTwoGrams;
+			//finalThreeGrams;
+			authTrace.setWordsFreqArray(
+					new WordsFreqWritable(
+							MethodsCollection.extractSubSetOrdered(wordFreq, 20, 60)
+							)
+					);
 			
 		    //Setting twoGram of author
-		    authTrace.setFinalTwoGrams(finalTwoGrams);
+		    authTrace.setTwoGramsKey(
+		    		new TwoGramsWritable(
+		    				MethodsCollection.extractSubSetOrderedTextPair(
+		    						finalTwoGrams.getTwoGrams(), 20, 60
+		    						)
+		    				)
+		    		);
 		    
 		    //Setting threeGram of author
-		    authTrace.setFinalThreeGrams(finalThreeGrams);
+		    authTrace.setThreeGramsKey(
+		    		new ThreeGramsWritable(
+		    				MethodsCollection.extractSubSetOrderedTrigram(
+				    				finalThreeGrams.getThreeGrams(), 20, 60
+				    				)
+		    				)
+		    		);
 		    
 		    //Excluding punctuation when calculating average word length
 		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunct));

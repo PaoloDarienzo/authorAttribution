@@ -262,11 +262,11 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				
 				TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 				twoGramsWritable.setTwoGrams(twoGrams);
-				authorTraceUnk.setFinalTwoGrams(twoGramsWritable);
+				authorTraceUnk.setTwoGramsKey(twoGramsWritable);
 				
 				ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
 				threeGramsWritable.setThreeGrams(threeGrams);
-				authorTraceUnk.setFinalThreeGrams(threeGramsWritable);
+				authorTraceUnk.setThreeGramsKey(threeGramsWritable);
 	           
 				authorsUnk.add(authorTraceUnk);
 				bufferedReader.close();
@@ -352,11 +352,11 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 			
 			TwoGramsWritable twoGramsWritable = new TwoGramsWritable();
 			twoGramsWritable.setTwoGrams(twoGrams);
-			authorTrace.setFinalTwoGrams(twoGramsWritable);
+			authorTrace.setTwoGramsKey(twoGramsWritable);
 			
 			ThreeGramsWritable threeGramsWritable = new ThreeGramsWritable();
 			threeGramsWritable.setThreeGrams(threeGrams);
-			authorTrace.setFinalThreeGrams(threeGramsWritable);
+			authorTrace.setThreeGramsKey(threeGramsWritable);
 			
 			
 			//////////////////////////////////////////////////

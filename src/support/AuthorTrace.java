@@ -19,9 +19,9 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	//range 0-1, so percentage
 	private FloatWritable functionDensity;
 	private FloatWritable TTR;
-	private WordsFreqWritable wordFreq;
-	private TwoGramsWritable finalTwoGrams;
-	private ThreeGramsWritable finalThreeGrams;
+	private WordsFreqWritable wordFreqKey;
+	private TwoGramsWritable twoGramsKey;
+	private ThreeGramsWritable threeGramsKey;
 	
 	//public String commenti = "";
 	
@@ -32,9 +32,9 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
 		this.setTTR(new FloatWritable(0));
-		this.wordFreq = new WordsFreqWritable();
-		this.setFinalTwoGrams(new TwoGramsWritable());
-		this.setFinalThreeGrams(new ThreeGramsWritable());
+		this.wordFreqKey = new WordsFreqWritable();
+		this.setTwoGramsKey(new TwoGramsWritable());
+		this.setThreeGramsKey(new ThreeGramsWritable());
 	}
 	
 	public Text getAuthor() {
@@ -86,27 +86,27 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	}
 
 	public WordsFreqWritable getWordsFreqArray(){
-		return this.wordFreq;
+		return this.wordFreqKey;
 	}
 	
 	public void setWordsFreqArray(WordsFreqWritable wordVal) {
-		this.wordFreq = wordVal;
+		this.wordFreqKey = wordVal;
 	}
 	
-	public TwoGramsWritable getFinalTwoGrams() {
-		return this.finalTwoGrams;
+	public TwoGramsWritable getTwoGramsKey() {
+		return this.twoGramsKey;
 	}
 
-	public void setFinalTwoGrams(TwoGramsWritable finalTwoGrams) {
-		this.finalTwoGrams = finalTwoGrams;
+	public void setTwoGramsKey(TwoGramsWritable twoGramsKey) {
+		this.twoGramsKey = twoGramsKey;
 	}
 	
-	public ThreeGramsWritable getFinalThreeGrams() {
-		return this.finalThreeGrams;
+	public ThreeGramsWritable getThreeGramsKey() {
+		return this.threeGramsKey;
 	}
 	
-	public void setFinalThreeGrams(ThreeGramsWritable finalThreeGrams) {
-		this.finalThreeGrams = finalThreeGrams;
+	public void setThreeGramsKey(ThreeGramsWritable threeGramsKey) {
+		this.threeGramsKey = threeGramsKey;
 	}
 	
 	@Override
@@ -119,9 +119,9 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity.readFields(in);
 		this.TTR.readFields(in);
 		
-		this.wordFreq.readFields(in);		
-		this.finalTwoGrams.readFields(in);
-		this.finalThreeGrams.readFields(in);
+		this.wordFreqKey.readFields(in);		
+		this.twoGramsKey.readFields(in);
+		this.threeGramsKey.readFields(in);
 		
 		/*
 		//commenti
@@ -145,9 +145,9 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.functionDensity.write(out);
 		this.TTR.write(out);
 		
-		this.wordFreq.write(out);
-		this.finalTwoGrams.write(out);
-		this.finalThreeGrams.write(out);
+		this.wordFreqKey.write(out);
+		this.twoGramsKey.write(out);
+		this.threeGramsKey.write(out);
 		
 		/*
 		//commenti
@@ -168,9 +168,9 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 				"\n" + "Punctuation words density: " + this.punctuationDensity +
 				"\n" + "Function words density: " + this.functionDensity +
 				"\n" + "TTR: " + this.TTR + 
-				"\n\n"+ "WordFreq: \n" + this.wordFreq.toString() +
-				"\n" + "Couples: \n" + this.finalTwoGrams.toString() +
-				"\n" + "Trigrams: \n" + this.finalThreeGrams.toString() + "\n";
+				"\n\n"+ "WordFreq: \n" + this.wordFreqKey.toString() +
+				"\n" + "Couples: \n" + this.twoGramsKey.toString() +
+				"\n" + "Trigrams: \n" + this.threeGramsKey.toString() + "\n";
 		
 	}
 

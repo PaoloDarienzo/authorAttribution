@@ -238,7 +238,7 @@ public class MethodsCollection {
 	 * @param results
 	 * @return the HashMap ordered by descending value
 	 */
-	public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
+public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
 		
 		List<String> mapKeys = new ArrayList<>(results.keySet());
 	    List<Float> mapValues = new ArrayList<>(results.values());
@@ -271,6 +271,74 @@ public class MethodsCollection {
 	    return sortedMap;
 	    
 	}
+
+	public static LinkedHashMap<TextPair, Integer> orderHashMapByValueTextPair(HashMap<TextPair, Integer> results) {
+	
+	List<TextPair> mapKeys = new ArrayList<>(results.keySet());
+    List<Integer> mapValues = new ArrayList<>(results.values());
+    Collections.sort(mapValues, Collections.reverseOrder());
+    Collections.sort(mapKeys, Collections.reverseOrder());
+    //for ascending order
+    //Collections.sort(mapValues);
+    //Collections.sort(mapKeys);
+
+    LinkedHashMap<TextPair, Integer> sortedMap = new LinkedHashMap<>();
+
+    Iterator<Integer> valueIt = mapValues.iterator();
+    while (valueIt.hasNext()) {
+    	Integer val = valueIt.next();
+        Iterator<TextPair> keyIt = mapKeys.iterator();
+
+        while (keyIt.hasNext()) {
+        	TextPair key = keyIt.next();
+        	Integer comp1 = results.get(key);
+        	Integer comp2 = val;
+
+            if (comp1.equals(comp2)) {
+                keyIt.remove();
+                sortedMap.put(key, val);
+                break;
+            }
+        }
+    }
+    
+    return sortedMap;
+    
+}
+
+	public static LinkedHashMap<TextTrigram, Integer> orderHashMapByValueTrigram(HashMap<TextTrigram, Integer> results) {
+	
+	List<TextTrigram> mapKeys = new ArrayList<>(results.keySet());
+    List<Integer> mapValues = new ArrayList<>(results.values());
+    Collections.sort(mapValues, Collections.reverseOrder());
+    Collections.sort(mapKeys, Collections.reverseOrder());
+    //for ascending order
+    //Collections.sort(mapValues);
+    //Collections.sort(mapKeys);
+
+    LinkedHashMap<TextTrigram, Integer> sortedMap = new LinkedHashMap<>();
+
+    Iterator<Integer> valueIt = mapValues.iterator();
+    while (valueIt.hasNext()) {
+    	Integer val = valueIt.next();
+        Iterator<TextTrigram> keyIt = mapKeys.iterator();
+
+        while (keyIt.hasNext()) {
+        	TextTrigram key = keyIt.next();
+        	Integer comp1 = results.get(key);
+        	Integer comp2 = val;
+
+            if (comp1.equals(comp2)) {
+                keyIt.remove();
+                sortedMap.put(key, val);
+                break;
+            }
+        }
+    }
+    
+    return sortedMap;
+    
+}
 	
 	/**
 	 * 
@@ -419,12 +487,13 @@ public class MethodsCollection {
 	public static LinkedHashMap<String, Float> extractSubSetOrdered(HashMap<String, Float> hashMap, 
 			int from, int to){
 		//extracting 20th-60th entries from ordered set
+		LinkedHashMap<String, Float> orderedMap = orderHashMapByValue(hashMap);
+		LinkedHashMap<String, Float> subSetOrdered = new LinkedHashMap<String, Float>();
+		
 		if(hashMap.size() < 100) {
-			return null;
+			return subSetOrdered;
 		}
 		else {
-			LinkedHashMap<String, Float> orderedMap = orderHashMapByValue(hashMap);
-			LinkedHashMap<String, Float> subSetOdered = new LinkedHashMap<String, Float>();
 			int counter = 0;
 			for(Entry<String, Float> entry : orderedMap.entrySet()) {
 				counter++;
@@ -435,10 +504,64 @@ public class MethodsCollection {
 					break;
 				}
 				else {
-					subSetOdered.put(entry.getKey(), entry.getValue());
+					subSetOrdered.put(entry.getKey(), entry.getValue());
 				}
 			}
-			return subSetOdered;
+			return subSetOrdered;
+		}
+	}
+	
+	public static LinkedHashMap<TextPair, Integer> extractSubSetOrderedTextPair(HashMap<TextPair, Integer> hashMap, 
+			int from, int to){
+		//extracting 20th-60th entries from ordered set
+		LinkedHashMap<TextPair, Integer> orderedMap = orderHashMapByValueTextPair(hashMap);
+		LinkedHashMap<TextPair, Integer> subSetOrdered = new LinkedHashMap<TextPair, Integer>();
+		
+		if(hashMap.size() < 100) {
+			return subSetOrdered;
+		}
+		else {
+			int counter = 0;
+			for(Entry<TextPair, Integer> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < from) {
+					continue;
+				}
+				else if(counter > to) {
+					break;
+				}
+				else {
+					subSetOrdered.put(entry.getKey(), entry.getValue());
+				}
+			}
+			return subSetOrdered;
+		}
+	}
+	
+	public static LinkedHashMap<TextTrigram, Integer> extractSubSetOrderedTrigram(HashMap<TextTrigram, Integer> hashMap, 
+			int from, int to){
+		//extracting 20th-60th entries from ordered set
+		LinkedHashMap<TextTrigram, Integer> orderedMap = orderHashMapByValueTrigram(hashMap);
+		LinkedHashMap<TextTrigram, Integer> subSetOrdered = new LinkedHashMap<TextTrigram, Integer>();
+		
+		if(hashMap.size() < 100) {
+			return subSetOrdered;
+		}
+		else {
+			int counter = 0;
+			for(Entry<TextTrigram, Integer> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < from) {
+					continue;
+				}
+				else if(counter > to) {
+					break;
+				}
+				else {
+					subSetOrdered.put(entry.getKey(), entry.getValue());
+				}
+			}
+			return subSetOrdered;
 		}
 	}
 

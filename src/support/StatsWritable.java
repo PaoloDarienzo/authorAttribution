@@ -86,13 +86,13 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		setWordFreqRatioRatio(MethodsCollection.getWordFreqRatioFromAll(knownWordFreq, unkWordFreq));
 		
 		//twoGramsRatio
-		HashMap<TextPair, Integer> unkTwoGrams = authorTraceUnk.getFinalTwoGrams().getTwoGrams();
-		HashMap<TextPair, Integer> knownTwoGrams = authorTrace.getFinalTwoGrams().getTwoGrams();
+		HashMap<TextPair, Integer> unkTwoGrams = authorTraceUnk.getTwoGramsKey().getTwoGrams();
+		HashMap<TextPair, Integer> knownTwoGrams = authorTrace.getTwoGramsKey().getTwoGrams();
 		setTwoGramsRatio(MethodsCollection.getTwoGramsRatio(knownTwoGrams, unkTwoGrams));
 		
 		//threeGramsRatio
-		HashMap<TextTrigram, Integer> unkThreeGrams = authorTraceUnk.getFinalThreeGrams().getThreeGrams();
-		HashMap<TextTrigram, Integer> knownThreeGrams = authorTrace.getFinalThreeGrams().getThreeGrams();
+		HashMap<TextTrigram, Integer> unkThreeGrams = authorTraceUnk.getThreeGramsKey().getThreeGrams();
+		HashMap<TextTrigram, Integer> knownThreeGrams = authorTrace.getThreeGramsKey().getThreeGrams();
 		setThreeGramsRatio(MethodsCollection.getThreeGramsRatio(knownThreeGrams, unkThreeGrams));
 		
 	}

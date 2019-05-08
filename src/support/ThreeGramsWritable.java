@@ -16,6 +16,10 @@ public class ThreeGramsWritable implements Writable {
 		this.threeGrams = new HashMap<TextTrigram, Integer>();				
 	}
 	
+	public ThreeGramsWritable(HashMap<TextTrigram, Integer> threeGrams) {
+		this.threeGrams = threeGrams;				
+	}
+	
 	public HashMap<TextTrigram, Integer> getThreeGrams() {
 		return this.threeGrams;
 	}
