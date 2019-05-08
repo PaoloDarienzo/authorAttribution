@@ -358,9 +358,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			//HFinal has the count of each word used by that author in every book analyzed
 			//numWords contains the number of total words used
 			HashMap<String, Float> wordFreq = MethodsCollection.getWordFrequencies(HFinal.getArray(), numWords);
-			//wordFreq;
-			//finalTwoGrams;
-			//finalThreeGrams;
+			
 			authTrace.setWordsFreqArray(
 					new WordsFreqWritable(
 							MethodsCollection.extractSubSetOrdered(wordFreq, 20, 60)

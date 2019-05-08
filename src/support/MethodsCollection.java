@@ -491,6 +491,19 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 		LinkedHashMap<String, Float> subSetOrdered = new LinkedHashMap<String, Float>();
 		
 		if(hashMap.size() < 100) {
+			int counter = 0;
+			for(Entry<String, Float> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < 0) {
+					continue;
+				}
+				else if(counter > 100) {
+					break;
+				}
+				else {
+					subSetOrdered.put(entry.getKey(), entry.getValue());
+				}
+			}
 			return subSetOrdered;
 		}
 		else {
@@ -518,6 +531,19 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 		LinkedHashMap<TextPair, Integer> subSetOrdered = new LinkedHashMap<TextPair, Integer>();
 		
 		if(hashMap.size() < 100) {
+			int counter = 0;
+			for(Entry<TextPair, Integer> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < 0) {
+					continue;
+				}
+				else if(counter > 100) {
+					break;
+				}
+				else {
+					subSetOrdered.put(entry.getKey(), entry.getValue());
+				}
+			}
 			return subSetOrdered;
 		}
 		else {
@@ -545,6 +571,19 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 		LinkedHashMap<TextTrigram, Integer> subSetOrdered = new LinkedHashMap<TextTrigram, Integer>();
 		
 		if(hashMap.size() < 100) {
+			int counter = 0;
+			for(Entry<TextTrigram, Integer> entry : orderedMap.entrySet()) {
+				counter++;
+				if(counter < 0) {
+					continue;
+				}
+				else if(counter > 100) {
+					break;
+				}
+				else {
+					subSetOrdered.put(entry.getKey(), entry.getValue());
+				}
+			}
 			return subSetOrdered;
 		}
 		else {
