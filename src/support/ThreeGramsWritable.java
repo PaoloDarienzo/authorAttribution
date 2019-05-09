@@ -13,7 +13,15 @@ public class ThreeGramsWritable implements Writable {
 	private HashMap<TextTrigram, Integer> threeGrams;
 	
 	public ThreeGramsWritable() {
-		this.threeGrams = new HashMap<TextTrigram, Integer>();				
+		this.threeGrams = new HashMap<TextTrigram, Integer>(128);				
+	}
+	
+	public ThreeGramsWritable(int supposedSize) {
+		this.threeGrams = new HashMap<TextTrigram, Integer>(supposedSize);				
+	}
+	
+	public ThreeGramsWritable(int supposedSize, float loadFact) {
+		this.threeGrams = new HashMap<TextTrigram, Integer>(supposedSize, loadFact);				
 	}
 	
 	public ThreeGramsWritable(HashMap<TextTrigram, Integer> threeGrams) {
@@ -29,7 +37,7 @@ public class ThreeGramsWritable implements Writable {
 	}
 	
 	public void clear() {
-		threeGrams.clear();
+		this.threeGrams.clear();
 	}
 
 	@Override

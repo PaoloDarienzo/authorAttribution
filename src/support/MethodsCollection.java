@@ -18,7 +18,36 @@ import org.apache.hadoop.io.FloatWritable;
  * @author Paolo D'Arienzo
  *
  */
-public class MethodsCollection {
+public final class MethodsCollection {
+	
+	public static final String[] SET_PUNCT_VALUES = new String[]{
+																	".", ",", ":", ";",
+																	"?", "!", "(", ")",
+																	"-", "\""
+																};
+	public static final Set<String> PUNCTUATION = new HashSet<>(Arrays.asList(SET_PUNCT_VALUES));
+	
+	public static final String[] SET_FUNCTION_WORDS = new String[] 
+			{
+				"a", "between", "in", "nor", "some", "upon", "about", "both",
+				"including", "nothing", "somebody", "us", "above", "but", "inside",
+				"of", "someone", "used", "after", "by", "into", "off", "something",
+				"via", "all", "can", "is", "on", "such", "we", "although", "coos", "it",
+				"once", "than", "what", "am", "do", "its", "one", "that", "whatever", "among",
+				"down", "latter", "onto", "the", "when", "an", "each", "less",
+				"opposite", "their", "where", "and", "either", "like", "or", "them", "whether",
+				"another", "enough", "little", "our", "these", "which", "any", "every", "lots", "outside",
+				"they", "while", "anybody", "everybody", "many", "over", "this", "who", "anyone",
+				"everyone", "me", "own", "those", "whoever", "anything", "everything", "more", "past",
+				"though", "whom", "are", "few", "most", "per", "though", "whose", "around", "following", 
+				"much", "plenty", "till", "will", "as", "for", "must", "plus", "to", "with", "at", 
+				"from", "my", "regarding", "toward", "within", "be", "have", "near", "same", "towards",
+				"without", "because", "he", "need", "several", "under", "worth", "before", "her",
+				"neither", "she", "unless", "would", "behind", "him", "no", "should", "unlike", "yes",
+				"below", "I", "nobody", "since", "until", "you", "beside", "if", "none"
+			};
+	
+	public static final Set<String> FUNCTION_WORDS = new HashSet<>(Arrays.asList(SET_FUNCTION_WORDS));
 
 	/**
 	 * 
@@ -27,12 +56,7 @@ public class MethodsCollection {
 	 */
 	public static boolean punctuationChecker(String word) {
 		
-		String[] set_punct_values = new String[] {	".", ",", ":", ";",
-													"?", "!", "(", ")",
-													"-", "\""};
-		Set<String> punctuation = new HashSet<>(Arrays.asList(set_punct_values));
-		
-		if(punctuation.contains(word)) {
+		if(PUNCTUATION.contains(word)) {
 			return true;
 		}
 		else {
@@ -46,30 +70,8 @@ public class MethodsCollection {
 	 * @return true if word is a fuction word, false otherwise
 	 */
 	public static boolean functionWordChecker(String word) {
-		
-		String[] set_function_words = new String[] 
-				{
-					"a", "between", "in", "nor", "some", "upon", "about", "both",
-					"including", "nothing", "somebody", "us", "above", "but", "inside",
-					"of", "someone", "used", "after", "by", "into", "off", "something",
-					"via", "all", "can", "is", "on", "such", "we", "although", "coos", "it",
-					"once", "than", "what", "am", "do", "its", "one", "that", "whatever", "among",
-					"down", "latter", "onto", "the", "when", "an", "each", "less",
-					"opposite", "their", "where", "and", "either", "like", "or", "them", "whether",
-					"another", "enough", "little", "our", "these", "which", "any", "every", "lots", "outside",
-					"they", "while", "anybody", "everybody", "many", "over", "this", "who", "anyone",
-					"everyone", "me", "own", "those", "whoever", "anything", "everything", "more", "past",
-					"though", "whom", "are", "few", "most", "per", "though", "whose", "around", "following", 
-					"much", "plenty", "till", "will", "as", "for", "must", "plus", "to", "with", "at", 
-					"from", "my", "regarding", "toward", "within", "be", "have", "near", "same", "towards",
-					"without", "because", "he", "need", "several", "under", "worth", "before", "her",
-					"neither", "she", "unless", "would", "behind", "him", "no", "should", "unlike", "yes",
-					"below", "I", "nobody", "since", "until", "you", "beside", "if", "none"
-				};
-		
-		Set<String> function_words = new HashSet<>(Arrays.asList(set_function_words));
 
-		if(function_words.contains(word)) {
+		if(FUNCTION_WORDS.contains(word)) {
 			return true;
 		}
 		else {
@@ -83,9 +85,9 @@ public class MethodsCollection {
 	 * @param wordVal HashMap containing word as key, number of time the word is used as value
 	 * @return the total number of chars inside the HashMap, excluding punctuation
 	 */
-	public static long getTotalCharsOnWords(HashMap<String, Integer> wordVal) {
+	public static int getTotalCharsOnWords(HashMap<String, Integer> wordVal) {
 		
-		long totalChars = 0;
+		int totalChars = 0;
 				
 		for (Entry<String, Integer> entry : wordVal.entrySet()) {
 		    String key = entry.getKey();
@@ -105,9 +107,9 @@ public class MethodsCollection {
 	 * @param wordVal HashMap containing word as key, number of time the word is used as value
 	 * @return the number of total entries, multiplied for their value, including punctuation
 	 */
-	public static long getTotalWords(HashMap<String, Integer> wordVal) {
+	public static int getTotalWords(HashMap<String, Integer> wordVal) {
 		//counts punctuation too
-		long totalWords = 0;
+		int totalWords = 0;
 		
 		for (Entry<String, Integer> entry : wordVal.entrySet()) {
 		    Integer value = entry.getValue();
@@ -123,9 +125,9 @@ public class MethodsCollection {
 	 * @param wordVal HashMap containing word as key, number of time the word is used as value
 	 * @return the number of total entries, multiplied for their value, excluding punctuation
 	 */
-	public static long getTotalWordsWOPunct(HashMap<String, Integer> wordVal) {
+	public static int getTotalWordsWOPunct(HashMap<String, Integer> wordVal) {
 		//excludes punctuation
-		long totalWords = 0;
+		int totalWords = 0;
 		
 		for (Entry<String, Integer> entry : wordVal.entrySet()) {
 			if(!MethodsCollection.punctuationChecker(entry.getKey())) {
@@ -205,7 +207,7 @@ public class MethodsCollection {
 	public static float getTTR(HashMap<String, Integer> wordCount) {
 		
 		float numDiffWords = (float) getWordsOnlySize(wordCount);
-		double numTotalWords = (double) getTotalWordsWOPunct(wordCount);
+		float numTotalWords = (float) getTotalWordsWOPunct(wordCount);
 		
 		return ((float) numDiffWords / (float) numTotalWords);
 	}
@@ -238,7 +240,7 @@ public class MethodsCollection {
 	 * @param results
 	 * @return the HashMap ordered by descending value
 	 */
-public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
+	public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, Float> results) {
 		
 		List<String> mapKeys = new ArrayList<>(results.keySet());
 	    List<Float> mapValues = new ArrayList<>(results.values());
@@ -343,7 +345,7 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 	/**
 	 * 
 	 * @param results
-	 * @return the string of the HashMap ordered by value
+	 * @return the toString of the HashMap ordered by value
 	 */
 	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
 	    
@@ -363,12 +365,12 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 	 * @param numWords number of total words used
 	 * @return HashMap(String, Float) as (word, frequency of that word)
 	 */
-	public static HashMap<String, Float> getWordFrequencies(HashMap<String, Integer> wordCount, long numWords){
+	public static HashMap<String, Float> getWordFrequencies(HashMap<String, Integer> wordCount, int numWords){
 		
 		HashMap<String, Float> wordFreq = new HashMap<String, Float>();
 		
 		for(Entry<String, Integer> entry : wordCount.entrySet()) {
-			wordFreq.put(entry.getKey(), (float) ((double)entry.getValue() / (double)numWords));
+			wordFreq.put(entry.getKey(), (float) ((float)entry.getValue() / (float)numWords));
 		}
 		
 		return wordFreq;
@@ -460,10 +462,9 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 	 */
 	public static float getWordFreqRatioFromAll(HashMap<String, Float> knownWordFreq, 
 			HashMap<String, Float> unkWordFreq) {
-		//estraggo tra le 20 e le 60 parole più usate dell'autore noto,
-		//e le confronto con le 20-60 parole più usate dell'autore ignoto.
-		//Se l'authKnown/authUnk ha meno di 100 entries, le uso tutte.
-		
+		//Extract from 20 to 60 most used words of known author,
+		//and confronting them with the 20-60 most used words of unknown author.
+		//If authKnown/authUnk has less than 100 entries, I use them all.
 		if(knownWordFreq.size() >= 100 && unkWordFreq.size() >= 100) {
 			int from = 20;
 			int to = 60;
@@ -479,14 +480,15 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 	
 	/**
 	 * 
-	 * @param hashMap
-	 * @param from
-	 * @param to
+	 * @param hashMap from which extract subset
+	 * @param from number of element from which extract
+	 * @param to number of element to which extract
 	 * @return return a subset of that HashMap
 	 */
 	public static LinkedHashMap<String, Float> extractSubSetOrdered(HashMap<String, Float> hashMap, 
 			int from, int to){
 		//extracting 20th-60th entries from ordered set
+		//or 0-100 if number of entries are less than 100
 		LinkedHashMap<String, Float> orderedMap = orderHashMapByValue(hashMap);
 		LinkedHashMap<String, Float> subSetOrdered = new LinkedHashMap<String, Float>();
 		
@@ -524,9 +526,17 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 		}
 	}
 	
+	/**
+	 * 
+	 * @param hashMap from which extract subset
+	 * @param from number of element from which extract
+	 * @param to number of element to which extract
+	 * @return return a subset of that HashMap
+	 */
 	public static LinkedHashMap<TextPair, Integer> extractSubSetOrderedTextPair(HashMap<TextPair, Integer> hashMap, 
 			int from, int to){
 		//extracting 20th-60th entries from ordered set
+		//or 0-100 if number of entries are less than 100
 		LinkedHashMap<TextPair, Integer> orderedMap = orderHashMapByValueTextPair(hashMap);
 		LinkedHashMap<TextPair, Integer> subSetOrdered = new LinkedHashMap<TextPair, Integer>();
 		
@@ -564,9 +574,17 @@ public static LinkedHashMap<String, Float> orderHashMapByValue(HashMap<String, F
 		}
 	}
 	
+	/**
+	 * 
+	 * @param hashMap from which extract subset
+	 * @param from number of element from which extract
+	 * @param to number of element to which extract
+	 * @return return a subset of that HashMap
+	 */
 	public static LinkedHashMap<TextTrigram, Integer> extractSubSetOrderedTrigram(HashMap<TextTrigram, Integer> hashMap, 
 			int from, int to){
 		//extracting 20th-60th entries from ordered set
+		//or 0-100 if number of entries are less than 100
 		LinkedHashMap<TextTrigram, Integer> orderedMap = orderHashMapByValueTrigram(hashMap);
 		LinkedHashMap<TextTrigram, Integer> subSetOrdered = new LinkedHashMap<TextTrigram, Integer>();
 		

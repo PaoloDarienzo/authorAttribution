@@ -13,7 +13,15 @@ public class TwoGramsWritable implements Writable {
 	private HashMap<TextPair, Integer> twoGrams;
 	
 	public TwoGramsWritable() {
-		this.twoGrams = new HashMap<TextPair, Integer>();				
+		this.twoGrams = new HashMap<TextPair, Integer>(128);				
+	}
+	
+	public TwoGramsWritable(int supposedSize) {
+		this.twoGrams = new HashMap<TextPair, Integer>(supposedSize);				
+	}
+	
+	public TwoGramsWritable(int supposedSize, float loadFact) {
+		this.twoGrams = new HashMap<TextPair, Integer>(supposedSize, loadFact);				
 	}
 
 	public TwoGramsWritable(HashMap<TextPair, Integer> twoGrams) {
@@ -29,7 +37,7 @@ public class TwoGramsWritable implements Writable {
 	}
 	
 	public void clear() {
-		twoGrams.clear();
+		this.twoGrams.clear();
 	}
 
 	@Override

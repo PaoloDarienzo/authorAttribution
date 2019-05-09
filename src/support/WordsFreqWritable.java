@@ -13,7 +13,15 @@ public class WordsFreqWritable implements Writable {
 	private HashMap<String, Float> wordFreq;
 
 	public WordsFreqWritable() {
-		this.wordFreq = new HashMap<String, Float>();
+		this.wordFreq = new HashMap<String, Float>(128);
+	}
+	
+	public WordsFreqWritable(int supposedSize) {
+		this.wordFreq = new HashMap<String, Float>(supposedSize);
+	}
+	
+	public WordsFreqWritable(int supposedSize, float loadFact) {
+		this.wordFreq = new HashMap<String, Float>(supposedSize, loadFact);
 	}
 	
 	public WordsFreqWritable(HashMap<String, Float> wordFreq) {

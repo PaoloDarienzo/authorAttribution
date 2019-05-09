@@ -31,10 +31,11 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.avgWordLength = new FloatWritable(0);
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
-		this.setTTR(new FloatWritable(0));
-		this.wordFreqKey = new WordsFreqWritable();
-		this.setTwoGramsKey(new TwoGramsWritable());
-		this.setThreeGramsKey(new ThreeGramsWritable());
+		this.TTR = new FloatWritable(0);
+		//the next structures will have 40 or 100 entries
+		this.wordFreqKey = new WordsFreqWritable(64, 0.8f);
+		this.twoGramsKey = new TwoGramsWritable(64, 0.8f);
+		this.threeGramsKey = new ThreeGramsWritable(64, 0.8f);
 	}
 	
 	public Text getAuthor() {
@@ -175,13 +176,13 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 	}
 
 	@Override
-	public int compareTo(AuthorTrace at) {
+	public int compareTo(AuthorTrace auth) {
 		
 		//if two AuthorTrace are of the same author
 		//i.e. author field is the same string,
 		//then there are the same AuthorTrace
 		
-		return this.author.compareTo(at.author);
+		return this.author.compareTo(auth.author);
 		
 	}
 

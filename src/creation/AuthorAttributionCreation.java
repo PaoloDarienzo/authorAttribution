@@ -31,11 +31,8 @@ import support.WordsFreqWritable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
@@ -81,7 +78,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 	} //end main class
 		
 	public int run(String[] args) throws Exception {
-					
+		
 		Job job = Job.getInstance(getConf(), "Profiles creation");
 		job.setJarByClass(this.getClass());
 		
@@ -129,11 +126,6 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		private final static Pattern WORD_BOUNDARY = Pattern.compile("\\s*\\b\\s*");
 		private final static Pattern WORD_BOUNDARY_FOR_PUNCT = Pattern.compile("\\s*\\s*");
 		private final static String AUTHOR_DELIMITER = ",___,";
-		//. , : ; ? ! ( ) - "
-		public static final String[] SET_PUNCT_VALUES = new String[] {	".", ",", ":", ";",
-																		"?", "!", "(", ")",
-																		"-", "\""};
-		public static final Set<String> PUNCTUATION = new HashSet<>(Arrays.asList(SET_PUNCT_VALUES));
 		
 		private Text author = new Text();
 		
@@ -168,7 +160,10 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 					//skip if word is empty
 					continue;
 				}
-				else if ((!(word.matches("^[a-zA-Z0-9]*$")) && !(PUNCTUATION.contains(word)))) {
+				else if (
+							!(word.matches("^[a-zA-Z0-9]*$")) && 
+							!(MethodsCollection.punctuationChecker(word))
+						) {
 					//will skip if word is not a digit or a char
 					//and is not a punctuation symbol
 					//NB: set of punctuation are not checked yet
@@ -179,7 +174,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 						//only punctuation will be accepted, else continue.
 						if (wordSymb.isEmpty()
 								||
-								!(PUNCTUATION.contains(wordSymb))
+								!(MethodsCollection.punctuationChecker(wordSymb))
 							){
 							continue; //skipping to next block to analyze
 						}
@@ -283,24 +278,18 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		
 		private int nBooks;
 		private int totalPunct, totalFunc;
-		private long totalChars, numWords;
+		private int totalChars, numWords;
 		private float TTR;
 		
 		private WordsArrayWritable HFinal; //for counting words
 		private TwoGramsWritable finalTwoGrams; //for twoGrams
 		private ThreeGramsWritable finalThreeGrams; //for threeGrams
 		private FloatWritable avgWordLength, punctuationDensity, functionDensity;
-				
+		
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 			
 			multipleOutputs = new MultipleOutputs<NullWritable, AuthorTrace>(context);
-			
-		}
-		
-		@Override
-		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
-				throws IOException, InterruptedException {
 			
 			authTrace = new AuthorTrace();
 			
@@ -318,8 +307,14 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			punctuationDensity = new FloatWritable(0);
 			functionDensity = new FloatWritable(0);
 			
+		}
+		
+		@Override
+		public void reduce(Text key, Iterable<BookTrace> values, Context context) 
+				throws IOException, InterruptedException {
+			
 			authTrace.setAuthor(key);
-		    
+			
 			for (BookTrace book : values) {
 				
 				nBooks++;
@@ -352,7 +347,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			
 			//Setting the number of books used for generate that author profile
 			authTrace.setNBooks(new IntWritable(nBooks));
-					    
+			
 			//Ordering HashMap by key; used
 		    //authTrace.setTreeWordsArray(orderArray(HFinal.getArray()));
 			//HFinal has the count of each word used by that author in every book analyzed
@@ -384,7 +379,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    		);
 		    
 		    //Excluding punctuation when calculating average word length
-		    float avgWordLenFloat = (float) ((double) totalChars / (double) (numWords - totalPunct));
+		    float avgWordLenFloat = (float) ((float) totalChars / (float) (numWords - totalPunct));
 		    avgWordLength = new FloatWritable(avgWordLenFloat);
 		    authTrace.setAvgWordLength(avgWordLength);
 		    
@@ -397,7 +392,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    TTR = MethodsCollection.getTTR(HFinal.getArray());
 		    authTrace.setTTR(new FloatWritable(TTR));
 		    
-		    //context.write(key, TraceFinal);
+		    //context.write(key, TraceFinal);			
 			multipleOutputs.write(NullWritable.get(), authTrace, key.toString());
 			
 		}//end reduce
@@ -405,7 +400,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			multipleOutputs.close();
-		}	
+		}
 		
 	} //end Reducer class	
 	

@@ -79,7 +79,7 @@ public class TextPair implements WritableComparable<TextPair> {
 	
 	@Override
 	public int hashCode() {
-		return this.first.hashCode() * 59 + this.second.hashCode();
+		return this.first.hashCode() * 11 + this.second.hashCode();
 	}
 	
 	@Override

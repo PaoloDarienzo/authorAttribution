@@ -25,7 +25,7 @@ public class WordsArrayWritable implements Writable {
 	}
 	
 	public void clear() {
-		wordVal.clear();
+		this.wordVal.clear();
 	}
 
 	@Override

@@ -95,7 +95,7 @@ public class TextTrigram implements WritableComparable<TextTrigram> {
 	
 	@Override
 	public int hashCode() {
-		return (first.hashCode() * 59 + this.second.hashCode()) * 101 + this.third.hashCode();
+		return (first.hashCode() * 13 + this.second.hashCode()) * 17 + this.third.hashCode();
 	}
 	
 	@Override
