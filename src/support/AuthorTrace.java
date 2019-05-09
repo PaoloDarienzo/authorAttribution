@@ -32,10 +32,10 @@ public class AuthorTrace implements WritableComparable<AuthorTrace> {
 		this.punctuationDensity = new FloatWritable(0);
 		this.functionDensity = new FloatWritable(0);
 		this.TTR = new FloatWritable(0);
-		//the next structures will have 40 or 100 entries
-		this.wordFreqKey = new WordsFreqWritable(64, 0.8f);
-		this.twoGramsKey = new TwoGramsWritable(64, 0.8f);
-		this.threeGramsKey = new ThreeGramsWritable(64, 0.8f);
+		//Next structures will have 100 entries
+		this.wordFreqKey = new WordsFreqWritable(128, 0.8f);
+		this.twoGramsKey = new TwoGramsWritable(128, 0.8f);
+		this.threeGramsKey = new ThreeGramsWritable(128, 0.8f);
 	}
 	
 	public Text getAuthor() {

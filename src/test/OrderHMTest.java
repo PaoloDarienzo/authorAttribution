@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import support.MethodsCollection;
+
 public class OrderHMTest {
 
 	public static void main(String[] args) {
@@ -31,6 +33,9 @@ public class OrderHMTest {
 		System.out.println(orderHashMapByValueToString(results));
 		//System.out.println("results after: " + results.toString());
 		System.out.println(extractSubSetOrdered(results));
+		
+		System.out.println();
+		System.out.println(MethodsCollection.entriesSortedByValues(results));
 		
 	}
 	

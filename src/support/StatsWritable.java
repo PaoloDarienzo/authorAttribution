@@ -290,9 +290,9 @@ public class StatsWritable implements WritableComparable<StatsWritable> {
 		statsToString += "Function density ratio: " + funcDensToString + "\n";
 		statsToString += "Punctuation density ratio: " + punctDensToString + "\n";
 		statsToString += "TTR: " + typeTokenRatioToString + "\n";
-		statsToString += "Word frequencies ratio (20-60): " + wordFreqRatioToString + "\n";
-		statsToString += "TwoGrams ratio: " + twoGramsRatioToString + "\n";
-		statsToString += "ThreeGrams ratio: " + threeGramsRatioToString + "\n";
+		statsToString += "Word frequencies ratio (20-120): " + wordFreqRatioToString + "\n";
+		statsToString += "TwoGrams ratio (0-100): " + twoGramsRatioToString + "\n";
+		statsToString += "ThreeGrams ratio (0-100): " + threeGramsRatioToString + "\n";
 		//statsToString += "Commenti: " + this.commenti + "\n";
 		
 		return statsToString;

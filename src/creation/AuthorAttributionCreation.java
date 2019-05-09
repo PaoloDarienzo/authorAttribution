@@ -356,7 +356,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 			
 			authTrace.setWordsFreqArray(
 					new WordsFreqWritable(
-							MethodsCollection.extractSubSetOrdered(wordFreq, 20, 60)
+							MethodsCollection.extractSubSetOrdered(wordFreq, 20, 120)
 							)
 					);
 			
@@ -364,7 +364,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    authTrace.setTwoGramsKey(
 		    		new TwoGramsWritable(
 		    				MethodsCollection.extractSubSetOrderedTextPair(
-		    						finalTwoGrams.getTwoGrams(), 20, 60
+		    						finalTwoGrams.getTwoGrams(), 0, 100
 		    						)
 		    				)
 		    		);
@@ -373,7 +373,7 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 		    authTrace.setThreeGramsKey(
 		    		new ThreeGramsWritable(
 		    				MethodsCollection.extractSubSetOrderedTrigram(
-				    				finalThreeGrams.getThreeGrams(), 20, 60
+				    				finalThreeGrams.getThreeGrams(), 0, 100
 				    				)
 		    				)
 		    		);
