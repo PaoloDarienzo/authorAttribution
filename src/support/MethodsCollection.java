@@ -51,7 +51,7 @@ public final class MethodsCollection {
 
 	/**
 	 * 
-	 * @param word
+	 * @param word word to check
 	 * @return true if word is a punctuation symbol, false otherwise
 	 */
 	public static boolean punctuationChecker(String word) {
@@ -66,7 +66,7 @@ public final class MethodsCollection {
 
 	/**
 	 * 
-	 * @param word
+	 * @param word to check
 	 * @return true if word is a fuction word, false otherwise
 	 */
 	public static boolean functionWordChecker(String word) {
@@ -142,8 +142,8 @@ public final class MethodsCollection {
 	
 	/**
 	 * 
-	 * @param unkFirst
-	 * @param knownSecond
+	 * @param unkFirst float from unknown profile
+	 * @param knownSecond float from known profile
 	 * @return the distance between the two float in percentage
 	 */
 	public static float getFloatRatio(FloatWritable unkFirst, FloatWritable knownSecond) {
@@ -152,8 +152,8 @@ public final class MethodsCollection {
 	
 	/**
 	 * 
-	 * @param a
-	 * @param b
+	 * @param a first float
+	 * @param b second float
 	 * @return the distance between the two float in percentage
 	 */
 	public static float getFloatRatio(float a, float b) {
@@ -256,7 +256,7 @@ public final class MethodsCollection {
 	
 	/**
 	 * 
-	 * @param results
+	 * @param results HashMap to print
 	 * @return the toString of the HashMap ordered by value
 	 */
 	public static String orderHashMapByValueToString(HashMap<String, Float> results) {
@@ -291,8 +291,8 @@ public final class MethodsCollection {
 
 	/**
 	 * 
-	 * @param knownTwoGrams
-	 * @param unkTwoGrams
+	 * @param knownTwoGrams HashMap of known profile
+	 * @param unkTwoGrams HashMap of unknown profile
 	 * @return how much the two HashMap have similar entries, in percentage
 	 */
 	public static float getTwoGramsRatio(HashMap<TextPair, Integer> knownTwoGrams,
@@ -316,8 +316,8 @@ public final class MethodsCollection {
 
 	/**
 	 * 
-	 * @param knownThreeGrams
-	 * @param unkThreeGrams
+	 * @param knownThreeGrams HashMap of known profile
+	 * @param unkThreeGrams HashMap of unknown profile
 	 * @return how much the two HashMap have similar entries, in percentage
 	 */
 	public static float getThreeGramsRatio(HashMap<TextTrigram, Integer> knownThreeGrams,
@@ -342,8 +342,8 @@ public final class MethodsCollection {
 	
 	/**
 	 * 
-	 * @param knownWordFreq
-	 * @param unkWordFreq
+	 * @param knownWordFreq HashMap of known profile
+	 * @param unkWordFreq HashMap of unknown profile
 	 * @return how much the two HashMap have similar entries, in percentage
 	 */
 	public static float getWordFreqRatio(HashMap<String, Float> knownWordFreq, 
@@ -368,8 +368,8 @@ public final class MethodsCollection {
 
 	/**
 	 * 
-	 * @param knownWordFreq
-	 * @param unkWordFreq
+	 * @param knownWordFreq HashMap of known profile
+	 * @param unkWordFreq HashMap of unkown profile
 	 * @return how much subset of the two HashMap have similar entries, in percentage
 	 */
 	public static float getWordFreqRatioFromAll(HashMap<String, Float> knownWordFreq, 

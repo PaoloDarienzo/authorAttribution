@@ -37,12 +37,17 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
 
+/**
+ * 
+ * @author Paolo D'Arienzo
+ *
+ */
 public class AuthorAttributionCreation extends Configured implements Tool {
 
 	/**
 	 * 
-	 * @param args
-	 * @throws Exception
+	 * @param args args[0] input path, args[1] output path, args[2] number of reducers
+	 * @throws Exception if run tool throws error
 	 */
 	public static void main(String[] args) throws Exception {
 		
@@ -78,6 +83,9 @@ public class AuthorAttributionCreation extends Configured implements Tool {
 	} //end main class
 		
 	public int run(String[] args) throws Exception {
+		//args[0]: input path
+		//args[1]: output path
+		//args[2]: number of reducers
 		
 		Job job = Job.getInstance(getConf(), "Profiles creation");
 		job.setJarByClass(this.getClass());

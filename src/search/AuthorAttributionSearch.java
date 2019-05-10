@@ -32,8 +32,18 @@ import java.util.HashMap;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 
+/**
+ * 
+ * @author Paolo D'Arienzo
+ *
+ */
 public class AuthorAttributionSearch extends Configured implements Tool{
 	
+	/**
+	 * 
+	 * @param args args[0] input path, args[1] output path, args[2] number of reducers, args[3] profiles repository path
+	 * @throws Exception if run tool throws error
+	 */
 	public static void main(String[] args) throws Exception {
 		
 		int res = ToolRunner.run(new AuthorAttributionSearch(), args);
@@ -181,6 +191,11 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		} //end setup
 		
 		//Reading files from distributed cache
+		/**
+		 * Reads file from distributed cache; must not exceed 10GB
+		 * @param filePath path where are stored profile of unknown authors
+		 * @param context context
+		 */
 		private void readFile(Path filePath, Context context) {
 			
 			AuthorTrace authorTraceUnk = new AuthorTrace();
