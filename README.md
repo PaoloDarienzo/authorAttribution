@@ -78,6 +78,7 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 		Per ogni autore, il punteggio di somiglianza.
 
 Struttura repository:
+
 La directory "script" contiene tutti gli script utilizzati nella gestione della base di dati.
 
 La directory "src" contiene il codice del progetto.
