@@ -9,39 +9,8 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 - densità di utilizzo di parole dette "function words"
 - accostamenti di parole utilizzate (vicinanza; 2grams e 3grams)
 
-FASE MAP:
 
-(K, V)
-
-CHIAVE: AUTORE
-
-VALORE: INSIEME DI VALORI
-
--> array di words (wordCount)
-
--> numero linee
-
--> vicinanza
-
-
-FASE REDUCE:
-
-(K, riceve per chiave/autore)
-
-(K, V)
-
-deve fare somma V
-
--> somma di words (wordCount)
-
--> stat su numero linee, densità varie, lunghezze varie...
-
--> vicinanza
-
-
-Passare come input un set di libri non utilizzati per creare l'impronta degli autori e calcolare la percentuale di successo.
-
-CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
+-> PROFILAZIONE AUTORE
 
 	INPUT:
 
@@ -66,22 +35,20 @@ CREAZIONE IMPRONTA AUTORE (O PROFILO AUTORE)
 					pertanto i risultati saranno falsati.
 
 	REDUCE:
-		Per ogni file, calcola i vari valori da calcolare.
+		Per ogni file, somma i valori ricevuti dai libri analizzati.
 		Genererà così una serie di valori che saranno l'impronta dell'autore.
 		
 	OUTPUT:
 	
 	Un file per ogni autore.
 	Ogni file ha come nome:
-	-> nome_autore.rdddddd
+	-> nome_autore-r-dddddd
 	
-DEDUZIONE AUTORE
+-> DEDUZIONE AUTORE
 
 	INPUT
 	
 	Uno o più file di testo di cui l'autore non è conosciuto.
-	Rimozione delle prime ~50 righe in cui, per conformazione del progetto Gutenberg,
-	è possibile la presenza del nome dell'autore, al fine di non falsare la ricerca dell'autore.
 	
 	MAP:
 		Creazione dell'impronta del singolo file;
@@ -94,15 +61,14 @@ DEDUZIONE AUTORE
 		Un file per ogni impronta generata sconosciuta.
 	
 	MAP:
-		Confronto dell'impronta generata con le impronte di autori noti.
-		Calcolo percentuale di somiglianza.
-		Ogni map confronta un'impronta nota con l'impronta sconosciuta.
-	REDUCE (1):
+		Load dei file sconosciuti e di un profilo noto.
+		Generazione statistiche di confronto tra ogni file sconosciuto e il profilo noto.
+	REDUCE :
 		Riceve tutti i risultati dei confronti ed emette una lista ordinata
 		di somiglianza.
 		
 	OUTPUT
-		Un file con una lista ordinata per punteggio di somiglianza;
+		Un file per ogni autore sconosciuto, con una lista ordinata per punteggio di somiglianza;
 		Per ogni autore, il punteggio di somiglianza.
 
 Struttura repository:
