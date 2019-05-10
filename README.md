@@ -2,7 +2,7 @@
 MapReduce project, Data-intensive computing systems, UniVr, 2018/2019.
 
 Obiettivo:
-analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
+analizzare libri (da project Gutenberg [https://www.gutenberg.org/]) e "profilare" ogni autore in base a:
 
 - parole utilizzate (frequenza, lunghezza media)
 - densità di punteggiatura
