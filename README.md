@@ -79,5 +79,7 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 
 Struttura repository:
 La directory "script" contiene tutti gli script utilizzati nella gestione della base di dati.
+
 La directory "src" contiene il codice del progetto.
+
 Il file "count.txt" contiene la lista di ogni autore e del numero di opere per ogni autore.
