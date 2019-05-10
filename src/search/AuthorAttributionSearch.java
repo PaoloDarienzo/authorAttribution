@@ -15,6 +15,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import org.apache.hadoop.util.Tool;
@@ -111,6 +112,8 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		
 		FileInputFormat.addInputPath(search, toMatchPath);
 		FileOutputFormat.setOutputPath(search, resultPath);
+		
+		LazyOutputFormat.setOutputFormatClass(search, TextOutputFormat.class);
 		
 		//CRITICAL
 		search.setNumReduceTasks(numReducer);
@@ -385,14 +388,16 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 	
 	public static class Reduce extends Reducer<AuthorTrace, StatsWritable, NullWritable, Text> {
 		
+		private MultipleOutputs<NullWritable, Text> multipleOutputs;
+		
 		//weight factors
-		private static float avgWordLenFact = 1;
+		private static float avgWordLenFact = 1.5f;
 		private static float funDensFact = 3;
 		private static float punctDensFact = 2;
-		private static float ttrFact = (float) 1.5;
+		private static float ttrFact = 1.5f;
 		private static float wordFreqFact = 1;
-		private static float twoGramsFact = 1;
-		private static float threeGramsFact = 1;
+		private static float twoGramsFact = 0.5f;
+		private static float threeGramsFact = 0.5f;
 		
 		//for weighted sum
 		private static float sum = avgWordLenFact + funDensFact + punctDensFact +
@@ -400,14 +405,20 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 		private static float numFact = (float) sum;
 		
 		@Override
+		public void setup(Context context) throws IOException, InterruptedException {
+			multipleOutputs = new MultipleOutputs<NullWritable, Text>(context);
+		}
+		
+		@Override
 		public void reduce(AuthorTrace unk, Iterable<StatsWritable> statsSet, Context context) 
 				throws IOException, InterruptedException {
 				
-			HashMap<String, Float> results = new HashMap<String, Float>();
+			//results is as big as number of authors known
+			HashMap<String, Float> results = new HashMap<String, Float>(1024);
 			
-			String result = "START\n";
+			String result = "START: " + unk.getAuthor() + "\n";
 			
-			String varieStats = "";
+			String variousStats = "";
 			
 			for (StatsWritable stats : statsSet) {
 				
@@ -423,17 +434,23 @@ public class AuthorAttributionSearch extends Configured implements Tool{
 				//<referring to author, similarity score>
 				results.put(stats.getOnAuthor().toString(), new Float(overrallScore / numFact));
 				
-				varieStats += "\n" + stats.toString();
+				variousStats += "\n" + stats.toString();
 				
 			}
 			
 		
 			String resultsOrdered = MethodsCollection.orderHashMapByValueToString(results);
 			
-			result += resultsOrdered + "\n" + varieStats;
-			context.write(NullWritable.get(), new Text(result));
+			result += resultsOrdered + "\n" + variousStats;
+			//context.write(NullWritable.get(), new Text(result));
+			multipleOutputs.write(NullWritable.get(), new Text(result), unk.getAuthor().toString());
 			
 		}//end reduce
+		
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {	
+			multipleOutputs.close();
+		}
 		
 	} //end Reduce class
 
