@@ -29,8 +29,6 @@ echo "Lancio un job alla volta: "
 
 echo "LANCIO."
 
-#hadoop jar authAttribution.jar creation.AuthorAttributionCreation2 /user/paolo/authorAttr/input/completeTest/search /user/paolo/authorAttr/output/creation/prova/ 3
-
 #hadoop jar authAttribution.jar creation.AuthorAttributionCreation /user/paolo/authorAttr/input/completeTest/creation/ /user/paolo/authorAttr/output/creation/short/ 3
 
 #hadoop jar authAttribution.jar creation.AuthorAttributionCreation /user/paolo/authorAttr/input/creation/veryshort /user/paolo/authorAttr/output/creation/veryshort/ 3
