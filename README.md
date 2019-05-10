@@ -50,6 +50,7 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 	
 	Uno o più file di testo di cui l'autore non è conosciuto.
 	
+	-> Primo job (profilazione autore)
 	MAP:
 		Creazione dell'impronta del singolo file;
 		Estrazione dei valori desiderati.
@@ -60,9 +61,14 @@ analizzare libri (da project Gutenberg) e "profilare" ogni autore in base a:
 	OUTPUT
 		Un file per ogni impronta generata sconosciuta.
 	
+	-> Secondo job
 	MAP:
 		Load dei file sconosciuti e di un profilo noto.
 		Generazione statistiche di confronto tra ogni file sconosciuto e il profilo noto.
+		
+	PARTITIONER:
+		Un reducer per ogni file sconosciuto.
+		
 	REDUCE :
 		Riceve tutti i risultati dei confronti ed emette una lista ordinata
 		di somiglianza.
